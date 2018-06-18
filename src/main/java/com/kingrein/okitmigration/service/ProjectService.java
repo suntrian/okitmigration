@@ -1,8 +1,12 @@
 package com.kingrein.okitmigration.service;
 
+import com.kingrein.okitmigration.util.TreeNode;
+
 import java.util.List;
 import java.util.Map;
 
 public interface ProjectService {
-    List<Map<String, Object>> listProject();
+    Map<Integer,Map<String, Object>> listProject();
+
+    List<TreeNode<Map<String, Object>>> listProjectTree();
 }

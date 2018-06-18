@@ -12,7 +12,21 @@
     </select>
 
     <select id="listAllUnit" resultType="map">
-        SELECT * FROM `unit` ;
+        SELECT * FROM unit;
+    </select>
+
+    <select id="listUnitByParent" resultType="map" parameterType="int">
+        SELECT * FROM `unit` u
+        <where>
+          <choose>
+              <when test="id != null">
+                  u.parent_id = #{id}
+              </when>
+              <otherwise>
+                  u.parent_id is null
+              </otherwise>
+          </choose>
+        </where>
     </select>
 
 </mapper>

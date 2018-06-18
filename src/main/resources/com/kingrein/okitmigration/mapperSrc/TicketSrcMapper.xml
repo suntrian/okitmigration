@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kingrein.okitmigration.mapperSrc.TicketSrcMapper">
+    <cache />
+
+    <select id="listTicketByProject" resultType="map" parameterType="int">
+        SELECT * FROM `ticket` t WHERE t.project_id = #{id};
+    </select>
+
+    <select id="listTicketByProjects" resultType="map" parameterType="list">
+        SELECT * FROM `ticket` t where t.project_id in
+        <foreach collection="list" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="listTicketType" resultType="map">
+        SELECT * FROM `s_ticket_type`;
+    </select>
+
+    <select id="listTicketStatus" resultType="map">
+        SELECT * FROM `s_ticket_status`;
+    </select>
+
+    <select id="listTicketSource" resultType="map">
+        SELECT * FROM `s_ticket_source`;
+    </select>
+
+    <select id="listTicketSeverity" resultType="map">
+        SELECT * FROM `s_ticket_severity`;
+    </select>
+
+    <select id="listTicketResolution" resultType="map">
+        SELECT * FROM `s_ticket_resolution`;
+    </select>
+
+    <select id="listTicketPriority" resultType="map">
+        SELECT * FROM `s_ticket_priority`;
+    </select>
+
+    <select id="listTicketFrequency" resultType="map">
+        SELECT * FROM `s_ticket_frequency`;
+    </select>
+
+    <select id="listTicketCategory" resultType="map">
+        SELECT * FROM `s_ticket_category`;
+    </select>
+
+    <select id="listTicketFile" resultType="map">
+        SELECT * FROM `r_ticket_file` rtf WHERE rtf.ticket_uid in
+        <foreach collection="list" open="(" close=")" separator="," item="uid">
+            #{uid}
+        </foreach>
+    </select>
+    
+</mapper>

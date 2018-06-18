@@ -21,10 +21,11 @@ public class ProjectController {
 
     @GetMapping(value = {"","/"})
     public List listProject(){
-        List<Map<String, Object>> projects = projectService.listProject();
+        Map<Integer, Map<String, Object>> projects = projectService.listProject();
         List<Map<String, Object>> results = new ArrayList<>();
         Map<String, Object> item = new HashMap<>();
-        for (Map project: projects){
+        for (Integer projectId: projects.keySet()){
+            Map<String, Object> project = projects.get(projectId);
             item.put("id", project.get("id"));
             item.put("name", project.get("name"));
             item.put("project_code", project.get("project_code"));

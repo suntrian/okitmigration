@@ -11,6 +11,24 @@
     <title>选择单位/部门</title>
 </head>
 <body>
+    <div class="wrap">
+        <table>
+            <thead>
+                <tr>
+                    <td>源单位/部门名称</td>
+                    <td>状态</td>
+                    <td>|</td>
+                    <td>目标单位/部门名称</td>
+                    <td>状态</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
 </body>
 </html>

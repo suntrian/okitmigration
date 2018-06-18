@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kingrein.okitmigration.mapperSrc.RequirementSrcMapper">
+    <cache />
+
+    <select id="listFormatDoc" resultType="map">
+        SELECT * FROM format_doc fd WHERE fd.project_id in
+        <foreach collection="list" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="listFormatDocFolder" resultType="map">
+        SELECT * FROM format_doc_floder fdf WHERE fdf.project_id in
+        <foreach collection="list" close=")" open="(" separator="," item="id">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="listFormatEdition" resultType="map">
+        SELECT * FROM format_edition fe WHERE fe.project_id in
+        <foreach collection="list" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="listFormatItemEdition" resultType="map">
+        SELECT * FROM format_item_edition fie WHERE fie.project_id in
+        <foreach collection="list" close=")" open="(" separator="," item="id">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="listRFormatSectionItem" resultType="map">
+        SELECT * FROM r_format_section_item rf WHERE 1=1;
+    </select>
+
+    <select id="listFormatDocType" resultType="map">
+        SELECT * FROM s_format_doc_type;
+    </select>
+
+    <select id="listFormatStability" resultType="map">
+        SELECT * FROM s_format_stability;
+    </select>
+
+    <select id="listFormatPrivileges" resultType="map">
+        SELECT * FROM s_format_privileges;
+    </select>
+
+    <select id="listFormatItemType" resultType="map">
+        SELECT * FROM s_format_item_type;
+    </select>
+
+    <select id="listFormatItemStatus" resultType="map">
+        SELECT * FROM s_format_item_status;
+    </select>
+
+    <select id="listFormatDifficulty" resultType="map">
+        SELECT * FROM s_format_difficulty;
+    </select>
+
+    <select id="listFormatExpectedLevel" resultType="map">
+        SELECT * FROM s_format_expected_level;
+    </select>
+
+
+</mapper>

@@ -11,7 +11,21 @@
     <title>选择项目</title>
 </head>
 <body>
+    <div class="wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="all"></th>
+                    <th>项目名称</th>
+                    <th>项目令号</th>
+                    <th>项目创建人</th>
+                </tr>
+            </thead>
+            <tbody>
 
+            </tbody>
+        </table>
+    </div>
 
 
 </body>

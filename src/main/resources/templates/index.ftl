@@ -1,0 +1,19 @@
+<html>
+<head>
+    <title>使用说明</title>
+</head>
+<body>
+<div>
+    欢迎使用
+</div>
+<div>
+    <h1>
+        使用说明
+    </h1>
+    <div>
+        <p></p>
+    </div>
+</div>
+<a href="/step2">下一步</a>
+</body>
+</html>

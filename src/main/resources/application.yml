@@ -1,15 +1,15 @@
 server:
   port: 8080
 spring:
-  mvc:
-    view:
-      suffix: .jsp
-      prefix: /WEB-INF/jsp/
+  freemarker:
+    cache: false
+    settings:
+      template_update_delay: 0
   datasource:
     src:
-      jdbc-url: jdbc:mysql://127.0.0.1:3306/pms_src?useSSL=false
+      jdbc-url: jdbc:mysql://127.0.0.1:3306/pms?useSSL=false
       username: root
-      password: 123456
+      password: abc123
       type: com.alibaba.druid.pool.DruidDataSource
       driver-class-name: com.mysql.jdbc.Driver
       mapperLocation: classpath*:com.kingrein.okitmigration.mapperSrc/*.xml
@@ -29,7 +29,7 @@ spring:
     dest:
       jdbc-url: jdbc:mysql://127.0.0.1:3306/pms?useSSL=false
       username: root
-      password: 123456
+      password: abc123
       type: com.alibaba.druid.pool.DruidDataSource
       driver-class-name: com.mysql.jdbc.Driver
       mapperLocation: classpath*:com.kingrein.okitmigration.mapperDest/*.xml
@@ -46,3 +46,14 @@ spring:
       testOnReturn: false
       poolPreparedStatements: true
       maxOpenPreparedStatements: 20
+  record:
+    rootDir: D:/temp
+    projectListFile: projectlist.txt
+    projectMapFile: projectmap.txt
+    unitMapFile: unitmap.txt
+    userMapFile: usermap.txt
+    ticketMapFile: ticketmap.txt
+    requirementMapFile: requirementmap.txt
+    taskMapFile: taskmap.txt
+    testcaseMapFile: testcasemap.txt
+    memoryMapFile: memorymap.txt

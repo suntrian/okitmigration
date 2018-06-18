@@ -7,4 +7,24 @@
         SELECT * FROM `project` p WHERE p.is_deleted = 0;
     </select>
 
+    <select id="listProjectType" resultType="map">
+        SELECT * FROM `s_project_type`;
+    </select>
+
+    <select id="listProjectStatus" resultType="map">
+        SELECT * FROM `s_project_status`;
+    </select>
+
+    <select id="listProjectLevel" resultType="map">
+        SELECT * FROM `s_project_level`;
+    </select>
+
+    <select id="listProjectImportance" resultType="map">
+        SELECT * FROM `s_project_importance`;
+    </select>
+
+    <select id="listProjectStage" resultType="map">
+        SELECT * FROM `s_project_stage`;
+    </select>
+
 </mapper>

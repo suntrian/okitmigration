@@ -3,13 +3,11 @@ package com.kingrein.okitmigration.service.impl;
 import com.kingrein.okitmigration.mapperDest.UserDestMapper;
 import com.kingrein.okitmigration.mapperSrc.UserSrcMapper;
 import com.kingrein.okitmigration.service.UserService;
+import com.kingrein.okitmigration.util.TreeNode;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service("userService")
 public class UserServiceImpl implements UserService {
@@ -69,14 +67,62 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Map<String , Object>> ListSrcUnit(){
-         return (List<Map<String, Object>>) userSrcMapper.listAllUnit().values();
-
+    public Map<Integer, Map<String, Object>> listAllSrcUnit(){
+        return userSrcMapper.listAllUnit();
     }
 
     @Override
-    public List<Map<String, Object>> listDestUnit(){
-        return (List<Map<String, Object>>) userDestMapper.listAllUnit().values();
+    public List< Map<String , Object>> listSrcUnit(Integer parentId){
+        return userSrcMapper.listUnitByParent(parentId);
+    }
+
+    @Override
+    public List<TreeNode<Map<String, Object>>> listSrcUnitTree(){
+        Map<Integer, Map<String, Object>> units = listAllSrcUnit();
+        return parseMap2Tree(units);
+    }
+
+    @Override
+    public Map<Integer, Map<String, Object>> listAllDestUnit(){
+        return userDestMapper.listAllUnit();
+    }
+
+    @Override
+    public  List< Map<String , Object>> listDestUnit(Integer parentId){
+        return  userDestMapper.listUnitByParent(parentId);
+    }
+
+    @Override
+    public List<TreeNode<Map<String, Object>>> listDestUnitTree(){
+        Map<Integer, Map<String, Object>> units = listAllDestUnit();
+        return parseMap2Tree(units);
+    }
+
+    private List<TreeNode<Map<String, Object>>> parseMap2Tree(Map<Integer, Map<String, Object>> map){
+        List<TreeNode<Map<String, Object>>> roots = new ArrayList<>();
+        Map<Integer, TreeNode> hasContained = new HashMap<>();
+        while (!map.isEmpty()){
+            Iterator<Map.Entry<Integer, Map<String, Object>>> iterator = map.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<Integer, Map<String, Object>> unitEntry = iterator.next();
+                Integer unitId = unitEntry.getKey();
+                Map<String, Object> unit = unitEntry.getValue();
+                Integer parent_id = unit.get("parent_id") == null ? null : (Integer) unit.get("parent_id");
+                TreeNode<Map<String, Object>> node = new TreeNode<>(unit);
+                if (parent_id == null) {
+                    roots.add(node);
+                    hasContained.put(unitId, node);
+                    iterator.remove();
+                } else {
+                    if (hasContained.containsKey(parent_id)){
+                        hasContained.get(parent_id).addChild(node);
+                        hasContained.put(unitId, node);
+                        iterator.remove();
+                    }
+                }
+            }
+        }
+        return roots;
     }
 
 }

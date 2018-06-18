@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Map;
 
 public class UserMapperTest  extends OkitmigrationApplicationTests {
@@ -33,8 +34,8 @@ public class UserMapperTest  extends OkitmigrationApplicationTests {
 
     @Test
     public void testListUnit(){
-        Map<Integer, Map<String ,Object>> units = userMapper.listAllUnit();
+        List< Map<String ,Object>> units = userMapper.listUnitByParent(null);
         Assert.assertTrue(units.size()>0);
-        System.out.println(units.get(14).get("name"));
+        System.out.println(units.get(1).get("name"));
     }
 }

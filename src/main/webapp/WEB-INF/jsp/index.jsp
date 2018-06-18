@@ -8,16 +8,19 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Hello World</title>
+    <title>使用说明</title>
 </head>
 <body>
     <div>
         欢迎使用
     </div>
     <div>
-        <p>
+        <h1>
             使用说明
-        </p>
+        </h1>
+        <div>
+            <p></p>
+        </div>
     </div>
     <a href="/step2">下一步</a>
 </body>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kingrein.okitmigration.mapperSrc.GeneralSrcMapper">
+    <cache />
+
+    <select id="listPageEntityColumn" resultType="map" parameterType="int">
+        SELECT * FROM `page_entity_column` p WHERE p.entity_id = #{id};
+    </select>
+
+</mapper>
