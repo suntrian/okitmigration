@@ -14,6 +14,10 @@ public interface UserService {
 
     Map<String, Object> getDestUser(Integer id);
 
+    Map<String, Object> getSrcUnit(Integer id);
+
+    Map<String, Object> getDestUnit(Integer id);
+
     Map<Integer, Map<String, Object>> listAllSrcUnit();
 
     List< Map<String , Object>> listSrcUnit(Integer parentId);

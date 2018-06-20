@@ -4,14 +4,24 @@
     <script src="/js/jquery-3.3.1.min.js"></script>
     <script src="/js/jstree.min.js"></script>
     <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .wrap{
+            width: 1024px;
+            margin: 0 auto;
+        }
+        .project_tree {
+            height: 768px;
+            overflow-y: auto;
+        }
+    </style>
 </head>
 <body>
 <div class="wrap">
-    <div id="project_tree">
+    <div id="project_tree" class="project_tree">
         <#assign proj_counter=0>
         <#macro recurse_tree treenode depth=1>
                 <#assign proj_counter=proj_counter+1 />
-                <li class="jstree-open">
+                <li class="jstree-open" id="${treenode.self.id}">
                     <span>${proj_counter}/${depth}</span>
                     <span><#if (depth>1)>><#list 2..depth as sp>--</#list></#if>${treenode.self.name}</span>
                     <span>${treenode.self.project_code!}</span>
@@ -31,12 +41,12 @@
                 </ul>
             </#list>
     </div>
-
-    <input type="submit" onclick="" value="下一步">
+    <input type="checkbox" value="all" id="checkall">全选
+    <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <input type="submit" onclick="submit()" value="下一步">
 </div>
 <script>
     var projectTree = $('#project_tree');
-
     projectTree.on("select_node.jstree", function (evnet, node) {
         console.log(node);
     });
@@ -56,6 +66,35 @@
             "cascade": "up"
         },
         "plugins" : ["search","state", "wholerow", "checkbox" ]
+    });
+    var submit = function () {
+        var ref = $('#project_tree').jstree(true);
+        var idArray = ref.get_checked();
+        var ids = [];
+        for (var id in idArray){
+            ids.push(parseInt(idArray[id]))
+        }
+        $.ajax({
+            url: "/project/selected",
+            data: JSON.stringify(ids),
+            type: "POST",
+            headers: {
+                "Content-Type": "application/json; charset=UTF-8"
+            },
+            success: function (data) {
+                if (data.data === "successed"){
+                    window.location.href='/'
+                }
+            }
+        })
+    }
+    $('#checkall').on("click", function (v) {
+        if ($('#checkall')[0].checked == true){
+            projectTree.jstree(true).check_all();
+        } else {
+            projectTree.jstree(true).uncheck_all();
+        }
+
     });
 </script>
 

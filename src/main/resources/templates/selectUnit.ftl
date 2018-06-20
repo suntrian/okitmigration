@@ -4,10 +4,22 @@
     <script src="/js/jquery-3.3.1.min.js"></script>
     <script src="/js/jstree.min.js"></script>
     <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .wrap{
+            width: 1024px;
+            margin: 0 auto;
+        }
+        .fixwidth{
+            width: 512px;
+            height: 768px;
+            overflow-y: auto;
+            float: left;
+        }
+    </style>
 </head>
 <body>
 <div class="wrap">
-    <div id="src_unit_tree">
+    <div id="src_unit_tree" class="fixwidth">
         <#assign unit_counter=0>
         <#macro recurse_tree treenode depth=1>
             <#assign unit_counter=unit_counter+1 />
@@ -35,14 +47,25 @@
         </ul>
         </#list>
     </div>
-    <div id="dest_unit_tree">
+    <div id="dest_unit_tree"  class="fixwidth">
 
+    </div>
+    <div>
+        <a href="/step4" target="_self" >下一步</a>
     </div>
 </div>
 <script>
     var srcUnitTree = $("#src_unit_tree");
     var destUnitTree = $("#dest_unit_tree");
     destUnitTree.on("select_node.jstree", function (event, node) {
+        var selectedNodes = node.selected;
+        var djt = destUnitTree.jstree(true);
+        $.each(selectedNodes, function (i, nd) {
+            if (nd != node.node.id){
+                djt.uncheck_node(nd);
+            }
+        })
+
         var jt = srcUnitTree.jstree(true);
         $.ajax({
             type: "POST",
@@ -52,7 +75,7 @@
                 dest: node.node.id
             },
             success: function (result) {
-                console.log(result);
+
             }
         })
     });
@@ -63,36 +86,31 @@
             if (nd != node.node.id)
                 sjt.uncheck_node(nd);
         });
-        console.log(node);
         $.ajax({
-            url: "/unit/dest",
+            url: "/unit/dest/mapped",
             data: {
-                id: node.node.id
+                id: node.node.parent==="#"?null:node.node.parent,
+                selfid: node.node.id
             },
             success: function (data) {
-
-                destUnitTree.jstree({
-                    core:{
-                        data:[
-                            'Simple root node',
-                            {
-                                'id': 12,
-                                'text' : 'Root node 2',
-                                'state' : {
-                                    'opened' : true,
-                                    'selected' : true
-                                },
-                                'children' : [
-                                    {
-                                        'id': 13,
-                                        'text' : 'Child 1'
-                                    },
-                                    'Child 2'
-                                ]
-                            }
-                        ]
+                destUnitTree.jstree(true).deselect_all();
+                var units = [];
+                var selectedNode;
+                for (var sn in data){
+                    var node = {};
+                    node.id = data[sn].id;
+                    node.text = data[sn].name;
+                    if (data[sn].selected){
+                        selectedNode = node.id;
                     }
-                })
+                    units.push(node);
+                };
+                destUnitTree.jstree(true).settings.core.data = units;
+                if (selectedNode) {
+                    destUnitTree.jstree(true).select_node(selectedNode);
+                }
+                destUnitTree.jstree(true).refresh();
+
             }
         })
     });
@@ -105,6 +123,12 @@
             "three_state": false
         },
         "plugins" : ["search", "wholerow", "checkbox" ]
+    });
+    destUnitTree.jstree({
+        'core':{
+            data: null
+        },
+        'plugins': ['search', 'wholerow', "checkbox"]
     });
 </script>
 </body>

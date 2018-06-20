@@ -12,6 +12,8 @@ import java.util.*;
 @Service("userService")
 public class UserServiceImpl implements UserService {
 
+    private Map<Integer, Integer> unitMap = new HashMap<>();
+
     @Resource
     private UserSrcMapper userSrcMapper;
 
@@ -67,6 +69,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Map<String, Object> getSrcUnit(Integer id){
+        return userSrcMapper.getUnit(id);
+    }
+
+    @Override
+    public Map<String, Object> getDestUnit(Integer id){
+        return userDestMapper.getUnit(id);
+    }
+
+    @Override
     public Map<Integer, Map<String, Object>> listAllSrcUnit(){
         return userSrcMapper.listAllUnit();
     }
@@ -89,7 +101,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public  List< Map<String , Object>> listDestUnit(Integer parentId){
-        return  userDestMapper.listUnitByParent(parentId);
+        List<Map<String, Object>> unitList = userDestMapper.listUnitByParent(parentId);
+        return  unitList;
     }
 
     @Override

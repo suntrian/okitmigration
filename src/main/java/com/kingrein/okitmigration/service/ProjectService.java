@@ -9,4 +9,6 @@ public interface ProjectService {
     Map<Integer,Map<String, Object>> listProject();
 
     List<TreeNode<Map<String, Object>>> listProjectTree();
+
+    List<TreeNode<Map<String, Object>>> listProjectSelected();
 }

@@ -20,4 +20,6 @@ public interface UserDestMapper {
 
     @MapKey("id")
     Map<Integer, Map<String, Object>> listAllUnit();
+
+    Map<String, Object> getUnit(Integer id);
 }

@@ -1,6 +1,8 @@
 package com.kingrein.okitmigration.service;
 
+import com.google.gson.JsonArray;
 import com.kingrein.okitmigration.util.RecordFile;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -43,11 +45,26 @@ public class RecordService {
 
     private RecordFile recordFile = new RecordFile();
 
+    public void writeProjectListFile(String data) throws IOException {
+        recordFile.writeRecordFile(new File(rootDir, projectListFile).toString(), data);
+    }
+
+    public void writeUnitMapFile(String data) throws IOException {
+        recordFile.writeRecordFile( new File(rootDir, unitMapFile).toString(), data);
+    }
+
+    public void writeUserMapFile(String data) throws IOException {
+        recordFile.writeRecordFile( new File(rootDir, userMapFile).toString(), data);
+    }
+
+
     public void recordProjectList(List<Integer> projectIds) throws IOException {
-        recordFile.writeRecordFile(projectIds.toString(), new File(rootDir, projectListFile).toString());
+        recordFile.writeRecordFile( new File(rootDir, projectListFile).toString(),projectIds.toString());
     }
 
     public void recordUnitMap(Integer src, Integer dest) throws IOException {
+        String filePath = new File(rootDir, unitMapFile).toString();
+        JsonArray json = recordFile.readRecordFile(filePath);
         recordFile.writeRecordFile( new File(rootDir, unitMapFile).toString() ,src+ ":"+dest);
     }
 

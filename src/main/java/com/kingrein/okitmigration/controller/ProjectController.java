@@ -1,27 +1,32 @@
 package com.kingrein.okitmigration.controller;
 
 
+import com.google.gson.Gson;
+import com.kingrein.okitmigration.model.ResultVO;
 import com.kingrein.okitmigration.service.ProjectService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.kingrein.okitmigration.service.RecordService;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/project")
 public class ProjectController {
 
+    private Map<Integer, Map<String, Object>> projects ;
+
+    private Set<Integer> projectIdSelected;
+
     @Resource
     private ProjectService projectService;
+    @Resource
+    private RecordService recordService;
 
     @GetMapping(value = {"","/"})
     public List listProject(){
-        Map<Integer, Map<String, Object>> projects = projectService.listProject();
+        projects = projectService.listProject();
         List<Map<String, Object>> results = new ArrayList<>();
         Map<String, Object> item = new HashMap<>();
         for (Integer projectId: projects.keySet()){
@@ -34,6 +39,19 @@ public class ProjectController {
             item = new HashMap<>();
         }
         return results;
+    }
+
+    @PostMapping(value = "/selected")
+    public ResultVO selectProjects(@RequestBody ArrayList<Integer> ids) throws IOException {
+        projectIdSelected = new HashSet<>();
+        projectIdSelected.addAll(ids);
+        List<Map<String, Object>> projectList = new ArrayList<>();
+        for (Integer id: ids){
+            projectList.add(projects.get(id));
+        }
+        recordService.writeProjectListFile(new Gson().toJson(projectList).toString());
+        //recordService.recordProjectList(ids);
+        return new ResultVO("successed");
     }
 
 }

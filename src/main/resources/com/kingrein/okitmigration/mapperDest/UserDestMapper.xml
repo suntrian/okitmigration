@@ -15,6 +15,10 @@
         SELECT * FROM unit;
     </select>
 
+    <select id="getUnit" resultType="map">
+        SELECT * FROM unit u WHERE u.id = #{id};
+    </select>
+
     <select id="listUnitByParent" resultType="map">
         SELECT * FROM `unit` u
         <where>

@@ -28,4 +28,11 @@ public class RecordFile {
         writer.close();
     }
 
+    public void writeRecordFile(String path, String data) throws IOException {
+        FileWriter writer = new FileWriter(path);
+        writer.write(data);
+        writer.flush();
+        writer.close();
+    }
+
 }

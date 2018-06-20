@@ -16,6 +16,8 @@ import java.util.Map;
 //@RequestMapping("/user")
 public class UserController {
 
+    private Map<Integer, Integer> unitMap = new HashMap<>();
+
     @Resource
     private UserService userService;
     @Resource
@@ -48,6 +50,18 @@ public class UserController {
         return userService.listDestUnit(id);
     }
 
+    @RequestMapping(value = "/unit/dest/mapped")
+    public List<Map<String, Object>> listDestUnitMapped(@RequestParam(name = "id", required = false) Integer id, @RequestParam(name = "selfid") Integer selfid ){
+        List<Map<String, Object>> unitList = userService.listDestUnit(id);
+        Map<String, Object> srcUnit = userService.getSrcUnit(selfid);
+        for (Map<String, Object> dest : unitList){
+            if (dest.get("name")!=null && dest.get("name")!=null && dest.get("name").equals(srcUnit.get("name"))){
+                dest.put("selected", true);
+            }
+        }
+        return unitList;
+    }
+
     @GetMapping(value = {"/unit/src","/unit/src/"})
     public List< Map<String,Object>> listSrcUnit(@RequestParam(name = "id", required = false) Integer id) {
         return userService.listSrcUnit(id);
@@ -61,6 +75,7 @@ public class UserController {
     @RequestMapping(value = "/unit/map")
     public ResultVO setUnitMap(@RequestParam("src") Integer src, @RequestParam("dest") Integer dest){
         try {
+            unitMap.put(src, dest);
             recordService.recordUnitMap(src, dest);
         } catch (IOException e) {
             e.printStackTrace();

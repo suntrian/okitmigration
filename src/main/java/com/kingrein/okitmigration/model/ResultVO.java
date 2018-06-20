@@ -5,7 +5,7 @@ import java.util.Collection;
 public class ResultVO {
 
     private Object data;
-    private Boolean success;
+    private Boolean success = true;
     private Integer size;
 
     public ResultVO(Object data) {

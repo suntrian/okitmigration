@@ -40,26 +40,40 @@ public class ViewController {
     }
 
     @RequestMapping(value = "/step3")
-    public ModelAndView chooseProject(ModelAndView modelAndView) {
-        modelAndView.setViewName("selectProject");
-        modelAndView.addObject("projectTreeNode", projectService.listProjectTree());
-        return modelAndView;
-    }
-
-    @RequestMapping(value = "/step4")
     public ModelAndView chooseUnit(ModelAndView modelAndView) {
         modelAndView.setViewName("selectUnit");
         modelAndView.addObject("unitTreeNode",  userService.listSrcUnitTree());
         return modelAndView;
     }
 
-    @RequestMapping(value = "/step5")
+    @RequestMapping(value = "/step4")
     public ModelAndView chooseUser(ModelAndView modelAndView){
         modelAndView.setViewName("selectUser");
         return modelAndView;
     }
 
+    @RequestMapping(value = "/step5")
+    public ModelAndView chooseProject(ModelAndView modelAndView) {
+        modelAndView.setViewName("selectProject");
+        modelAndView.addObject("projectTreeNode", projectService.listProjectTree());
+        return modelAndView;
+    }
+
     @RequestMapping(value = "/step6")
+    public ModelAndView selectProjectMap(ModelAndView modelAndView){
+        modelAndView.setViewName("selectProjectMap");
+        modelAndView.addObject("projectsSelected", projectService.listProjectSelected() );
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/step7")
+    public ModelAndView selectColumnMap(ModelAndView modelAndView){
+        modelAndView.setViewName("selectColumnMap");
+        //todo
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/step8")
     public ModelAndView chooseStandardData(ModelAndView modelAndView) {
         modelAndView.setViewName("selectUnit");
         return modelAndView;
