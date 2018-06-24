@@ -1,9 +1,10 @@
 <html>
 <head>
+    <#assign basepath="${request.getContextPath()}">
     <title>选择单位/部门</title>
-    <script src="/js/jquery-3.3.1.min.js"></script>
-    <script src="/js/jstree.min.js"></script>
-    <link rel="stylesheet" href="/css/style.css">
+    <script src="${basepath}/js/jquery-3.3.1.min.js"></script>
+    <script src="${basepath}/js/jstree.min.js"></script>
+    <link rel="stylesheet" href="${basepath}/css/style.css">
     <style>
         .wrap{
             width: 1024px;
@@ -15,6 +16,12 @@
             overflow-y: auto;
             float: left;
         }
+        .normal {
+            color: #00ff00;
+        }
+        .deleted {
+            color: #ff00ff;
+        }
     </style>
 </head>
 <body>
@@ -24,12 +31,9 @@
         <#macro recurse_tree treenode depth=1>
             <#assign unit_counter=unit_counter+1 />
                 <li id=${treenode.self.id} class="jstree-open">
-                    <span>${unit_counter}/${depth}</span>
-                    <span><#if (depth>1)>><#list 2..depth as sp>--</#list></#if>${treenode.self.name}</span>
-                    <span>
-                        <#if treenode.self.is_deleted=1>已删除
-                        <#else >正常
-                        </#if>
+                    <span>${treenode.self.name}</span>
+                    <span class="<#if treenode.self.is_deleted=1>deleted<#else>normal</#if>">
+                        <#if treenode.self.is_deleted=1>已删除<#else>正常</#if>
                     </span>
                     <#if (treenode.children)??>
                         <ul>
@@ -51,7 +55,7 @@
 
     </div>
     <div>
-        <a href="/step4" target="_self" >下一步</a>
+        <a href="${basepath}/step4" target="_self" >下一步</a>
     </div>
 </div>
 <script>
@@ -64,12 +68,12 @@
             if (nd != node.node.id){
                 djt.uncheck_node(nd);
             }
-        })
+        });
 
         var jt = srcUnitTree.jstree(true);
         $.ajax({
             type: "POST",
-            url: "/unit/map",
+            url: "${basepath}/unit/map",
             data: {
                 src: jt.get_checked()[0],
                 dest: node.node.id
@@ -87,7 +91,7 @@
                 sjt.uncheck_node(nd);
         });
         $.ajax({
-            url: "/unit/dest/mapped",
+            url: "${basepath}/unit/dest/mapped",
             data: {
                 id: node.node.parent==="#"?null:node.node.parent,
                 selfid: node.node.id
@@ -102,15 +106,17 @@
                     node.text = data[sn].name;
                     if (data[sn].selected){
                         selectedNode = node.id;
+                        if (!node.state) {node.state = {}}
+                        node.state.selected = true;
+                        node.state.checked = true;
                     }
                     units.push(node);
                 };
                 destUnitTree.jstree(true).settings.core.data = units;
                 if (selectedNode) {
-                    destUnitTree.jstree(true).select_node(selectedNode);
+                    destUnitTree.jstree(true).select_node(selectedNode)
                 }
                 destUnitTree.jstree(true).refresh();
-
             }
         })
     });

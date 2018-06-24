@@ -22,4 +22,8 @@ public interface UserDestMapper {
     Map<Integer, Map<String, Object>> listAllUnit();
 
     Map<String, Object> getUnit(Integer id);
+
+    List<Map<String, Object>> listAllUserOrderByName();
+
+    List<Map<String, Object>> listUserByName(String name);
 }

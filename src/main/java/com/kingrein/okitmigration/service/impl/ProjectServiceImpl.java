@@ -15,13 +15,18 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectSrcMapper projectSrcMapper;
 
     @Override
-    public Map<Integer, Map<String, Object>>  listProject(){
+    public Map<Integer, Map<String, Object>>  listSrcProject(){
         return projectSrcMapper.listProject();
     }
 
     @Override
+    public Map<Integer, Map<String, Object>> listSrcProject(List<Integer> ids){
+        return projectSrcMapper.listProjectByIds(ids);
+    }
+
+    @Override
     public List<TreeNode<Map<String, Object>>> listProjectTree(){
-        Map<Integer, Map<String, Object>> projects = listProject();
+        Map<Integer, Map<String, Object>> projects = listSrcProject();
         List<TreeNode<Map<String, Object>>> roots = new ArrayList<>();
         Map<Integer, TreeNode> hasContained = new HashMap<>();
         while (!projects.isEmpty()){

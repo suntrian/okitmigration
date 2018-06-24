@@ -33,4 +33,11 @@
         </where>
     </select>
 
+    <select id="listAllUserOrderByName" resultType="map">
+        SELECT u.id, p.name,p.unit_id, uu.name,u.username, p.mobile,p.is_deleted FROM `user` u
+            LEFT JOIN `person` p ON u.person_id = p.id
+            LEFT JOIN `unit` uu ON  p.unit_id = uu.id
+            WHERE u.usertype_id !=1 ORDER by p.name ;
+    </select>
+
 </mapper>

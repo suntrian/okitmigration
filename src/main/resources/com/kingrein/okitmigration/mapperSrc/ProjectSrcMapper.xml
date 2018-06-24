@@ -27,4 +27,8 @@
         SELECT * FROM `s_project_stage`;
     </select>
 
+    <select id="listProjectByIds" resultType="map">
+        SELECT * FROM `project` p WHERE p.id IN <foreach collection="list" open="(" close=")" item="id" separator=",">#{id}</foreach>
+    </select>
+    
 </mapper>

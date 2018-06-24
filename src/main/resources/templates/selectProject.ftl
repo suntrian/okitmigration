@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>选择项目</title>
+    <title>选择将导入的项目</title>
     <script src="/js/jquery-3.3.1.min.js"></script>
     <script src="/js/jstree.min.js"></script>
     <link rel="stylesheet" href="/css/style.css">
@@ -72,6 +72,7 @@
         var idArray = ref.get_checked();
         var ids = [];
         for (var id in idArray){
+            if (ids.indexOf(parseInt(idArray[id])) >= 0) continue;
             ids.push(parseInt(idArray[id]))
         }
         $.ajax({
@@ -83,7 +84,7 @@
             },
             success: function (data) {
                 if (data.data === "successed"){
-                    window.location.href='/'
+                    window.location.href='/step6'
                 }
             }
         })

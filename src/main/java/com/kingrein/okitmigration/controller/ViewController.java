@@ -75,7 +75,7 @@ public class ViewController {
 
     @RequestMapping(value = "/step8")
     public ModelAndView chooseStandardData(ModelAndView modelAndView) {
-        modelAndView.setViewName("selectUnit");
+        modelAndView.setViewName("selectStandardData");
         return modelAndView;
     }
 

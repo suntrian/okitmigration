@@ -9,4 +9,7 @@ public interface ProjectSrcMapper {
 
     @MapKey("id")
     Map<Integer,Map<String, Object>> listProject();
+
+    @MapKey("id")
+    Map<Integer, Map<String, Object>> listProjectByIds(List<Integer> ids);
 }

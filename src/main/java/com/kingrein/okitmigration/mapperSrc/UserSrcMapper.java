@@ -23,4 +23,5 @@ public interface UserSrcMapper {
 
     Map<String, Object> getUnit(Integer id);
 
+    List<Map<String, Object>> listAllUserOrderByName();
 }

@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface ProjectService {
-    Map<Integer,Map<String, Object>> listProject();
+    Map<Integer,Map<String, Object>> listSrcProject();
+
+    Map<Integer, Map<String, Object>> listSrcProject(List<Integer> ids);
 
     List<TreeNode<Map<String, Object>>> listProjectTree();
 

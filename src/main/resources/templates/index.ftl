@@ -1,5 +1,6 @@
 <html>
 <head>
+    <#assign basepath="${request.getContextPath()}">
     <title>使用说明</title>
     <style>
         .wrap {
@@ -32,7 +33,7 @@
         </div>
         <div class="clear"></div>
         <div class="next">
-            <a href="/step3">下一步</a>
+            <a href="${basepath}/step3">下一步</a>
         </div>
     </div>
 </body>

@@ -2,6 +2,7 @@ package com.kingrein.okitmigration.service;
 
 import com.kingrein.okitmigration.util.TreeNode;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -29,4 +30,6 @@ public interface UserService {
     List< Map<String , Object>> listDestUnit(Integer parentId);
 
     List<TreeNode<Map<String, Object>>> listDestUnitTree();
+
+    List<Map<String, Object>> listUserNotMapped() throws IOException;
 }

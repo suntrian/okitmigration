@@ -72,6 +72,7 @@ public class UserController {
         return userService.listSrcUnitTree();
     }
 
+
     @RequestMapping(value = "/unit/map")
     public ResultVO setUnitMap(@RequestParam("src") Integer src, @RequestParam("dest") Integer dest){
         try {
@@ -80,7 +81,12 @@ public class UserController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return new ResultVO(src + "" + dest);
     }
+
+    @RequestMapping(value = "/user/notmapped")
+    public List<Map<String, Object>> listSrcUserNotMapped() throws IOException {
+        return userService.listUserNotMapped();
+    }
+
 }
