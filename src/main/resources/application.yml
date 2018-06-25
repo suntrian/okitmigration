@@ -53,6 +53,7 @@ spring:
     projectMapFile: projectmap.txt
     unitMapFile: unitmap.txt
     userMapFile: usermap.txt
+    entityFile: entityselected.txt
     ticketMapFile: ticketmap.txt
     requirementMapFile: requirementmap.txt
     taskMapFile: taskmap.txt

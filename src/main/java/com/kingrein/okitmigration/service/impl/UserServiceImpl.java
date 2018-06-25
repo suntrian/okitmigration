@@ -148,18 +148,19 @@ public class UserServiceImpl implements UserService {
                     result.add(srcUser);
                 } else {
                     //正常匹配到一个的情况
-                    src.addProperty("id", (Number) srcUser.get("id"));
-                    src.addProperty("username", (String) srcUser.get("username"));
-                    src.addProperty("name", (String) srcUser.get("name"));
-                    dest.addProperty("id", (Number) destUser.get("id"));
-                    dest.addProperty("username", (String) destUser.get("username"));
-                    dest.addProperty("name", (String) destUser.get("name"));
-                    thisMap.add("src", src);
-                    thisMap.add("dest", dest);
-                    json.add(thisMap);
-                    src = new JsonObject();
-                    dest = new JsonObject();
-                    thisMap = new JsonObject();
+                    recordService.recordUserMap((Integer) srcUser.get("id"), (Integer) destUser.get("id"));
+//                    src.addProperty("id", (Number) srcUser.get("id"));
+//                    src.addProperty("username", (String) srcUser.get("username"));
+//                    src.addProperty("name", (String) srcUser.get("name"));
+//                    dest.addProperty("id", (Number) destUser.get("id"));
+//                    dest.addProperty("username", (String) destUser.get("username"));
+//                    dest.addProperty("name", (String) destUser.get("name"));
+//                    thisMap.add("src", src);
+//                    thisMap.add("dest", dest);
+//                    json.add(thisMap);
+//                    src = new JsonObject();
+//                    dest = new JsonObject();
+//                    thisMap = new JsonObject();
                 }
 
             }
@@ -169,10 +170,11 @@ public class UserServiceImpl implements UserService {
                 cursor = 0;
             }
         }
-        recordService.recordUserMap(json);
+//        recordService.recordUserMap(json);
         return result;
     }
 
+    @Override
     public List<Map<String, Object>>  listDestUserByName(String name) {
         return userDestMapper.listUserByName(name);
     }
@@ -204,6 +206,14 @@ public class UserServiceImpl implements UserService {
         return roots;
     }
 
-
+    @Override
+    public Boolean addUnitBySrcUnitId(Integer id){
+        Map<String, Object> srcUnit = userSrcMapper.getUnit(id);
+        // TODO 需改为目标单位中对应的单位
+        srcUnit.put("parent_id",srcUnit.get("parent_id") );
+        Integer newId = userDestMapper.addUnit(srcUnit);
+        // TODO 保存源ID与返回的新ID对应关系
+        return true;
+    }
 
 }

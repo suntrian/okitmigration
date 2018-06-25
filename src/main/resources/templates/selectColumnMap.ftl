@@ -1,5 +1,6 @@
 <html>
 <head>
+    <#assign basepath="${request.getContextPath()}">
     <title>选择属性对应列</title>
 </head>
 <body>
@@ -12,7 +13,7 @@
 
 </div>
 <div>
-    <a href="/step8" target="_self">下一步</a>
+    <a href="${basepath}/step9" target="_self">下一步</a>
 </div>
 </body>
 </html>

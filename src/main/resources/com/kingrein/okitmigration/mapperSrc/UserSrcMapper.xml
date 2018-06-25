@@ -4,7 +4,8 @@
     <cache />
 
     <select id="getUser" parameterType="int" resultType="map">
-        SELECT * FROM `user` WHERE id = #{id};
+        SELECT u.id, u.username, p.name, p.unit_id, p.mobile, uu.name as unitname FROM `user` u left join person p on u.id = p.id left join unit uu on p.unit_id = uu.id
+          WHERE u.id = #{id};
     </select>
 
     <select id="listAllUser" resultType="map">

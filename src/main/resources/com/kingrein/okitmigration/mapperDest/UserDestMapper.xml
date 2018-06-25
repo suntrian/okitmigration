@@ -4,7 +4,8 @@
     <cache />
 
     <select id="getUser" parameterType="int" resultType="map">
-        SELECT * FROM `user` WHERE id = #{id};
+        SELECT u.id, u.username, p.name, p.unit_id, p.mobile, uu.name as unitname FROM `user` u left join person p on u.id = p.id left join unit uu on p.unit_id = uu.id
+          WHERE u.id = #{id};
     </select>
 
     <select id="listAllUser" resultType="map">
@@ -41,6 +42,16 @@
     </select>
     
     <select id="listUserByName" resultType="map">
-        SELECT * FROM user u LEFT JOIN person p ON u.person_id = p.id where p.name = #{name}
+        SELECT u.id, u.username, p.name as text, p.unit_id, uu.name
+            FROM user u
+            LEFT JOIN person p ON u.person_id = p.id
+            LEFT JOIN unit uu on p.unit_id = uu.id
+            where p.name = #{name}
     </select>
+
+
+    <insert id="addUnit" parameterType="map">
+        INSERT INTO `unit`(`type`,`name`,`code`,`address`,`phone`,`comm`,`create_date`,`category_id`) VALUES (#{type},#{name},#{code},#{address},#{phone},#{comm},current_timestamp,#{category_id} )
+    </insert>
+
 </mapper>

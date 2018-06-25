@@ -1,9 +1,10 @@
 <html>
 <head>
+    <#assign basepath="${request.getContextPath()}">
     <title>选择将导入的项目</title>
-    <script src="/js/jquery-3.3.1.min.js"></script>
-    <script src="/js/jstree.min.js"></script>
-    <link rel="stylesheet" href="/css/style.css">
+    <script src="${basepath}/js/jquery-3.3.1.min.js"></script>
+    <script src="${basepath}/js/jstree.min.js"></script>
+    <link rel="stylesheet" href="${basepath}/css/style.css">
     <style>
         .wrap{
             width: 1024px;
@@ -76,15 +77,15 @@
             ids.push(parseInt(idArray[id]))
         }
         $.ajax({
-            url: "/project/selected",
+            url: "${basepath}/project/selected",
             data: JSON.stringify(ids),
             type: "POST",
             headers: {
                 "Content-Type": "application/json; charset=UTF-8"
             },
             success: function (data) {
-                if (data.data === "successed"){
-                    window.location.href='/step6'
+                if (data.data === "succeed"){
+                    window.location.href='${basepath}/step6'
                 }
             }
         })

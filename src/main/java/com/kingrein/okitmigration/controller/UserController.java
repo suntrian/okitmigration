@@ -89,4 +89,20 @@ public class UserController {
         return userService.listUserNotMapped();
     }
 
+    @RequestMapping(value = "/user/map", method = RequestMethod.POST)
+    public ResultVO setUserMap(@RequestParam("src") Integer src, @RequestParam("dest") Integer dest) throws IOException {
+        recordService.recordUserMap(src, dest);
+        return new ResultVO("succeed");
+    }
+
+    @RequestMapping(value = "/user/dest", method = RequestMethod.GET)
+    public List<Map<String, Object>> listDestUserByName(@RequestParam("name") String name) {
+        return userService.listDestUserByName(name);
+    }
+
+    @PostMapping(value = "/unit")
+    public ResultVO addUnit(@RequestParam("id") Integer id){
+        userService.addUnitBySrcUnitId(id);
+        return new ResultVO("succeed");
+    }
 }

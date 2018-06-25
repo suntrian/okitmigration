@@ -1,9 +1,10 @@
 <html>
 <head>
+    <#assign basepath="${request.getContextPath()}">
     <title>选择项目</title>
-    <script src="/js/jquery-3.3.1.min.js"></script>
-    <script src="/js/jstree.min.js"></script>
-    <link rel="stylesheet" href="/css/style.css">
+    <script src="${basepath}/js/jquery-3.3.1.min.js"></script>
+    <script src="${basepath}/js/jstree.min.js"></script>
+    <link rel="stylesheet" href="${basepath}/css/style.css">
     <style>
         .wrap {
             margin: 0 auto;
@@ -30,10 +31,11 @@
         </div>
         <div id="project_dest_tree" class="scroll_y"></div>
     </div>
+    <div>
+        <a href="${basepath}/step7" target="_self">下一步</a>
+    </div>
 </div>
-<div>
-    <a href="/step7" target="_self">下一步</a>
-</div>
+
 <script>
     $("#project_src_tree").on("select_node.jstree", function (event, node) {
         var selectedNodes = node.selected;
@@ -59,7 +61,7 @@
             return;
         }
         $.ajax({
-            url: "/project/map",
+            url: "${basepath}/project/map",
             data: {
                 src:  srcProj.get_checked()[0],
                 dest: node.node.id
@@ -86,7 +88,7 @@
     $("#project_src_tree").jstree({
         'core':{
             'data':{
-                'url': "/project/selected"
+                'url': "${basepath}/project/selected"
             }
         },
         'plugins': ["wholerow", "checkbox"]
@@ -95,7 +97,7 @@
     $("#project_dest_tree").jstree({
         'core':{
             'data': {
-                'url': "/project/"
+                'url': "${basepath}/project/"
             }
         },
         'plugins': ["search", "wholerow", "checkbox"]

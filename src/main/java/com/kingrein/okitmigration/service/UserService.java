@@ -32,4 +32,8 @@ public interface UserService {
     List<TreeNode<Map<String, Object>>> listDestUnitTree();
 
     List<Map<String, Object>> listUserNotMapped() throws IOException;
+
+    List<Map<String, Object>>  listDestUserByName(String name);
+
+    Boolean addUnitBySrcUnitId(Integer id);
 }

@@ -7,11 +7,11 @@
     <link rel="stylesheet" href="${basepath}/css/style.css">
     <style>
         .wrap{
-            width: 1024px;
+            width: 800px;
             margin: 0 auto;
         }
         .fixwidth{
-            width: 512px;
+            width: 400px;
             height: 768px;
             overflow-y: auto;
             float: left;
@@ -26,6 +26,18 @@
 </head>
 <body>
 <div class="wrap">
+    <div>
+        <h1>使用说明</h1>
+        <ul>
+            <li>
+                1. 先选择上级单位的对应关系，再选择下级单位的对应关系
+            </li>
+            <li>
+                2. 找不到对应的单位/部门时，选中源单位，然后点击【增加单位】。非外部单位请谨慎添加
+            </li>
+        </ul>
+
+    </div>
     <div id="src_unit_tree" class="fixwidth">
         <#assign unit_counter=0>
         <#macro recurse_tree treenode depth=1>
@@ -55,6 +67,7 @@
 
     </div>
     <div>
+        <a onclick="addUnit()" >增加单位</a>
         <a href="${basepath}/step4" target="_self" >下一步</a>
     </div>
 </div>
@@ -100,7 +113,7 @@
                 destUnitTree.jstree(true).deselect_all();
                 var units = [];
                 var selectedNode;
-                for (var sn in data){
+                for (var sn = 0, len = data.length; sn < len; sn++){
                     var node = {};
                     node.id = data[sn].id;
                     node.text = data[sn].name;
@@ -136,6 +149,19 @@
         },
         'plugins': ['search', 'wholerow', "checkbox"]
     });
+    function addUnit() {
+        var srcUnitId = srcUnitTree.jstree(true).get_checked()[0];
+        $.ajax({
+            url: "${basepath}/unit",
+            type: "POST",
+            data:{
+                id: srcUnitId
+            },
+            success: function (result) {
+
+            }
+        })
+    }
 </script>
 </body>
 </html>

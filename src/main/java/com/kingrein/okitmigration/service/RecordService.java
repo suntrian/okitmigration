@@ -32,6 +32,9 @@ public class RecordService {
     @Value("${spring.record.userMapFile}")
     private String userMapFile;
 
+    @Value("${spring.record.entityFile}")
+    private String entityFile;
+
     @Value("${spring.record.ticketMapFile")
     private String ticketMapFile;
 
@@ -63,10 +66,70 @@ public class RecordService {
         recordFile.writeRecordFile( new File(rootDir, unitMapFile).toString(), data);
     }
 
-    public void recordUserMap(Object obj) throws IOException {
-        recordFile.writeRecordFile( new File(rootDir, userMapFile).toString(), new GsonBuilder().setPrettyPrinting().create().toJson(obj) );
+    /**
+     * 记录用户选择的人员对应关系，采用JSON格式存储，结构为
+     *  [
+     *      {
+     *          src:{
+     *              id: ***,
+     *              name: ***,
+     *              code: ***,
+     *              unitid: ***,
+     *              unitname: ***
+     *          },
+     *          dest:{
+     *              id: ***,
+     *              name: ***,
+     *              code: ***,
+     *              unitid: ***,
+     *              unitname: ***
+     *          }
+     *      },
+     *      {
+     *
+     *      }
+     *  ]
+     *
+     * @param src
+     * @param dest
+     * @throws IOException
+     */
+    public void recordUserMap(Integer src, Integer dest) throws IOException {
+        String filePath = new File(rootDir, userMapFile).toString();
+        JsonArray json = recordFile.readRecordFileAsJsonArray(filePath);
+        Map<String, Object> srcUser = userService.getSrcUser(src);
+        Map<String, Object> destUser = userService.getDestUser(dest);
+        JsonObject srcObj =  new JsonObject();
+        JsonObject destObj = new JsonObject();
+        srcObj.addProperty("id", (Number) srcUser.get("id"));
+        srcObj.addProperty("name", (String) srcUser.get("name"));
+        srcObj.addProperty("code", (String) srcUser.get("mobile"));
+        srcObj.addProperty("unitid", (Number) srcUser.get("unit_id"));
+        srcObj.addProperty("unit", (String) srcUser.get("unitname"));
+        destObj.addProperty("id", (Number) destUser.get("id"));
+        destObj.addProperty("name", (String) destUser.get("name"));
+        destObj.addProperty("code", (String) destUser.get("mobile"));
+        destObj.addProperty("unitid", (Number) destUser.get("unit_id"));
+        destObj.addProperty("unit", (String) destUser.get("unitname"));
+        JsonObject thisMap = new JsonObject();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        //thisMap.addProperty("src", gson.toJson(srcObj));
+        //thisMap.addProperty("dest", gson.toJson(srcObj));
+        thisMap.add("src", srcObj);
+        thisMap.add("dest", destObj);
+        json.add(thisMap);
+        recordFile.writeRecordFile( filePath ,json);
     }
 
+    public JsonArray readUserMap() throws IOException {
+        String filePath = new File(rootDir, userMapFile).toString();
+        JsonArray json = recordFile.readRecordFileAsJsonArray(filePath);
+        return json;
+    }
+
+//    public void recordUserMap(Object obj) throws IOException {
+//        recordFile.writeRecordFile( new File(rootDir, userMapFile).toString(), new GsonBuilder().setPrettyPrinting().create().toJson(obj) );
+//    }
 
     /**
      * 记录用户选择的项目，采用JSON格式存储，结构为
@@ -160,6 +223,13 @@ public class RecordService {
         String filePath = new File(rootDir, unitMapFile).toString();
         JsonArray json = recordFile.readRecordFileAsJsonArray(filePath);
         return json;
+    }
+
+    public void recordEntity(Object obj) throws IOException {
+        String path = new File(rootDir, entityFile).toString();
+        if (obj instanceof Map){
+            recordFile.writeRecordFile(path, obj);
+        }
     }
 
 }

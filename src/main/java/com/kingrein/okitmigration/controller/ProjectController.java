@@ -18,7 +18,7 @@ import java.util.*;
 public class ProjectController {
 
     private Map<Integer, Map<String, Object>> projects ;
-
+    private Map<String , String> entities = new HashMap<>();
     private Set<Integer> projectIdSelected;
 
     @Resource
@@ -50,7 +50,7 @@ public class ProjectController {
         projectIdSelected.addAll(ids);
         recordService.recordProjectList(ids);
         //recordService.recordProjectList(ids);
-        return new ResultVO("successed");
+        return new ResultVO("succeed");
     }
 
     @GetMapping(value = "/selected")
@@ -76,6 +76,34 @@ public class ProjectController {
     @PostMapping(value = "/map")
     public ResultVO setProjectMap(@RequestParam("src") Integer src,@RequestParam("dest") Integer dest) {
         
+        return new ResultVO("succeed");
+    }
+
+    @GetMapping(value = "/entity")
+    public Map<String, String> listEntities() {
+
+        entities.put("ticket", "项目缺陷");
+        entities.put("requirement","项目需求");
+        entities.put("testcase","项目测试用例");
+        entities.put("task","项目计划任务");
+        entities.put("configuration", "项目配置管理");
+        entities.put("moment","项目日志");
+        entities.put("risk","项目风险");
+        entities.put("problem","项目问题");
+        entities.put("forum","项目论坛");
+        return entities;
+    }
+
+    @PostMapping(value = "/entity")
+    public ResultVO selectEntities(ArrayList<String> ids) throws IOException {
+        Iterator<String> keyItor = entities.keySet().iterator();
+        while (keyItor.hasNext()){
+            String key = keyItor.next();
+            if (!ids.contains(key)){
+                entities.remove(key);
+            }
+        }
+        recordService.recordEntity(entities);
         return new ResultVO("succeed");
     }
 

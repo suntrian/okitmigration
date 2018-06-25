@@ -5,7 +5,7 @@
     <style>
         .wrap {
             margin: 0 auto;
-            width: 1024px;
+            width: 800px;
             height: 768px;
         }
         h1, h2, h3, h4, h5 {

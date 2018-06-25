@@ -67,13 +67,19 @@ public class ViewController {
     }
 
     @RequestMapping(value = "/step7")
+    public ModelAndView selectEntity(ModelAndView modelAndView) {
+        modelAndView.setViewName("selectEntity");
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/step8")
     public ModelAndView selectColumnMap(ModelAndView modelAndView){
         modelAndView.setViewName("selectColumnMap");
         //todo
         return modelAndView;
     }
 
-    @RequestMapping(value = "/step8")
+    @RequestMapping(value = "/step9")
     public ModelAndView chooseStandardData(ModelAndView modelAndView) {
         modelAndView.setViewName("selectStandardData");
         return modelAndView;

@@ -26,4 +26,6 @@ public interface UserDestMapper {
     List<Map<String, Object>> listAllUserOrderByName();
 
     List<Map<String, Object>> listUserByName(String name);
+
+    Integer addUnit(Map<String, Object> unit);
 }
