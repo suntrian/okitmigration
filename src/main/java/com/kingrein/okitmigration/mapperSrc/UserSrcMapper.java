@@ -11,10 +11,15 @@ import java.util.Map;
 @Repository
 public interface UserSrcMapper {
 
+    Map<String, Object> getSimpleUser(Integer id);
     Map<String, Object> getUser(Integer id);
+    Map<String ,Object> getPerson(Integer id);
 
     @MapKey("id")
     Map<Integer, Map<String, Object>>  listAllUser();
+
+    @MapKey("id")
+    Map<Integer, Map<String, Object>> listUserByIds(Integer[] ids);
 
     List<Map<String , Object>> listUnitByParent(@Param("id") Integer parentId);
 

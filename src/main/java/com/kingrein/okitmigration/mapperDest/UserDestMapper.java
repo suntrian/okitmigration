@@ -16,6 +16,9 @@ public interface UserDestMapper {
     @MapKey("id")
     Map<Integer, Map<String, Object>>  listAllUser();
 
+    @MapKey("id")
+    Map<Integer, Map<String, Object>> listUserByIds(Integer[] ids);
+
     List<Map<String , Object>> listUnitByParent(@Param("id") Integer parentId);
 
     @MapKey("id")
@@ -28,4 +31,8 @@ public interface UserDestMapper {
     List<Map<String, Object>> listUserByName(String name);
 
     Integer addUnit(Map<String, Object> unit);
+
+    Integer addPerson(Map<String, Object> person);
+
+    Integer addUser(Map<String, Object> user);
 }

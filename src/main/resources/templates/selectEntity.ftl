@@ -5,23 +5,23 @@
     <script src="${basepath}/js/jquery-3.3.1.min.js"></script>
     <script src="${basepath}/js/jstree.min.js"></script>
     <link rel="stylesheet" href="${basepath}/css/style.css">
-    <style>
-        .wrap{
-            width: 512px;
-            margin: 0 auto;
-        }
+    <link rel="stylesheet" href="${basepath}/css/my.css">
 
-    </style>
 </head>
 <body>
     <div class="wrap">
+
+        <h2>选择要导入的内容</h2>
         <div id="import">
 
         </div>
-        <div>
-            <input type="checkbox" value="all" id="checkall">全选
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <a href="${basepath}/step8" title="下一步">下一步</a>
+        <div class="bottom">
+            <div class="left">
+                <input type="checkbox" value="all" id="checkall">全选
+            </div>
+            <div class="right">
+                <a href="javascript:void(0);" onclick="next_step()" title="下一步">下一步</a>
+            </div>
         </div>
     </div>
     <script>
@@ -51,8 +51,12 @@
             $.ajax({
                 url: "${basepath}/project/entity",
                 type: "POST",
+                data: JSON.stringify(ids),
+                headers: {
+                    "Content-Type": "application/json; charset=UTF-8"
+                },
                 success: function (result) {
-                    window.location.href = "${basepath}/step8"
+                    window.location.href = "${basepath}/next"
                 }
             })
         }

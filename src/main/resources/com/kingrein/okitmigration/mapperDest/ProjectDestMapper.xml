@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper  namespace="com.kingrein.okitmigration.mapperDest.ProjectDestMapper">
+    <cache />
+
+    <select id="listProject" resultType="map" >
+        SELECT * FROM  `project` p WHERE  p.is_deleted = 0;
+    </select>
+
+    <select id="listProjectByIds" resultType="map" >
+        SELECT * FROM `project` p WHERE p.is_deleted = 0 AND p.id IN <foreach collection="list" close=")" open="(" separator="," item="id">#{id}</foreach>
+    </select>
+
+    <select id="listProjectType" resultType="map">
+        SELECT * FROM `s_project_type`;
+    </select>
+
+    <select id="listProjectStatus" resultType="map">
+        SELECT * FROM `s_project_status`;
+    </select>
+
+    <select id="listProjectLevel" resultType="map">
+        SELECT * FROM `s_project_level`;
+    </select>
+
+    <select id="listProjectImportance" resultType="map">
+        SELECT * FROM `s_project_importance`;
+    </select>
+
+    <select id="listProjectStage" resultType="map">
+        SELECT * FROM `s_project_stage`;
+    </select>
+
+    <select id="listWorkflow" resultType="map">
+        SELECT * FROM workflow;
+    </select>
+
+    <insert id="addWorkflowTask" parameterType="map">
+        INSERT IGNORE INTO workflow_task (uid, workflow_uid, status_id, create_time, creator_id, operate_time, operator_id, disposer_id)
+              VALUES (#{uid}, #{workflow_uid}, #{status_id}, #{create_time}, #{creator_id}, #{operate_time}, #{operator_id}, #{disposer_id});
+    </insert>
+
+    <insert id="addProject" parameterType="map" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO `project` (id,name,father_id,ord,status_id,type_id,level_id,project_code,short_name,create_userid,project_source,start_date,end_date,comm,research_content,research_typeid,importance_id,leader_id,quality_leader_id,responsible_unit_id,officer_id,create_date,is_deleted,is_archived,delete_person_id,delete_ip,delete_date,delete_reason,archived_num,by_task,by_task_num,weight,order_unit_id,chief_leader_id,hignlevel_file,inside_taskNum,is_control,is_union,is_simulation,remarks,current_year_weight,stage_id,online_time,life_cycle_id,process_library_uid,is_require_change_by_bpm,is_config_all_visible,is_subTaskAccecpt_relation_father,is_subTaskComplete_relation_father,int_column_1,int_column_2,int_column_3,int_column_4,int_column_5,int_column_6,int_column_7,int_column_8,int_column_9,int_column_10,double_column_1,double_column_2,double_column_3,double_column_4,double_column_5,double_column_6,double_column_7,double_column_8,double_column_9,double_column_10,boolean_column_1,boolean_column_2,boolean_column_3,boolean_column_4,boolean_column_5,boolean_column_6,boolean_column_7,boolean_column_8,boolean_column_9,boolean_column_10,date_column_1,date_column_2,date_column_3,date_column_4,date_column_5,date_time_column_1,date_time_column_2,date_time_column_3,date_time_column_4,date_time_column_5,varchar_column_1,varchar_column_2,varchar_column_3,varchar_column_4,varchar_column_5,varchar_column_6,varchar_column_7,varchar_column_8,varchar_column_9,varchar_column_10,text_column_1,text_column_2,text_column_3,text_column_4,text_column_5,web_column_1,web_column_2,web_column_3,standard_column_1,standard_column_2,standard_column_3,standard_column_4,standard_column_5,standard_column_6,standard_column_7,standard_column_8,standard_column_9,standard_column_10,url_column_1,url_column_2,url_column_3,url_column_4,url_column_5,url_column_1_address,url_column_2_address,url_column_3_address,url_column_4_address,url_column_5_address,person_single_1,person_single_2,person_single_3,person_single_4,person_single_5,person_multiple_1,person_multiple_2,person_multiple_3,unit_single_1,unit_single_2,unit_single_3,unit_single_4,unit_single_5,unit_multiple_1,unit_multiple_2,unit_multiple_3,project_single_1,project_single_2,project_single_3,project_multiple_1,project_multiple_2,product_column_1,product_column_2,product_column_3,product_version_1,product_version_2,product_version_3,product_module_1,product_module_2,product_module_3,STANDARD_FX_COLUMN_1,STANDARD_FX_COLUMN_2,STANDARD_FX_COLUMN_3,STANDARD_FX_COLUMN_4,STANDARD_FX_COLUMN_5,STANDARD_TREE_COLUMN_1,STANDARD_TREE_COLUMN_2,STANDARD_TREE_COLUMN_3,STANDARD_TREE_COLUMN_4,STANDARD_TREE_COLUMN_5,STANDARD_TREE_FX_COLUMN_1,STANDARD_TREE_FX_COLUMN_2,STANDARD_TREE_FX_COLUMN_3,STANDARD_TREE_FX_COLUMN_4,STANDARD_TREE_FX_COLUMN_5,stage_name,is_jump_flowControl,language_id,UUID)
+            VALUES (null ,#{name},#{father_id},#{ord},#{status_id},#{type_id},#{level_id},#{project_code},#{short_name},#{create_userid},#{project_source},#{start_date},#{end_date},#{comm},#{research_content},#{research_typeid},#{importance_id},#{leader_id},#{quality_leader_id},#{responsible_unit_id},#{officer_id},#{create_date},#{is_deleted},#{is_archived},#{delete_person_id},#{delete_ip},#{delete_date},#{delete_reason},#{archived_num},#{by_task},#{by_task_num},#{weight},#{order_unit_id},#{chief_leader_id},#{hignlevel_file},#{inside_taskNum},#{is_control},#{is_union},#{is_simulation},#{remarks},#{current_year_weight},#{stage_id},#{online_time},#{life_cycle_id},#{process_library_uid},#{is_require_change_by_bpm},#{is_config_all_visible},#{is_subTaskAccecpt_relation_father},#{is_subTaskComplete_relation_father},#{int_column_1},#{int_column_2},#{int_column_3},#{int_column_4},#{int_column_5},#{int_column_6},#{int_column_7},#{int_column_8},#{int_column_9},#{int_column_10},#{double_column_1},#{double_column_2},#{double_column_3},#{double_column_4},#{double_column_5},#{double_column_6},#{double_column_7},#{double_column_8},#{double_column_9},#{double_column_10},#{boolean_column_1},#{boolean_column_2},#{boolean_column_3},#{boolean_column_4},#{boolean_column_5},#{boolean_column_6},#{boolean_column_7},#{boolean_column_8},#{boolean_column_9},#{boolean_column_10},#{date_column_1},#{date_column_2},#{date_column_3},#{date_column_4},#{date_column_5},#{date_time_column_1},#{date_time_column_2},#{date_time_column_3},#{date_time_column_4},#{date_time_column_5},#{varchar_column_1},#{varchar_column_2},#{varchar_column_3},#{varchar_column_4},#{varchar_column_5},#{varchar_column_6},#{varchar_column_7},#{varchar_column_8},#{varchar_column_9},#{varchar_column_10},#{text_column_1},#{text_column_2},#{text_column_3},#{text_column_4},#{text_column_5},#{web_column_1},#{web_column_2},#{web_column_3},#{standard_column_1},#{standard_column_2},#{standard_column_3},#{standard_column_4},#{standard_column_5},#{standard_column_6},#{standard_column_7},#{standard_column_8},#{standard_column_9},#{standard_column_10},#{url_column_1},#{url_column_2},#{url_column_3},#{url_column_4},#{url_column_5},#{url_column_1_address},#{url_column_2_address},#{url_column_3_address},#{url_column_4_address},#{url_column_5_address},#{person_single_1},#{person_single_2},#{person_single_3},#{person_single_4},#{person_single_5},#{person_multiple_1},#{person_multiple_2},#{person_multiple_3},#{unit_single_1},#{unit_single_2},#{unit_single_3},#{unit_single_4},#{unit_single_5},#{unit_multiple_1},#{unit_multiple_2},#{unit_multiple_3},#{project_single_1},#{project_single_2},#{project_single_3},#{project_multiple_1},#{project_multiple_2},#{product_column_1},#{product_column_2},#{product_column_3},#{product_version_1},#{product_version_2},#{product_version_3},#{product_module_1},#{product_module_2},#{product_module_3},#{STANDARD_FX_COLUMN_1},#{STANDARD_FX_COLUMN_2},#{STANDARD_FX_COLUMN_3},#{STANDARD_FX_COLUMN_4},#{STANDARD_FX_COLUMN_5},#{STANDARD_TREE_COLUMN_1},#{STANDARD_TREE_COLUMN_2},#{STANDARD_TREE_COLUMN_3},#{STANDARD_TREE_COLUMN_4},#{STANDARD_TREE_COLUMN_5},#{STANDARD_TREE_FX_COLUMN_1},#{STANDARD_TREE_FX_COLUMN_2},#{STANDARD_TREE_FX_COLUMN_3},#{STANDARD_TREE_FX_COLUMN_4},#{STANDARD_TREE_FX_COLUMN_5},#{stage_name},#{is_jump_flowControl},#{language_id},#{UUID})
+    </insert>
+
+    <insert id="addProjectPerson" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO project_person(project_id, user_id, partake_type_id, ORD, is_whitelist, is_audit, creater_id) SELECT #{project_id}, #{user_id}, #{partake_type_id}, #{ord}, #{is_whitelist}, #{is_audit}, #{creater_id} FROM project_person WHERE NOT EXISTS (SELECT * FROM project_person pp WHERE pp.project_id = #{project_id} AND pp.user_id = #{user_id}) limit 1;
+    </insert>
+
+    <insert id="addProjectPersonAuth" keyProperty="id" useGeneratedKeys="true" parameterType="map">
+        INSERT IGNORE INTO r_user_projectauth (user_id, project_id, operation_id, is_whitelist, is_cascade)
+            select #{user_id}, #{project_id}, #{operation_id}, #{is_whitelist}, #{is_cascade} from r_user_projectauth
+                  where not exists (select * from r_user_projectauth rua where rua.project_id = #{project_id} and rua.user_id = #{user_id} and rua.operation_id = #{operation_id}) limit 1;
+    </insert>
+
+    <select id="listSvnNode" resultType="map" >
+        SELECT * FROM  svn_node_config;
+    </select>
+
+    <insert id="addProduct" parameterType="map">
+        INSERT IGNORE INTO `product` (product_uid,father_uid,NAME,tag,ORD,is_default,pm_person_id,creator_id,level_id,create_time,comm,is_deleted,delete_person_id,delete_ip,delete_date,delete_reason,rd_person_id,qm_person_id,is_share,type_id,tagExternal)
+              VALUES (#{product_uid},#{father_uid},#{NAME},#{tag},#{ORD},#{is_default},#{pm_person_id},#{creator_id},#{level_id},#{create_time},#{comm},#{is_deleted},#{delete_person_id},#{delete_ip},#{delete_date},#{delete_reason},#{rd_person_id},#{qm_person_id},#{is_share},#{type_id},#{tagExternal})
+    </insert>
+
+    <insert id="addProductVersion" parameterType="map">
+        INSERT IGNORE INTO `product_version` (product_version_uid,parent_version_uid,version,tag,is_default,rd_person_id,creator_id,create_time,release_notes,is_deleted,delete_person_id,delete_ip,delete_date,delete_reason,pm_person_id,qm_person_id,product_uid,product_version_status_id,plan_release_date,release_date,subproducts_desc,is_share,change_item_status)
+              VALUES (#{product_version_uid},#{parent_version_uid},#{version},#{tag},#{is_default},#{rd_person_id},#{creator_id},#{create_time},#{release_notes},#{is_deleted},#{delete_person_id},#{delete_ip},#{delete_date},#{delete_reason},#{pm_person_id},#{qm_person_id},#{product_uid},#{product_version_status_id},#{plan_release_date},#{release_date},#{subproducts_desc},#{is_share},#{change_item_status})
+    </insert>
+    
+    <insert id="addProductVersionModule" parameterType="map">
+        INSERT IGNORE INTO `product_version_module` (module_uid, father_uid, name, tag, ord, rd_person_id, creator_id, create_time, comm, is_deleted, delete_person_id, delete_ip, delete_date, delete_reason, product_uid, product_version_uid, is_share)
+              VALUES (#{module_uid}, #{father_uid}, #{name}, #{tag}, #{ord}, #{rd_person_id}, #{creator_id}, #{create_time}, #{comm}, #{is_deleted}, #{delete_person_id}, #{delete_ip}, #{delete_date}, #{delete_reason}, #{product_uid}, #{product_version_uid}, #{is_share})
+    </insert>
+
+    <insert id="addProductProject" parameterType="map">
+        INSERT IGNORE INTO `r_product_project` (product_uid, project_id, is_owned, father_uid, ord) VALUES (#{product_uid}, #{project_id}, #{is_owned}, #{father_uid}, #{ord});
+    </insert>
+
+    <insert id="addProductVersionProject" parameterType="map">
+        INSERT IGNORE INTO `r_product_version_project` (product_version_uid, product_uid, project_id, is_owned) VALUES (#{product_version_uid}, #{product_uid}, #{project_id}, #{is_owned});
+    </insert>
+
+    <insert id="addProductVersionModuleProject" parameterType="map">
+        INSERT IGNORE INTO `r_product_module_project` (product_uid, product_version_uid, product_module_uid, is_owned, project_id, father_uid, ord) VALUES (#{product_uid},#{product_version_uid},#{product_module_uid}, #{is_owned}, #{project_id}, #{father_uid}, #{ord});
+    </insert>
+
+    <insert id="addProductAuth" parameterType="map">
+        INSERT IGNORE INTO `r_product_auth` (uid, product_uid, person_id, auth_type_id) VALUES (#{uid}, #{product_uid}, #{person_id}, #{auth_type_id});
+    </insert>
+
+    <insert id="addSvnConfigDirectory" parameterType="map">
+        INSERT INTO `svn_config_directory` (id,product_uid,project_id,name,repository,library_type,user_id,create_date,comm,is_deleted,delete_person_id,delete_ip,delete_date,delete_reason,node_config_id,folder_count,file_count,size,analyse_version)
+              select  null,#{product_uid},#{project_id},#{name},#{repository},#{library_type},#{user_id},#{create_date},#{comm},#{is_deleted},#{delete_person_id},#{delete_ip},#{delete_date},#{delete_reason},#{node_config_id},#{folder_count},#{file_count},#{size},#{analyse_version} from svn_config_directory
+                  where not exists (select * from svn_config_directory scd where scd.repository = #{repository}) limit 1;
+    </insert>
+
+    <select id="listTicketPageEntityColumm" resultType="map">
+        SELECT pec.*, pdc.column_name AS `column` FROM page_entity_column pec LEFT JOIN page_defined_column pdc ON pec.column_id = pdc.column_id WHERE pec.entity_id = 10 AND pec.is_use_column = 1 ORDER by pec.column_id;
+    </select>
+
+    <select id="listTicketType" resultType="map">
+        SELECT * from s_ticket_type;
+    </select>
+    <select id="listTicketStatus" resultType="map">
+        select * from s_ticket_status;
+    </select>
+    <select id="listTicketSource" resultType="map">
+        select * from s_ticket_source;
+    </select>
+    <select id="listTicketSeverity" resultType="map">
+        SELECT * FROM s_ticket_severity;
+    </select>
+    <select id="listTicketResolution" resultType="map">
+        SELECT * FROM s_ticket_resolution;
+    </select>
+    <select id="listTicketPriority" resultType="map">
+        SELECT * FROM s_ticket_priority;
+    </select>
+    <select id="listTicketFrequency" resultType="map">
+        SELECT * FROM s_ticket_frequency;
+    </select>
+    <select id="listTicketCategory" resultType="map">
+        SELECT * FROM s_ticket_category;
+    </select>
+
+    <insert id="addTicket" parameterType="map">
+        INSERT IGNORE INTO `ticket` (source_unit_id,source_tag,uid,project_id,tag,title,problem_desc,environment_desc,type_id,severity_id,product_uid,product_version_uid,plan_resolved_product_version_uid,resolved_product_version_uid,milestone_id,module_uid,test_activity_id,source_id,priority_id,status_id,resolution_id,dispose_role_id,disposer_id,dispose_time,reporter_id,born_address,born_time,version_id,found_build,resolve_build,finder,category_id,frequency_id,plan_solution_date,actual_workLoad,plan_workLoad,stage_id,doc_uid,item_uid,doc_edition_uid,schedule_uid,requireItem,modifier_id,modify_reportwork,int_column_1,int_column_2,int_column_3,int_column_4,int_column_5,int_column_6,int_column_7,int_column_8,int_column_9,int_column_10,double_column_1,double_column_2,double_column_3,double_column_4,double_column_5,double_column_6,double_column_7,double_column_8,double_column_9,double_column_10,boolean_column_1,boolean_column_2,boolean_column_3,boolean_column_4,boolean_column_5,boolean_column_6,boolean_column_7,boolean_column_8,boolean_column_9,boolean_column_10,date_column_1,date_column_2,date_column_3,date_column_4,date_column_5,date_time_column_1,date_time_column_2,date_time_column_3,date_time_column_4,date_time_column_5,varchar_column_1,varchar_column_2,varchar_column_3,varchar_column_4,varchar_column_5,varchar_column_6,varchar_column_7,varchar_column_8,varchar_column_9,varchar_column_10,text_column_1,text_column_2,text_column_3,text_column_4,text_column_5,web_column_1,web_column_2,web_column_3,standard_column_1,standard_column_2,standard_column_3,standard_column_4,standard_column_5,standard_column_6,standard_column_7,standard_column_8,standard_column_9,standard_column_10,url_column_1,url_column_2,url_column_3,url_column_4,url_column_5,url_column_1_address,url_column_2_address,url_column_3_address,url_column_4_address,url_column_5_address,person_single_1,person_single_2,person_single_3,person_single_4,person_single_5,person_multiple_1,person_multiple_2,person_multiple_3,unit_single_1,unit_single_2,unit_single_3,unit_single_4,unit_single_5,unit_multiple_1,unit_multiple_2,unit_multiple_3,project_single_1,project_single_2,project_single_3,project_multiple_1,project_multiple_2,product_column_1,product_column_2,product_column_3,product_version_1,product_version_2,product_version_3,product_module_1,product_module_2,product_module_3,rule_num,error_num)
+              VALUES (#{source_unit_id},#{source_tag},#{uid},#{project_id},#{tag},#{title},#{problem_desc},#{environment_desc},#{type_id},#{severity_id},#{product_uid},#{product_version_uid},#{plan_resolved_product_version_uid},#{resolved_product_version_uid},#{milestone_id},#{module_uid},#{test_activity_id},#{source_id},#{priority_id},#{status_id},#{resolution_id},#{dispose_role_id},#{disposer_id},#{dispose_time},#{reporter_id},#{born_address},#{born_time},#{version_id},#{found_build},#{resolve_build},#{finder},#{category_id},#{frequency_id},#{plan_solution_date},#{actual_workLoad},#{plan_workLoad},#{stage_id},#{doc_uid},#{item_uid},#{doc_edition_uid},#{schedule_uid},#{requireItem},#{modifier_id},#{modify_reportwork},#{int_column_1},#{int_column_2},#{int_column_3},#{int_column_4},#{int_column_5},#{int_column_6},#{int_column_7},#{int_column_8},#{int_column_9},#{int_column_10},#{double_column_1},#{double_column_2},#{double_column_3},#{double_column_4},#{double_column_5},#{double_column_6},#{double_column_7},#{double_column_8},#{double_column_9},#{double_column_10},#{boolean_column_1},#{boolean_column_2},#{boolean_column_3},#{boolean_column_4},#{boolean_column_5},#{boolean_column_6},#{boolean_column_7},#{boolean_column_8},#{boolean_column_9},#{boolean_column_10},#{date_column_1},#{date_column_2},#{date_column_3},#{date_column_4},#{date_column_5},#{date_time_column_1},#{date_time_column_2},#{date_time_column_3},#{date_time_column_4},#{date_time_column_5},#{varchar_column_1},#{varchar_column_2},#{varchar_column_3},#{varchar_column_4},#{varchar_column_5},#{varchar_column_6},#{varchar_column_7},#{varchar_column_8},#{varchar_column_9},#{varchar_column_10},#{text_column_1},#{text_column_2},#{text_column_3},#{text_column_4},#{text_column_5},#{web_column_1},#{web_column_2},#{web_column_3},#{standard_column_1},#{standard_column_2},#{standard_column_3},#{standard_column_4},#{standard_column_5},#{standard_column_6},#{standard_column_7},#{standard_column_8},#{standard_column_9},#{standard_column_10},#{url_column_1},#{url_column_2},#{url_column_3},#{url_column_4},#{url_column_5},#{url_column_1_address},#{url_column_2_address},#{url_column_3_address},#{url_column_4_address},#{url_column_5_address},#{person_single_1},#{person_single_2},#{person_single_3},#{person_single_4},#{person_single_5},#{person_multiple_1},#{person_multiple_2},#{person_multiple_3},#{unit_single_1},#{unit_single_2},#{unit_single_3},#{unit_single_4},#{unit_single_5},#{unit_multiple_1},#{unit_multiple_2},#{unit_multiple_3},#{project_single_1},#{project_single_2},#{project_single_3},#{project_multiple_1},#{project_multiple_2},#{product_column_1},#{product_column_2},#{product_column_3},#{product_version_1},#{product_version_2},#{product_version_3},#{product_module_1},#{product_module_2},#{product_module_3},#{rule_num},#{error_num})
+    </insert>
+    
+    <insert id="addFile" parameterType="map">
+        INSERT IGNORE INTO `file` (id, name, suffix, type_id, path, size, create_time, user_id, is_tolibrary, import_path) VALUES (#{id}, #{name}, #{suffix}, #{type_id}, #{path},#{size},#{create_time}, #{user_id}, #{is_tolibrary},#{import_path});
+    </insert>
+    
+    <insert id="addTicketFile" parameterType="map">
+        INSERT IGNORE INTO `r_ticket_file` (id, ticket_uid, file_id, uploader_id, upload_time, comm)
+             select null, #{ticket_uid},#{file_id}, #{uplaoder_id}, #{upload_time}, #{comm} from r_ticket_file where not exists (select * from r_ticket_file rtf where rtf.file_id = #{file_id} and rtf.ticket_uid = #{ticket_uid}) limit 1;
+    </insert>
+
+    <insert id="addTicketHistory" parameterType="map">
+        INSERT IGNORE INTO ticket_history (uid, ticket_uid, comm, changed_record, dispose_time, status_id, resolution_id, disposer_id, process_address, disposer_from_id) VALUES (#{uid},#{ ticket_uid},#{ comm},#{ changed_record},#{ dispose_time},#{ status_id},#{ resolution_id},#{ disposer_id},#{ process_address},#{ disposer_from_id})
+    </insert>
+    
+    <insert id="addWorkflowTaskTicket" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        INSERT IGNORE INTO workflow_task_ticket (id, task_uid, ticket_uid)
+              select null, #{task_uid}, #{ticket_uid} from workflow_task_ticket
+                  where not exists (select * from workflow_task_ticket wtt where wtt.task_uid = #{task_uid} and wtt.ticket_uid = #{ticket_uid}) limit 1;
+    </insert>
+
+    <insert id="addWorkflowHistory" keyProperty="id" useGeneratedKeys="true" parameterType="map">
+        INSERT IGNORE INTO workflow_history (task_uid, from_status_id, from_status_name, to_status_id, to_status_name, operate_time, operator_id, former_disposer_id, next_disposer_id, comm)
+              select #{task_uid}, #{from_status_id},#{from_status_name}, #{to_status_id}, #{to_status_name}, #{operate_time}, #{operator_id}, #{former_disposer_id}, #{next_disposer_id}, #{comm} from workflow_history
+                  where not exists (select * from workflow_history wh where wh.task_uid = #{task_uid} and wh.operate_time = #{operate_time} and wh.operator_id = #{operator_id} ) limit 1;
+    </insert>
+    
+    <insert id="addWorkflowHistoryFile" keyProperty="id" parameterType="map" useGeneratedKeys="true">
+        INSERT INTO r_workflow_history_file (history_id, file_id)
+              select #{history_id}, #{file_id} from r_workflow_history_file where not exists (select * from r_workflow_history_file where file_id = #{file_id}) limit 1;
+    </insert>
+
+
+    <!-- 需求导入开始 -->
+    <select id="listFormatPageEntityColumn" resultType="map">
+        select pec.*, pdc.column_name as `column` from page_entity_column pec left join page_defined_column pdc on pec.column_id = pdc.column_id where pec.entity_id = 1 and pec.is_use_column = 1 order by pec.column_id;
+    </select>
+    <select id="listFormatItemStatus" resultType="map">
+        SELECT * FROM s_format_item_status;
+    </select>
+    <select id="listFormatItemType" resultType="map">
+        SELECT * FROM s_format_item_type;
+    </select>
+    <select id="listFormatDifficulty" resultType="map">
+        SELECT * FROM s_format_difficulty;
+    </select>
+    <select id="listFormatStability" resultType="map">
+        SELECT * FROM s_format_stability;
+    </select>
+    <select id="listFormatExpectedLevel" resultType="map">
+        SELECT * FROM s_format_expected_level;
+    </select>
+    <select id="listFormatItemChange" resultType="map">
+        SELECT * FROM s_format_item_change;
+    </select>
+    <select id="listFormatAlteredStatus" resultType="map">
+        SELECT * FROM s_format_altered_status;
+    </select>
+    <select id="listFormatDocType" resultType="map">
+        SELECT * FROM s_format_doc_type;
+    </select>
+    <select id="listFormatPrivileges" resultType="map">
+        SELECT * FROM s_format_privileges;
+    </select>
+    <select id="listFormatChangedManner" resultType="map">
+        SELECT * FROM s_format_changed_manner;
+    </select>
+    <insert id="addFormatDoc" parameterType="map">
+        INSERT ignore INTO format_doc (uid,project_id,name,tag_prefix,tag_count,user_id,create_time,is_deleted,comm,doc_type,delete_ip,delete_person_id,delete_date,be_influenced,is_all_person,unit_id,product_uid)
+            VALUES (#{uid},#{project_id},#{name},#{tag_prefix},#{tag_count},#{user_id},#{create_time},#{is_deleted},#{comm},#{doc_type},#{delete_ip},#{delete_person_id},#{delete_date},#{be_influenced},#{is_all_person},#{unit_id},#{product_uid});
+    </insert>
+    <insert id="addFormatDocFloder" parameterType="map">
+        INSERT ignore INTO format_doc_floder (floder_uid, father_floder_uid, name, project_id, create_time, comm, is_deleted, delete_person_id, delete_ip, delete_time)
+              VALUES (#{floder_uid}, #{father_floder_uid}, #{name}, #{project_id}, #{create_time}, #{comm}, #{is_deleted}, #{delete_person_id}, #{delete_ip}, #{delete_time});
+    </insert>
+    <insert id="addFormatEdition" parameterType="map">
+        INSERT ignore INTO format_edition (uid, project_id, doc_uid, edition, item_num, user_id, create_time, is_deleted, is_current, comm, be_influenced)
+              VALUES (#{uid}, #{project_id}, #{doc_uid}, #{edition}, #{item_num}, #{user_id}, #{create_time}, #{is_deleted}, #{is_current}, #{comm}, #{be_influenced});
+    </insert>
+    <insert id="addFormatSection" parameterType="map">
+        INSERT ignore INTO format_section (uid, edition_uid, doc_uid, project_id, preview_content, parent_node_uid, ord, self_item_sum, item_sum)
+              VALUES (#{uid}, #{edition_uid}, #{doc_uid}, #{project_id}, #{preview_content}, #{parent_node_uid}, #{ord}, #{self_item_sum}, #{item_sum}  );
+    </insert>
+    <insert id="addFormatItemEdition" parameterType="map">
+        INSERT ignore INTO format_item_edition (uid, edition, doc_uid, preview_content, content, tag, create_time, is_current, project_id, operator_id, operate_time)
+              VALUES (#{uid}, #{edition}, #{doc_uid}, #{preview_content}, #{content}, #{tag}, #{create_time}, #{is_current}, #{project_id}, #{operator_id}, #{operate_time} );
+    </insert>
+    <insert id="addFormatItemChangedRecord" parameterType="map">
+        INSERT ignore INTO format_item_changed_record (id,uid,doc_edition,preview_content,content,tag,change_type,creator,create_time,doc_uid,changed_record_uid,ord,priority,status,is_test,item_type_id,product_uid,product_version_uid,module_uid,is_status_changed,author,approver,scale,actual_workload,plan_complete_node,manager,tenderer,stability_id,difficulty_id,expected_level_id,item_source)
+              VALUES (#{id},#{uid},#{doc_edition},#{preview_content},#{content},#{tag},#{change_type},#{creator},#{create_time},#{doc_uid},#{changed_record_uid},#{ord},#{priority},#{status},#{is_test},#{item_type_id},#{product_uid},#{product_version_uid},#{module_uid},#{is_status_changed},#{author},#{approver},#{scale},#{actual_workload},#{plan_complete_node},#{manager},#{tenderer},#{stability_id},#{difficulty_id},#{expected_level_id},#{item_source});
+    </insert>
+    <insert id="addFormatItemComm" parameterType="map">
+        INSERT ignore INTO format_item_comm (doc_edition_uid, item_uid, comm, creator, create_time)
+              select #{doc_edition_uid}, #{item_uid}, #{comm}, #{creator}, #{create_time} from format_item_comm where not exists (select * from format_item_comm where item_uid = #{item_uid}) limit 1;
+    </insert>
+    <insert id="addFormatItemDisposeHistory" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO format_item_dispose_history (id,section_uid,doc_edition_uid,item_uid,item_edition,ord,priority,item_type_id,approve_time,approver,create_time,creator,status,is_test,change_type,ext_content,product_uid,product_version_uid,module_uid,alter_operator,alter_datetime,changed_record_uid,altered_status_id,be_influenced,is_deleted,delete_person_id,delete_date,scale,actual_workload,plan_complete_node,manager,tenderer,stability_id,difficulty_id,expected_level_id,item_source,file_ids,operator_id,operate_time,INT_COLUMN_1,INT_COLUMN_2,INT_COLUMN_3,INT_COLUMN_4,INT_COLUMN_5,INT_COLUMN_6,INT_COLUMN_7,INT_COLUMN_8,INT_COLUMN_9,INT_COLUMN_10,INT_COLUMN_11,INT_COLUMN_12,INT_COLUMN_13,INT_COLUMN_14,INT_COLUMN_15,MUTILVARCHAR_COLUMN_1,MUTILVARCHAR_COLUMN_2,MUTILVARCHAR_COLUMN_3,MUTILVARCHAR_COLUMN_4,MUTILVARCHAR_COLUMN_5,MUTILVARCHAR_COLUMN_6,MUTILVARCHAR_COLUMN_7,MUTILVARCHAR_COLUMN_8,MUTILVARCHAR_COLUMN_9,MUTILVARCHAR_COLUMN_10,DATENOTIME_COLUMN_1,DATENOTIME_COLUMN_2,DATENOTIME_COLUMN_3,DATENOTIME_COLUMN_4,DATENOTIME_COLUMN_5,DATENOTIME_COLUMN_6,DATENOTIME_COLUMN_7,DATENOTIME_COLUMN_8,DATENOTIME_COLUMN_9,DATENOTIME_COLUMN_10,SINGLEPERSON_COLUMN_1,SINGLEPERSON_COLUMN_2,SINGLEPERSON_COLUMN_3,SINGLEPERSON_COLUMN_4,SINGLEPERSON_COLUMN_5,SINGLEPERSON_COLUMN_6,SINGLEPERSON_COLUMN_7,SINGLEPERSON_COLUMN_8,SINGLEPERSON_COLUMN_9,SINGLEPERSON_COLUMN_10,DOUBLE_COLUMN_1,DOUBLE_COLUMN_2,DOUBLE_COLUMN_3,DOUBLE_COLUMN_4,DOUBLE_COLUMN_5,DOUBLE_COLUMN_6,DOUBLE_COLUMN_7,DOUBLE_COLUMN_8,DOUBLE_COLUMN_9,DOUBLE_COLUMN_10,DATE_COLUMN_1,DATE_COLUMN_2,DATE_COLUMN_3,DATE_COLUMN_4,DATE_COLUMN_5,DATE_COLUMN_6,DATE_COLUMN_7,DATE_COLUMN_8,DATE_COLUMN_9,DATE_COLUMN_10,VARCHAR_COLUMN_1,VARCHAR_COLUMN_2,VARCHAR_COLUMN_3,VARCHAR_COLUMN_4,VARCHAR_COLUMN_5,VARCHAR_COLUMN_6,VARCHAR_COLUMN_7,VARCHAR_COLUMN_8,VARCHAR_COLUMN_9,VARCHAR_COLUMN_10,TEXT_COLUMN_1,TEXT_COLUMN_2,TEXT_COLUMN_3,BOOLEAN_COLUMN_1,BOOLEAN_COLUMN_2,BOOLEAN_COLUMN_3,BOOLEAN_COLUMN_4,BOOLEAN_COLUMN_5,HREF_COLUMN_1,HREF_COLUMN_2,HREF_COLUMN_3,HREF_COLUMN_4,HREF_COLUMN_5,HREF_COLUMN_1_NAME,HREF_COLUMN_2_NAME,HREF_COLUMN_3_NAME,HREF_COLUMN_4_NAME,HREF_COLUMN_5_NAME,STANDARD_COLUMN_1,STANDARD_COLUMN_2,STANDARD_COLUMN_3,STANDARD_COLUMN_4,STANDARD_COLUMN_5,)
+              VALUES (null ,#{section_uid},#{doc_edition_uid},#{item_uid},#{item_edition},#{ord},#{priority},#{item_type_id},#{approve_time},#{approver},#{create_time},#{creator},#{status},#{is_test},#{change_type},#{ext_content},#{product_uid},#{product_version_uid},#{module_uid},#{alter_operator},#{alter_datetime},#{changed_record_uid},#{altered_status_id},#{be_influenced},#{is_deleted},#{delete_person_id},#{delete_date},#{scale},#{actual_workload},#{plan_complete_node},#{manager},#{tenderer},#{stability_id},#{difficulty_id},#{expected_level_id},#{item_source},#{file_ids},#{operator_id},#{operate_time},#{INT_COLUMN_1},#{INT_COLUMN_2},#{INT_COLUMN_3},#{INT_COLUMN_4},#{INT_COLUMN_5},#{INT_COLUMN_6},#{INT_COLUMN_7},#{INT_COLUMN_8},#{INT_COLUMN_9},#{INT_COLUMN_10},#{INT_COLUMN_11},#{INT_COLUMN_12},#{INT_COLUMN_13},#{INT_COLUMN_14},#{INT_COLUMN_15},#{MUTILVARCHAR_COLUMN_1},#{MUTILVARCHAR_COLUMN_2},#{MUTILVARCHAR_COLUMN_3},#{MUTILVARCHAR_COLUMN_4},#{MUTILVARCHAR_COLUMN_5},#{MUTILVARCHAR_COLUMN_6},#{MUTILVARCHAR_COLUMN_7},#{MUTILVARCHAR_COLUMN_8},#{MUTILVARCHAR_COLUMN_9},#{MUTILVARCHAR_COLUMN_10},#{DATENOTIME_COLUMN_1},#{DATENOTIME_COLUMN_2},#{DATENOTIME_COLUMN_3},#{DATENOTIME_COLUMN_4},#{DATENOTIME_COLUMN_5},#{DATENOTIME_COLUMN_6},#{DATENOTIME_COLUMN_7},#{DATENOTIME_COLUMN_8},#{DATENOTIME_COLUMN_9},#{DATENOTIME_COLUMN_10},#{SINGLEPERSON_COLUMN_1},#{SINGLEPERSON_COLUMN_2},#{SINGLEPERSON_COLUMN_3},#{SINGLEPERSON_COLUMN_4},#{SINGLEPERSON_COLUMN_5},#{SINGLEPERSON_COLUMN_6},#{SINGLEPERSON_COLUMN_7},#{SINGLEPERSON_COLUMN_8},#{SINGLEPERSON_COLUMN_9},#{SINGLEPERSON_COLUMN_10},#{DOUBLE_COLUMN_1},#{DOUBLE_COLUMN_2},#{DOUBLE_COLUMN_3},#{DOUBLE_COLUMN_4},#{DOUBLE_COLUMN_5},#{DOUBLE_COLUMN_6},#{DOUBLE_COLUMN_7},#{DOUBLE_COLUMN_8},#{DOUBLE_COLUMN_9},#{DOUBLE_COLUMN_10},#{DATE_COLUMN_1},#{DATE_COLUMN_2},#{DATE_COLUMN_3},#{DATE_COLUMN_4},#{DATE_COLUMN_5},#{DATE_COLUMN_6},#{DATE_COLUMN_7},#{DATE_COLUMN_8},#{DATE_COLUMN_9},#{DATE_COLUMN_10},#{VARCHAR_COLUMN_1},#{VARCHAR_COLUMN_2},#{VARCHAR_COLUMN_3},#{VARCHAR_COLUMN_4},#{VARCHAR_COLUMN_5},#{VARCHAR_COLUMN_6},#{VARCHAR_COLUMN_7},#{VARCHAR_COLUMN_8},#{VARCHAR_COLUMN_9},#{VARCHAR_COLUMN_10},#{TEXT_COLUMN_1},#{TEXT_COLUMN_2},#{TEXT_COLUMN_3},#{BOOLEAN_COLUMN_1},#{BOOLEAN_COLUMN_2},#{BOOLEAN_COLUMN_3},#{BOOLEAN_COLUMN_4},#{BOOLEAN_COLUMN_5},#{HREF_COLUMN_1},#{HREF_COLUMN_2},#{HREF_COLUMN_3},#{HREF_COLUMN_4},#{HREF_COLUMN_5},#{HREF_COLUMN_1_NAME},#{HREF_COLUMN_2_NAME},#{HREF_COLUMN_3_NAME},#{HREF_COLUMN_4_NAME},#{HREF_COLUMN_5_NAME},#{STANDARD_COLUMN_1},#{STANDARD_COLUMN_2},#{STANDARD_COLUMN_3},#{STANDARD_COLUMN_4},#{STANDARD_COLUMN_5});
+    </insert>
+    <insert id="addFormatItemEditionChange" parameterType="map" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO format_item_edition_change (id,uid,doc_edition,preview_content,content,tag,change_type,creator,create_time,doc_uid,changed_record_uid,ord,priority,status,is_test,item_type_id,product_uid,product_version_uid,module_uid,is_status_changed,author,approver,scale,actual_workload,plan_complete_node,manager,tenderer,stability_id,difficulty_id,expected_level_id,item_source)
+              VALUES (null ,#{uid},#{doc_edition},#{preview_content},#{content},#{tag},#{change_type},#{creator},#{create_time},#{doc_uid},#{changed_record_uid},#{ord},#{priority},#{status},#{is_test},#{item_type_id},#{product_uid},#{product_version_uid},#{module_uid},#{is_status_changed},#{author},#{approver},#{scale},#{actual_workload},#{plan_complete_node},#{manager},#{tenderer},#{stability_id},#{difficulty_id},#{expected_level_id},#{item_source});
+    </insert>
+    <insert id="addFormatItemModifyHistory" parameterType="map">
+        INSERT INTO format_item_modify_history (id, uid, edition, doc_uid, preview_content, content, tag, create_time, is_current, project_id, operator_id, operate_time)
+              select null, #{uid}, #{edition}, #{doc_uid}, #{preview_content}, #{content}, #{tag}, #{create_time}, #{is_current}, #{project_id}, #{operator_id}, #{operate_time} from format_item_modify_history
+                    where not exists (select * from format_item_modify_history fh where fh.uid = #{uid} and fh.operator_id = #{operator_id} and fh.operate_time = #{operate_time}) limit 1;
+    </insert>
+    <insert id="addRFormatDocFloder" parameterType="map">
+        INSERT ignore INTO r_format_doc_floder (formatdoc_uid, floder_uid) VALUES (#{formatdoc_uid}, #{floder_uid});
+    </insert>
+    <insert id="addRFormatDocItemType" parameterType="map">
+        INSERT ignore INTO r_format_doc_item_type (doc_uid, item_type_id) VALUES (#{doc_uid}, #{item_type_id});
+    </insert>
+    <insert id="addRFormatDocFile" parameterType="map">
+        INSERT ignore INTO r_format_docfile (doc_uid, file_id, comm) VALUES (#{doc_uid}, #{file_id}, #{comm});
+    </insert>
+    <insert id="addRFormatDocs" parameterType="map">
+        INSERT ignore INTO r_format_docs (source_doc_uid, source_edition_uid, target_doc_uid, target_edition_uid)
+              select #{source_doc_uid}, #{source_edition_uid},#{target_doc_uid}, #{target_edition_uid} from r_format_docs where not exists (
+                  select * from r_format_docs rfd where  rfd.source_doc_uid = #{source_doc_uid} and rfd.source_edition_uid = #{source_edition_uid} and rfd.target_doc_uid = #{target_doc_uid} and rfd.target_edition_uid = #{target_edition_uid}
+              ) limit 1;
+    </insert>
+    <insert id="addRFormatItemProduct" parameterType="map">
+        INSERT ignore INTO r_format_item_product (item_uid, doc_edition_uid, product_uid, edition, is_main, comm, manager, product_manager, change_num, product_version_uid, business_manager, develop_manager, req_manager, task_type_id, change_type_id)
+              VALUES (#{item_uid}, #{doc_edition_uid}, #{product_uid}, #{edition}, #{is_main}, #{comm}, #{manager}, #{product_manager}, #{change_num}, #{product_version_uid}, #{business_manager}, #{develop_manager}, #{req_manager}, #{task_type_id}, #{change_type_id});
+    </insert>
+    <insert id="addRFormatItemFile" parameterType="map">
+        INSERT ignore INTO r_format_itemfile (item_uid, edition, file_id, comm, doc_edition_uid, doc_uid, type_id)
+              VALUES (#{item_uid}, #{edition}, #{file_id}, #{comm}, #{doc_edition_uid}, #{doc_uid}, #{type_id});
+    </insert>
+    <insert id="addRFormatItems" parameterType="map">
+        INSERT ignore INTO r_format_items (reference_item_uid, reference_edition, referencedby_item_uid, referencedby_edition, reference_doc_edition_uid, referencedby_doc_edition_uid, reference_doc_uid, referencedby_doc_uid, comm)
+              VALUES (#{reference_item_uid}, #{reference_edition}, #{referencedby_item_uid}, #{referencedby_edition}, #{reference_doc_edition_uid}, #{referencedby_doc_edition_uid}, #{reference_doc_uid}, #{referencedby_doc_uid}, #{comm})
+    </insert>
+    <insert id="addRFormatSectionItem" parameterType="map">
+        INSERT ignore INTO r_format_section_item (section_uid,doc_edition_uid,item_uid,item_edition,ord,priority,item_type_id,approve_time,approver,create_time,creator,status,is_test,change_type,ext_content,product_uid,product_version_uid,module_uid,alter_operator,alter_datetime,changed_record_uid,altered_status_id,be_influenced,is_deleted,delete_person_id,delete_date,scale,actual_workload,plan_complete_node,manager,tenderer,stability_id,difficulty_id,expected_level_id,item_source,operator_id,operate_time,INT_COLUMN_1,INT_COLUMN_2,INT_COLUMN_3,INT_COLUMN_4,INT_COLUMN_5,INT_COLUMN_6,INT_COLUMN_7,INT_COLUMN_8,INT_COLUMN_9,INT_COLUMN_10,INT_COLUMN_11,INT_COLUMN_12,INT_COLUMN_13,INT_COLUMN_14,INT_COLUMN_15,MUTILVARCHAR_COLUMN_1,MUTILVARCHAR_COLUMN_2,MUTILVARCHAR_COLUMN_3,MUTILVARCHAR_COLUMN_4,MUTILVARCHAR_COLUMN_5,MUTILVARCHAR_COLUMN_6,MUTILVARCHAR_COLUMN_7,MUTILVARCHAR_COLUMN_8,MUTILVARCHAR_COLUMN_9,MUTILVARCHAR_COLUMN_10,DATENOTIME_COLUMN_1,DATENOTIME_COLUMN_2,DATENOTIME_COLUMN_3,DATENOTIME_COLUMN_4,DATENOTIME_COLUMN_5,DATENOTIME_COLUMN_6,DATENOTIME_COLUMN_7,DATENOTIME_COLUMN_8,DATENOTIME_COLUMN_9,DATENOTIME_COLUMN_10,SINGLEPERSON_COLUMN_1,SINGLEPERSON_COLUMN_2,SINGLEPERSON_COLUMN_3,SINGLEPERSON_COLUMN_4,SINGLEPERSON_COLUMN_5,SINGLEPERSON_COLUMN_6,SINGLEPERSON_COLUMN_7,SINGLEPERSON_COLUMN_8,SINGLEPERSON_COLUMN_9,SINGLEPERSON_COLUMN_10,DOUBLE_COLUMN_1,DOUBLE_COLUMN_2,DOUBLE_COLUMN_3,DOUBLE_COLUMN_4,DOUBLE_COLUMN_5,DOUBLE_COLUMN_6,DOUBLE_COLUMN_7,DOUBLE_COLUMN_8,DOUBLE_COLUMN_9,DOUBLE_COLUMN_10,DATE_COLUMN_1,DATE_COLUMN_2,DATE_COLUMN_3,DATE_COLUMN_4,DATE_COLUMN_5,DATE_COLUMN_6,DATE_COLUMN_7,DATE_COLUMN_8,DATE_COLUMN_9,DATE_COLUMN_10,VARCHAR_COLUMN_1,VARCHAR_COLUMN_2,VARCHAR_COLUMN_3,VARCHAR_COLUMN_4,VARCHAR_COLUMN_5,VARCHAR_COLUMN_6,VARCHAR_COLUMN_7,VARCHAR_COLUMN_8,VARCHAR_COLUMN_9,VARCHAR_COLUMN_10,TEXT_COLUMN_1,TEXT_COLUMN_2,TEXT_COLUMN_3,BOOLEAN_COLUMN_1,BOOLEAN_COLUMN_2,BOOLEAN_COLUMN_3,BOOLEAN_COLUMN_4,BOOLEAN_COLUMN_5,HREF_COLUMN_1,HREF_COLUMN_2,HREF_COLUMN_3,HREF_COLUMN_4,HREF_COLUMN_5,HREF_COLUMN_1_NAME,HREF_COLUMN_2_NAME,HREF_COLUMN_3_NAME,HREF_COLUMN_4_NAME,HREF_COLUMN_5_NAME,STANDARD_COLUMN_1,STANDARD_COLUMN_2,STANDARD_COLUMN_3,STANDARD_COLUMN_4,STANDARD_COLUMN_5)
+              VALUES (#{section_uid},#{doc_edition_uid},#{item_uid},#{item_edition},#{ord},#{priority},#{item_type_id},#{approve_time},#{approver},#{create_time},#{creator},#{status},#{is_test},#{change_type},#{ext_content},#{product_uid},#{product_version_uid},#{module_uid},#{alter_operator},#{alter_datetime},#{changed_record_uid},#{altered_status_id},#{be_influenced},#{is_deleted},#{delete_person_id},#{delete_date},#{scale},#{actual_workload},#{plan_complete_node},#{manager},#{tenderer},#{stability_id},#{difficulty_id},#{expected_level_id},#{item_source},#{operator_id},#{operate_time},#{INT_COLUMN_1},#{INT_COLUMN_2},#{INT_COLUMN_3},#{INT_COLUMN_4},#{INT_COLUMN_5},#{INT_COLUMN_6},#{INT_COLUMN_7},#{INT_COLUMN_8},#{INT_COLUMN_9},#{INT_COLUMN_10},#{INT_COLUMN_11},#{INT_COLUMN_12},#{INT_COLUMN_13},#{INT_COLUMN_14},#{INT_COLUMN_15},#{MUTILVARCHAR_COLUMN_1},#{MUTILVARCHAR_COLUMN_2},#{MUTILVARCHAR_COLUMN_3},#{MUTILVARCHAR_COLUMN_4},#{MUTILVARCHAR_COLUMN_5},#{MUTILVARCHAR_COLUMN_6},#{MUTILVARCHAR_COLUMN_7},#{MUTILVARCHAR_COLUMN_8},#{MUTILVARCHAR_COLUMN_9},#{MUTILVARCHAR_COLUMN_10},#{DATENOTIME_COLUMN_1},#{DATENOTIME_COLUMN_2},#{DATENOTIME_COLUMN_3},#{DATENOTIME_COLUMN_4},#{DATENOTIME_COLUMN_5},#{DATENOTIME_COLUMN_6},#{DATENOTIME_COLUMN_7},#{DATENOTIME_COLUMN_8},#{DATENOTIME_COLUMN_9},#{DATENOTIME_COLUMN_10},#{SINGLEPERSON_COLUMN_1},#{SINGLEPERSON_COLUMN_2},#{SINGLEPERSON_COLUMN_3},#{SINGLEPERSON_COLUMN_4},#{SINGLEPERSON_COLUMN_5},#{SINGLEPERSON_COLUMN_6},#{SINGLEPERSON_COLUMN_7},#{SINGLEPERSON_COLUMN_8},#{SINGLEPERSON_COLUMN_9},#{SINGLEPERSON_COLUMN_10},#{DOUBLE_COLUMN_1},#{DOUBLE_COLUMN_2},#{DOUBLE_COLUMN_3},#{DOUBLE_COLUMN_4},#{DOUBLE_COLUMN_5},#{DOUBLE_COLUMN_6},#{DOUBLE_COLUMN_7},#{DOUBLE_COLUMN_8},#{DOUBLE_COLUMN_9},#{DOUBLE_COLUMN_10},#{DATE_COLUMN_1},#{DATE_COLUMN_2},#{DATE_COLUMN_3},#{DATE_COLUMN_4},#{DATE_COLUMN_5},#{DATE_COLUMN_6},#{DATE_COLUMN_7},#{DATE_COLUMN_8},#{DATE_COLUMN_9},#{DATE_COLUMN_10},#{VARCHAR_COLUMN_1},#{VARCHAR_COLUMN_2},#{VARCHAR_COLUMN_3},#{VARCHAR_COLUMN_4},#{VARCHAR_COLUMN_5},#{VARCHAR_COLUMN_6},#{VARCHAR_COLUMN_7},#{VARCHAR_COLUMN_8},#{VARCHAR_COLUMN_9},#{VARCHAR_COLUMN_10},#{TEXT_COLUMN_1},#{TEXT_COLUMN_2},#{TEXT_COLUMN_3},#{BOOLEAN_COLUMN_1},#{BOOLEAN_COLUMN_2},#{BOOLEAN_COLUMN_3},#{BOOLEAN_COLUMN_4},#{BOOLEAN_COLUMN_5},#{HREF_COLUMN_1},#{HREF_COLUMN_2},#{HREF_COLUMN_3},#{HREF_COLUMN_4},#{HREF_COLUMN_5},#{HREF_COLUMN_1_NAME},#{HREF_COLUMN_2_NAME},#{HREF_COLUMN_3_NAME},#{HREF_COLUMN_4_NAME},#{HREF_COLUMN_5_NAME},#{STANDARD_COLUMN_1},#{STANDARD_COLUMN_2},#{STANDARD_COLUMN_3},#{STANDARD_COLUMN_4},#{STANDARD_COLUMN_5});
+    </insert>
+    <insert id="addRUserFormatDoc" parameterType="map">
+        INSERT ignore INTO r_user_format_doc (data_privilege_id, user_id, format_doc_id) VALUES (#{data_privilege_id}, #{user_id}, #{format_doc_id});
+    </insert>
+    <insert id="addRUserFormatDocStatus" parameterType="map">
+        INSERT ignore INTO r_user_format_doc_status (concerned_status_id, person_id, format_doc_uid) VALUES (#{concerned_status_id}, #{person_id}, #{format_doc_uid});
+    </insert>
+    <insert id="addWorkflowTaskFormatFormatItem" parameterType="map">
+        INSERT ignore INTO workflow_task_format_item (task_uid, doc_edition_uid, section_uid, item_uid, item_edition)
+            VALUES (#{task_uid}, #{doc_edition_uid}, #{section_uid}, #{item_uid}, #{item_edition});
+    </insert>
+    
+
+    <!-- 测试用例 -->
+    <select id="listTestActivityLevel" resultType="map">
+        SELECT * FROM s_test_activity_level;
+    </select>
+    <select id="listTestActivityStatus" resultType="map">
+        SELECT * FROM s_test_activity_status;
+    </select>
+    <select id="listTestCasePriority" resultType="map">
+        SELECT * FROM s_test_case_priority;
+    </select>
+    <select id="listTestCaseStatus" resultType="map">
+        SELECT * FROM s_test_case_status;
+    </select>
+    <select id="listTestMethod" resultType="map">
+        SELECT * FROM s_test_method;
+    </select>
+    <select id="listTestRule" resultType="map">
+        SELECT * FROM s_test_rule;
+    </select>
+    <select id="listTestStageCategory" resultType="map">
+        SELECT * FROM s_test_stage_category;
+    </select>
+    <select id="listTestType" resultType="map">
+        SELECT * FROM s_test_type;
+    </select>
+
+    <insert id="addTestActivity" parameterType="map">
+        INSERT ignore INTO test_activity (uid, name, ord, start_time, due_time, is_default, project_id, creator_id, create_time, comm, is_deleted, level_id, status_id, unit_id, plot, research_code, improve_code, multiplex_code, overall_code, actual_start_time, actual_end_time)
+              VALUES (#{uid}, #{name}, #{ord}, #{start_time}, #{due_time}, #{is_default}, #{project_id}, #{creator_id}, #{create_time}, #{comm}, #{is_deleted}, #{level_id}, #{status_id}, #{unit_id}, #{plot}, #{research_code}, #{improve_code}, #{multiplex_code}, #{overall_code}, #{actual_start_time}, #{actual_end_time})
+    </insert>
+    <insert id="addTestActivityStage" parameterType="map">
+        INSERT ignore INTO test_activity_stage (activity_uid,stage_uid,ord,start_time,due_time,stage_name,baseline_id,creator_id,test_desc_uid,stage_status_id,create_time,comm,is_deleted,research_code,improve_code,multiplex_code,overall_code,normal_abnormal_KLOC,test_case_KLOC,ticket_KLOC,level_id,test_tools,endTime,rule_id,unit_id,method_id,workload,category_id,actual_start_time)
+              VALUES  (#{activity_uid},#{stage_uid},#{ord},#{start_time},#{due_time},#{stage_name},#{baseline_id},#{creator_id},#{test_desc_uid},#{stage_status_id},#{create_time},#{comm},#{is_deleted},#{research_code},#{improve_code},#{multiplex_code},#{overall_code},#{normal_abnormal_KLOC},#{test_case_KLOC},#{ticket_KLOC},#{level_id},#{test_tools},#{endTime},#{rule_id},#{unit_id},#{method_id},#{workload},#{category_id},#{actual_start_time})
+    </insert>
+    <insert id="addTestDesc" parameterType="map">
+        INSERT ignore INTO test_desc (be_influenced,test_desc_uid,name,project_name,project_id,tag_prefix,tag_count,creator_name,user_id,doc_name_version,format_edition_uid,create_time,comm,operator_name,operator_id,operate_date,is_deleted,delete_ip,delete_reason,is_organize,is_approve,organize_tag)
+              VALUES (#{be_influenced},#{test_desc_uid},#{name},#{project_name},#{project_id},#{tag_prefix},#{tag_count},#{creator_name},#{user_id},#{doc_name_version},#{format_edition_uid},#{create_time},#{comm},#{operator_name},#{operator_id},#{operate_date},#{is_deleted},#{delete_ip},#{delete_reason},#{is_organize},#{is_approve},#{organize_tag})
+    </insert>
+    <insert id="addTestDescSection" parameterType="map">
+        INSERT ignore INTO test_desc_section (test_desc_uid, section_uid, preview_content, tag, parent_node_uid, ord, self_item_sum, item_sum)
+              VALUES (#{test_desc_uid}, #{section_uid}, #{preview_content}, #{tag}, #{parent_node_id}, #{ord}, #{self_item_sum}, #{item_sum})
+    </insert>
+    <insert id="addTestDescriptionCaseResult" parameterType="map">
+        INSERT ignore INTO test_description_case_result (test_version_message,be_influenced,product_uid,product_version_uid,test_desc_uid,desc_case_uid,section_uid,ord,name,identifier,module_name,module_uid,status_id,type_id,priority_id,ref_requirements,comm,hardware_configuration,software_configuration,test_configuration,parameter_configuration,precondition_restriction,end_condition,evaluation_standard,designer_name,designer_id,design_date,modify_person,modify_date,be_restart,be_restart_success,be_invalidate,recover_time,result,monitor_person_name,monitor_person_id,test_person_name,test_person_id,test_date,test_case_uid,run_begin,run_finish,project_id,executor,caseCategory)
+              VALUES (#{test_version_message},#{be_influenced},#{product_uid},#{product_version_uid},#{test_desc_uid},#{desc_case_uid},#{section_uid},#{ord},#{name},#{identifier},#{module_name},#{module_uid},#{status_id},#{type_id},#{priority_id},#{ref_requirements},#{comm},#{hardware_configuration},#{software_configuration},#{test_configuration},#{parameter_configuration},#{precondition_restriction},#{end_condition},#{evaluation_standard},#{designer_name},#{designer_id},#{design_date},#{modify_person},#{modify_date},#{be_restart},#{be_restart_success},#{be_invalidate},#{recover_time},#{result},#{monitor_person_name},#{monitor_person_id},#{test_person_name},#{test_person_id},#{test_date},#{test_case_uid},#{run_begin},#{run_finish},#{project_id},#{executor},#{caseCategory})
+    </insert>
+    <insert id="addTestDescStepResult" parameterType="map">
+        INSERT ignore INTO test_desc_step_result (test_desc_uid, desc_case_uid, step_uid, ord, ref_requirements, precondition_restriction, test_purpose, input, operation, expected_result, result, evaluate_std, comm)
+            VALUES (#{test_desc_uid}, #{desc_case_uid}, #{step_uid}, #{ord}, #{ref_requirements}, #{precondition_restriction}, #{test_purpose}, #{input}, #{operation}, #{expected_result}, #{result}, #{evaluate_std}, #{comm});
+    </insert>
+    <insert id="addTestDescFormatDoc" parameterType="map">
+        INSERT INTO test_desc_format_doc (test_desc_uid, uid, id)
+              select {#{test_desc_uid}, #{uid}, #{id} from test_desc_format_doc where not exists (select * from test_desc_format_doc where uid=#{uid} and test_desc_uid=#{test_desc_uid}) limit 1;
+    </insert>
+    <insert id="addRTestDescStepTicket" parameterType="map">
+        INSERT ignore INTO r_test_desc_step_ticket (test_desc_uid, desc_case_uid, step_uid, ticket_uid, comm) VALUES (#{test_desc_uid}, #{desc_case_uid}, #{step_uid}, #{ticket_uid}, #{comm} );
+    </insert>
+    <insert id="addRTestDescCaseFile" parameterType="map">
+        INSERT ignore INTO r_test_desc_case_file (test_desc_uid, desc_case_uid, file_id, upload_time, comm) VALUES (#{test_desc_uid}, #{desc_case_uid}, #{file_id}, #{upload_time}, #{comm});
+    </insert>
+    <insert id="addRTestDescCaseItemEdition" parameterType="map">
+        INSERT ignore INTO r_test_case_item_edition (test_case_uid, doc_uid, item_uid, edition, comm) VALUES (#{test_case_uid}, #{doc_uid}, #{item_uid}, #{edition}, #{comm}) ;
+    </insert>
+
+    <!-- 计划任务 -->
+    <select id="listSTaskType" resultType="map">
+        SELECT * FROM s_task_type;
+    </select>
+    <select id="listSTaskStatus" resultType="map">
+        SELECT * FROM s_task_status;
+    </select>
+    <select id="listSTaskLogType" resultType="map">
+        select * from s_task_logtype;
+    </select>
+    <select id="listSTaskSatisfaction" resultType="map">
+        select * from s_task_satisfaction;
+    </select>
+    <select id="listSTaskImportant" resultType="map">
+        select * from s_task_important;
+    </select>
+    <select id="listSTaskCategory" resultType="map">
+        select * from s_task_category;
+    </select>
+    <select id="listRootTaskByProjectIds" resultType="map">
+        select * from task t where t.parent_uid is null and t.project_id in <foreach collection="list" separator="," item="id" close=")" open="(">#{id}</foreach>
+    </select>
+    <insert id="addPlan" parameterType="map">
+        insert ignore into plan (plan_uid,plan_time,plan_content,plan_progress,plan_changes,plan_question_risk,project_id,plan_operate_time,plan_operator)
+              values (#{plan_uid},#{plan_time},#{plan_content},#{plan_progress},#{plan_changes},#{plan_question_risk},#{project_id},#{plan_operate_time},#{plan_operator});
+    </insert>
+    <insert id="addTask" parameterType="map">
+        INSERT ignore INTO task (UID,ID,Name,Notes,OutlineNumber,OutlineLevel,Start,Finish,ActualStart,ActualFinish,Duration,Work,PercentComplete,ProcDesc,ConstraintType,ConstraintDate,Hyperlink,ClassName,Priority,Type,Important,Status,Summary,Recurring,Estimated,Milestone,deliverable_description,project_id,user_id,update_time,parent_uid,ord,update_user_id,item_status_id,product_uid,product_version_uid,module_uid,category,relevanceMilestone,is_default,plan_all_duration,used_task_duration,remain_task_duration,used_point,remain_point,is_critical_task,critical_group,critical_ord,project_task_id,INT_COLUMN_1,INT_COLUMN_2,INT_COLUMN_3,INT_COLUMN_4,INT_COLUMN_5,INT_COLUMN_6,INT_COLUMN_7,INT_COLUMN_8,INT_COLUMN_9,INT_COLUMN_10,DOUBLE_COLUMN_1,DOUBLE_COLUMN_2,DOUBLE_COLUMN_3,DOUBLE_COLUMN_4,DOUBLE_COLUMN_5,DOUBLE_COLUMN_6,DOUBLE_COLUMN_7,DOUBLE_COLUMN_8,DOUBLE_COLUMN_9,DOUBLE_COLUMN_10,DATE_COLUMN_1,DATE_COLUMN_2,DATE_COLUMN_3,DATE_COLUMN_4,DATE_COLUMN_5,DATE_COLUMN_6,DATE_COLUMN_7,DATE_COLUMN_8,DATE_COLUMN_9,DATE_COLUMN_10,VARCHAR_COLUMN_1,VARCHAR_COLUMN_2,VARCHAR_COLUMN_3,VARCHAR_COLUMN_4,VARCHAR_COLUMN_5,VARCHAR_COLUMN_6,VARCHAR_COLUMN_7,VARCHAR_COLUMN_8,VARCHAR_COLUMN_9,VARCHAR_COLUMN_10,TEXT_COLUMN_1,TEXT_COLUMN_2,TEXT_COLUMN_3,BOOLEAN_COLUMN_1,BOOLEAN_COLUMN_2,BOOLEAN_COLUMN_3,BOOLEAN_COLUMN_4,BOOLEAN_COLUMN_5,HREF_COLUMN_1,HREF_COLUMN_2,HREF_COLUMN_3,HREF_COLUMN_4,HREF_COLUMN_5,STANDARD_COLUMN_1,STANDARD_COLUMN_2,STANDARD_COLUMN_3,STANDARD_COLUMN_4,STANDARD_COLUMN_5,PERSON_COLUMN_1,PERSON_COLUMN_2,PERSON_COLUMN_3,PERSON_COLUMN_4,PERSON_COLUMN_5,UNIT_COLUMN_1,UNIT_COLUMN_2,UNIT_COLUMN_3,UNIT_COLUMN_4,UNIT_COLUMN_5,HREF_COLUMN_1_NAME,HREF_COLUMN_2_NAME,HREF_COLUMN_3_NAME,HREF_COLUMN_4_NAME,HREF_COLUMN_5_NAME,STANDARD_COLUMN_1_NAME,STANDARD_COLUMN_2_NAME,STANDARD_COLUMN_3_NAME,STANDARD_COLUMN_4_NAME,STANDARD_COLUMN_5_NAME,PERSON_COLUMN_1_NAME,PERSON_COLUMN_2_NAME,PERSON_COLUMN_3_NAME,PERSON_COLUMN_4_NAME,PERSON_COLUMN_5_NAME,UNIT_COLUMN_1_NAME,UNIT_COLUMN_2_NAME,UNIT_COLUMN_3_NAME,UNIT_COLUMN_4_NAME,UNIT_COLUMN_5_NAME,working_hours,actual_working_hours,stage_id,start_finish,doc_uid,item_uid,doc_edition_uid,schedule_uid,milestone_type_id,is_controlled,plan_category_id,is_counted)
+            VALUES (#{UID},null,#{Name},#{Notes},#{OutlineNumber},#{OutlineLevel},#{Start},#{Finish},#{ActualStart},#{ActualFinish},#{Duration},#{Work},#{PercentComplete},#{ProcDesc},#{ConstraintType},#{ConstraintDate},#{Hyperlink},#{ClassName},#{Priority},#{Type},#{Important},#{Status},#{Summary},#{Recurring},#{Estimated},#{Milestone},#{deliverable_description},#{project_id},#{user_id},#{update_time},#{parent_uid},#{ord},#{update_user_id},#{item_status_id},#{product_uid},#{product_version_uid},#{module_uid},#{category},#{relevanceMilestone},#{is_default},#{plan_all_duration},#{used_task_duration},#{remain_task_duration},#{used_point},#{remain_point},#{is_critical_task},#{critical_group},#{critical_ord},#{project_task_id},#{INT_COLUMN_1},#{INT_COLUMN_2},#{INT_COLUMN_3},#{INT_COLUMN_4},#{INT_COLUMN_5},#{INT_COLUMN_6},#{INT_COLUMN_7},#{INT_COLUMN_8},#{INT_COLUMN_9},#{INT_COLUMN_10},#{DOUBLE_COLUMN_1},#{DOUBLE_COLUMN_2},#{DOUBLE_COLUMN_3},#{DOUBLE_COLUMN_4},#{DOUBLE_COLUMN_5},#{DOUBLE_COLUMN_6},#{DOUBLE_COLUMN_7},#{DOUBLE_COLUMN_8},#{DOUBLE_COLUMN_9},#{DOUBLE_COLUMN_10},#{DATE_COLUMN_1},#{DATE_COLUMN_2},#{DATE_COLUMN_3},#{DATE_COLUMN_4},#{DATE_COLUMN_5},#{DATE_COLUMN_6},#{DATE_COLUMN_7},#{DATE_COLUMN_8},#{DATE_COLUMN_9},#{DATE_COLUMN_10},#{VARCHAR_COLUMN_1},#{VARCHAR_COLUMN_2},#{VARCHAR_COLUMN_3},#{VARCHAR_COLUMN_4},#{VARCHAR_COLUMN_5},#{VARCHAR_COLUMN_6},#{VARCHAR_COLUMN_7},#{VARCHAR_COLUMN_8},#{VARCHAR_COLUMN_9},#{VARCHAR_COLUMN_10},#{TEXT_COLUMN_1},#{TEXT_COLUMN_2},#{TEXT_COLUMN_3},#{BOOLEAN_COLUMN_1},#{BOOLEAN_COLUMN_2},#{BOOLEAN_COLUMN_3},#{BOOLEAN_COLUMN_4},#{BOOLEAN_COLUMN_5},#{HREF_COLUMN_1},#{HREF_COLUMN_2},#{HREF_COLUMN_3},#{HREF_COLUMN_4},#{HREF_COLUMN_5},#{STANDARD_COLUMN_1},#{STANDARD_COLUMN_2},#{STANDARD_COLUMN_3},#{STANDARD_COLUMN_4},#{STANDARD_COLUMN_5},#{PERSON_COLUMN_1},#{PERSON_COLUMN_2},#{PERSON_COLUMN_3},#{PERSON_COLUMN_4},#{PERSON_COLUMN_5},#{UNIT_COLUMN_1},#{UNIT_COLUMN_2},#{UNIT_COLUMN_3},#{UNIT_COLUMN_4},#{UNIT_COLUMN_5},#{HREF_COLUMN_1_NAME},#{HREF_COLUMN_2_NAME},#{HREF_COLUMN_3_NAME},#{HREF_COLUMN_4_NAME},#{HREF_COLUMN_5_NAME},#{STANDARD_COLUMN_1_NAME},#{STANDARD_COLUMN_2_NAME},#{STANDARD_COLUMN_3_NAME},#{STANDARD_COLUMN_4_NAME},#{STANDARD_COLUMN_5_NAME},#{PERSON_COLUMN_1_NAME},#{PERSON_COLUMN_2_NAME},#{PERSON_COLUMN_3_NAME},#{PERSON_COLUMN_4_NAME},#{PERSON_COLUMN_5_NAME},#{UNIT_COLUMN_1_NAME},#{UNIT_COLUMN_2_NAME},#{UNIT_COLUMN_3_NAME},#{UNIT_COLUMN_4_NAME},#{UNIT_COLUMN_5_NAME},#{working_hours},#{actual_working_hours},#{stage_id},#{start_finish},#{doc_uid},#{item_uid},#{doc_edition_uid},#{schedule_uid},#{milestone_type_id},#{is_controlled},#{plan_category_id},#{is_counted});
+    </insert>
+    <insert id="addTaskLog" parameterType="map">
+        INSERT INTO task_log (taskUID, user_id, content, create_date, type, is_dispose) VALUES (#{taskUID}, #{user_id}, #{content}, #{create_date}, #{type}, #{is_dispose})
+    </insert>
+    <insert id="addTaskHistory" parameterType="map">
+        INSERT ignore INTO task_history (ID,task_uid,user_id,update_user_id,project_id,STATUS,NAME,START,Finish,ActualStart,ActualFinish,deliverable_description,update_time,ord,after_update_finish,duration,stage_id,start_finish)
+            VALUES (#{ID},#{task_uid},#{user_id},#{update_user_id},#{project_id},#{STATUS},#{NAME},#{START},#{Finish},#{ActualStart},#{ActualFinish},#{deliverable_description},#{update_time},#{ord},#{after_update_finish},#{duration},#{stage_id},#{start_finish});
+    </insert>
+    <insert id="addTaskAssignment" parameterType="map">
+        insert ignore into task_assignment (UID, TaskUID, ResourceUID, type, description, participation, plan_working_hours, use_working_hours)
+            values (null, #{TaskUID}, #{ResourceUID},#{type}, #{description}, #{participation}, #{plan_working_hours}, #{use_working_hours});
+    </insert>
+    <insert id="addTaskAcceptance" parameterType="map">
+        INSERT ignore into task_acceptance (taskUID, result_desc, satisfaction, accept_time, user_id) values (#{taskUID}, #{result_desc}, #{satisfaction}, #{acception_time}, #{user_id});
+    </insert>
+    <insert id="addRTaskFile" parameterType="map">
+        insert into r_task_file (id, taskUID, file_id, create_date, comm, user_id, task_filetype)
+              select null, #{taskUID}, #{file_id}, #{create_date}, #{comm}, #{user_id}, #{task_filetype} from r_task_file where not exists (select * from r_task_file rtf where rtf.taskUID = #{taskUID} and rtf.file_id = #{file_id}) limit 1;
+    </insert>
+    <insert id="addTaskPredecessorLink" parameterType="map" keyProperty="UID" useGeneratedKeys="true">
+        insert into task_predecessorlink (UID, taskUID, PredecessorUID, type, LinkLag, ClassName)
+              select null, #{taskUID}, #{PredecessorUID}, #{type},#{LinkLag}, #{ClassName} from task_predecessorlink where not exists (select * from task_predecessorlink tp where tp.taskUID = #{taskUID} and tp.PredecessorUID = #{PredecessorUID}) limit 1;
+    </insert>
+    <insert id="addTaskProgressHistory" parameterType="map">
+        insert ignore into task_progress_history (task_uid, statistical_date, project_id, percentComplete) values (#{task_uid}, #{statistical_date}, #{project_id}, #{percentComplete});
+    </insert>
+    <insert id="addRTaskItem" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        insert  into r_task_item (task_item_id, task_uid, uid, edition, doc_uid, doc_edition_uid, doc_tag_prefix)
+              select null, #{task_uid}, #{uid}, #{edition}, #{doc_uid}, #{doc_edition_uid}, #{doc_tag_prefix} from r_task_item where not exists (select * from r_task_item rti where rti.task_uid = #{task_uid} and rti.uid = #{uid}) limit 1;
+    </insert>
+    <insert id="addRTaskCase" parameterType="map">
+        insert ignore into r_task_case (task_case_id, task_uid, desc_case_uid, test_desc_uid, section_uid)
+              select  null, #{task_uid}, #{desc_case_uid}, #{test_desc_uid}, #{section_uid} from r_task_case where not exists (select * from r_task_case rtc where rtc.task_uid = #{task_uid} and rtc.desc_case_uid = #{desc_case_uid}) limit 1;
+    </insert>
+    <insert id="addReportQuestion" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        insert into report_question (id,project_id,father_id,title,content,type_id,priority_id,status_id,user_id,taskUID,create_date,last_respondent,response_date,response_times,concern_date,concern_times)
+              select null,#{project_id},#{father_id},#{title},#{content},#{type_id},#{priority_id},#{status_id},#{user_id},#{taskUID},#{create_date},#{last_respondent},#{response_date},#{response_times},#{concern_date},#{concern_times} from report_question
+                  where not exists (select * from report_question rq where rq.title = #{title} and rq.create_date = #{create_date}) limit 1;
+    </insert>
+    <insert id="addRQuestionFile" parameterType="map" keyProperty="id" useGeneratedKeys="true">
+        insert into r_question_file (id, question_id, file_id)
+            select null, #{question_id}, #{file_id} from r_question_file where not exists (select * from r_question_file rqf where rqf.file_id = #{file_id}) limit 1;
+    </insert>
+
+    <!-- 项目日志 -->
+    <select id="listSMemorabiliaType" resultType="map">
+        select * from s_memorabilia_type;
+    </select>
+    <select id="listSEventsLevel" resultType="map">
+        select * from s_events_level;
+    </select>
+    <insert id="addMemorabilia" parameterType="map" keyProperty="id" useGeneratedKeys="true">
+        insert into memorabilia (id,project_id,title,content,memo_date,user_id,create_date,type_id,publish_status,place,member,product_uid,product_version_uid,module_uid,relevance_milestone_uid,level_id,is_read)
+              select null,#{project_id},#{title},#{content},#{memo_date},#{user_id},#{create_date},#{type_id},#{publish_status},#{place},#{member},#{product_uid},#{product_version_uid},#{module_uid},#{relevance_milestone_uid},#{level_id},#{is_read} from memorabilia
+                  where not exists (select * from memorabilia m where m.title = #{title} and m.project_id = #{project_id} and m.create_date = #{create_date}) limit 1;
+    </insert>
+    <insert id="addRMemorabiliaFile" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        insert into r_memorabilia_file (id, memorabilia_id, file_id)
+            select null , #{memorabilia_id}, #{file_id} from r_memorabilia_file where not exists (select * from r_memorabilia_file rmf where rmf.file_id = #{file_id}) limit 1;
+    </insert>
+    <insert id="addRMemorabiliaUserProject" parameterType="map">
+        insert ignore into r_memorabilia_user_project (events_id, user_id, project_id) values (#{events_id}, #{user_id}, #{project_id});
+    </insert>
+    <insert id="addEventsCriticle" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        insert into events_criticle (id,father_id,title,content,creator,user_id,events_id,create_date,last_critics,last_criticdate,critic_times,type,is_delete)
+              select null,#{father_id},#{title},#{content},#{creator},#{user_id},#{events_id},#{create_date},#{last_critics},#{last_criticdate},#{critic_times},#{type},#{is_delete} from events_criticle
+                    where not exists (select * from events_criticle ec where ec.content = #{content} and ec.create_date = #{create_date}) limit 1;
+    </insert>
+    <insert id="addEventsCriticleFile" parameterType="map" keyProperty="id" useGeneratedKeys="true">
+        insert into r_eventscriticle_file (id, criticle_id, file_id)
+              select null, #{criticle_id}, #{file_id} from r_eventscriticle_file where not exists (select * from r_eventscriticle_file ref where ref.file_id = #{file_id}) limit 1;
+    </insert>
+
+    <!-- 项目论坛 -->
+    <select id="listSQuestionPriority" resultType="map">
+        select * from s_question_priority;
+    </select>
+    <select id="listSQuestionStatus" resultType="map">
+        select * from s_question_status;
+    </select>
+    <select id="listSQuestionType" resultType="map">
+        select * from s_question_type;
+    </select>
+    <!-- 项目论坛表同计划任务报告与反馈表 -->
+
+    <!-- 项目问题 -->
+    <select id="listQuestionPageEntityColumn" resultType="map">
+        select pec.*, pdc.column_name as `column` from page_entity_column pec left join page_defined_column pdc on pec.column_id = pdc.column_id where pec.entity_id = 2 and pec.is_use_column = 1 order by pec.column_id;
+    </select>
+    <select id="listSQuestionCategory" resultType="map">
+        select * from s_question_category;
+    </select>
+    <select id="listSQuestionEvaluationLevel" resultType="map">
+        select * from s_question_evaluation_level;
+    </select>
+    <select id="listSQuestionManageStatus" resultType="map">
+        select * from s_question_manage_status;
+    </select>
+    <insert id="addQuestion" parameterType="map">
+        insert ignore into question (question_uid,comm,creator_id,create_time,create_unit_id,expect_finish_date,category_id,title,disposer,used_time,finish_date,productUid,product_version_uid,module_uid,project_id,question_number,status_id,int_column_1,int_column_2,int_column_4,int_column_3,int_column_5,int_column_6,int_column_7,int_column_8,int_column_9,int_column_10,double_column_1,double_column_2,double_column_3,double_column_4,double_column_5,double_column_6,double_column_7,double_column_8,double_column_9,double_column_10,boolean_column_1,boolean_column_2,boolean_column_3,boolean_column_4,boolean_column_5,boolean_column_6,boolean_column_7,boolean_column_8,boolean_column_9,boolean_column_10,date_column_1,date_column_2,date_column_3,date_column_4,date_column_5,date_time_column_1,date_time_column_2,date_time_column_3,date_time_column_4,date_time_column_5,varchar_column_1,varchar_column_2,varchar_column_3,varchar_column_4,varchar_column_5,varchar_column_6,varchar_column_7,varchar_column_8,varchar_column_9,varchar_column_10,text_column_1,text_column_2,text_column_3,text_column_4,text_column_5,web_column_1,web_column_2,web_column_3,standard_column_1,standard_column_2,standard_column_3,standard_column_4,standard_column_5,standard_column_6,standard_column_7,standard_column_8,standard_column_9,standard_column_10,url_column_1,url_column_2,url_column_3,url_column_4,url_column_5,url_column_1_address,url_column_2_address,url_column_3_address,url_column_4_address,url_column_5_address,person_single_1,person_single_2,person_single_3,person_single_4,person_single_5,person_multiple_1,person_multiple_2,person_multiple_3,unit_single_1,unit_single_2,unit_single_3,unit_single_4,unit_single_5,unit_multiple_1,unit_multiple_2,unit_multiple_3,project_single_1,project_single_2,project_single_3,project_multiple_1,project_multiple_2,product_column_1,product_column_2,product_column_3,product_version_1,product_version_2,product_version_3,product_module_1,product_module_2,product_module_3,evaluator,evaluation_time,evaluation_level,evaluation_content)
+                values (#{question_uid},#{comm},#{creator_id},#{create_time},#{create_unit_id},#{expect_finish_date},#{category_id},#{title},#{disposer},#{used_time},#{finish_date},#{productUid},#{product_version_uid},#{module_uid},#{project_id},#{question_number},#{status_id},#{int_column_1},#{int_column_2},#{int_column_4},#{int_column_3},#{int_column_5},#{int_column_6},#{int_column_7},#{int_column_8},#{int_column_9},#{int_column_10},#{double_column_1},#{double_column_2},#{double_column_3},#{double_column_4},#{double_column_5},#{double_column_6},#{double_column_7},#{double_column_8},#{double_column_9},#{double_column_10},#{boolean_column_1},#{boolean_column_2},#{boolean_column_3},#{boolean_column_4},#{boolean_column_5},#{boolean_column_6},#{boolean_column_7},#{boolean_column_8},#{boolean_column_9},#{boolean_column_10},#{date_column_1},#{date_column_2},#{date_column_3},#{date_column_4},#{date_column_5},#{date_time_column_1},#{date_time_column_2},#{date_time_column_3},#{date_time_column_4},#{date_time_column_5},#{varchar_column_1},#{varchar_column_2},#{varchar_column_3},#{varchar_column_4},#{varchar_column_5},#{varchar_column_6},#{varchar_column_7},#{varchar_column_8},#{varchar_column_9},#{varchar_column_10},#{text_column_1},#{text_column_2},#{text_column_3},#{text_column_4},#{text_column_5},#{web_column_1},#{web_column_2},#{web_column_3},#{standard_column_1},#{standard_column_2},#{standard_column_3},#{standard_column_4},#{standard_column_5},#{standard_column_6},#{standard_column_7},#{standard_column_8},#{standard_column_9},#{standard_column_10},#{url_column_1},#{url_column_2},#{url_column_3},#{url_column_4},#{url_column_5},#{url_column_1_address},#{url_column_2_address},#{url_column_3_address},#{url_column_4_address},#{url_column_5_address},#{person_single_1},#{person_single_2},#{person_single_3},#{person_single_4},#{person_single_5},#{person_multiple_1},#{person_multiple_2},#{person_multiple_3},#{unit_single_1},#{unit_single_2},#{unit_single_3},#{unit_single_4},#{unit_single_5},#{unit_multiple_1},#{unit_multiple_2},#{unit_multiple_3},#{project_single_1},#{project_single_2},#{project_single_3},#{project_multiple_1},#{project_multiple_2},#{product_column_1},#{product_column_2},#{product_column_3},#{product_version_1},#{product_version_2},#{product_version_3},#{product_module_1},#{product_module_2},#{product_module_3},#{evaluator},#{evaluation_time},#{evaluation_level},#{evaluation_content});
+    </insert>
+    <insert id="addRQuestionManageFile" parameterType="map">
+        insert ignore into r_question_manage_file (file_id, question_uid) values (#{file_id}, #{question_uid});
+    </insert>
+
+    <!-- 项目风险 -->
+    <select id="listProjectRiskPageEntityColumn" resultType="map">
+        select pec.*, pdc.column_name as `column` from page_entity_column pec left join page_defined_column pdc on pec.column_id = pdc.column_id where pec.entity_id = 11 and pec.is_use_column = 1 order by pec.column_id;
+    </select>
+    <select id="listSRiskStatus" resultType="map">
+        select * from s_risk_status;
+    </select>
+    <select id="listSRiskCategory" resultType="map">
+        select * from s_risk_category;
+    </select>
+    <select id="listSRiskDisposeStatus" resultType="map">
+        select * from s_risk_dispose_status;
+    </select>
+    <select id="listSRiskDisposeMethod" resultType="map">
+        select * from s_risk_dispose_method;
+    </select>
+    <insert id="addProjectRisk" parameterType="map">
+        insert ignore into project_risk (risk_uid,project_id,name,risk_tag,risk_comm,introducer,introduce_date,category_id,risk_level,risk_chance,influence_degree_id,influence_type_id,risk_budget,risk_semaphore,risk_common_measure,risk_project_measure,risk_status_id,risk_dispose_status_id,milestone_type_id,manager,risk_factory_uid,operate_time,disposer,risk_dispose_method,risk_dispose_after,int_column_1,int_column_2,int_column_4,int_column_3,int_column_5,double_column_1,double_column_2,double_column_3,boolean_column_1,boolean_column_2,boolean_column_3,date_column_1,date_column_2,date_column_3,date_column_4,date_column_5,varchar_column_1,varchar_column_2,varchar_column_3,varchar_column_4,varchar_column_5,web_column_1,standard_column_1,standard_column_2,standard_column_3,person_single_1,person_single_2,person_single_3,unit_single_1,unit_single_2,unit_single_3)
+                values (#{risk_uid},#{project_id},#{name},#{risk_tag},#{risk_comm},#{introducer},#{introduce_date},#{category_id},#{risk_level},#{risk_chance},#{influence_degree_id},#{influence_type_id},#{risk_budget},#{risk_semaphore},#{risk_common_measure},#{risk_project_measure},#{risk_status_id},#{risk_dispose_status_id},#{milestone_type_id},#{manager},#{risk_factory_uid},#{operate_time},#{disposer},#{risk_dispose_method},#{risk_dispose_after},#{int_column_1},#{int_column_2},#{int_column_4},#{int_column_3},#{int_column_5},#{double_column_1},#{double_column_2},#{double_column_3},#{boolean_column_1},#{boolean_column_2},#{boolean_column_3},#{date_column_1},#{date_column_2},#{date_column_3},#{date_column_4},#{date_column_5},#{varchar_column_1},#{varchar_column_2},#{varchar_column_3},#{varchar_column_4},#{varchar_column_5},#{web_column_1},#{standard_column_1},#{standard_column_2},#{standard_column_3},#{person_single_1},#{person_single_2},#{person_single_3},#{unit_single_1},#{unit_single_2},#{unit_single_3});
+    </insert>
+    <insert id="addRProjectRiskFile" parameterType="map">
+        insert ignore into r_project_risk_file (risk_uid, project_id, file_id) values (#{risk_uid}, #{project_id}, #{file_id});
+    </insert>
+
+
+
+</mapper>

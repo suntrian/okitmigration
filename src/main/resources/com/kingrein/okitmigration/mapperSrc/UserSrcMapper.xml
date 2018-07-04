@@ -3,13 +3,29 @@
 <mapper namespace="com.kingrein.okitmigration.mapperSrc.UserSrcMapper">
     <cache />
 
-    <select id="getUser" parameterType="int" resultType="map">
+    <select id="getSimpleUser" parameterType="int" resultType="map">
         SELECT u.id, u.username, p.name, p.unit_id, p.mobile, uu.name as unitname FROM `user` u left join person p on u.id = p.id left join unit uu on p.unit_id = uu.id
           WHERE u.id = #{id};
     </select>
 
+    <select id="getUser" parameterType="int" resultType="map">
+        SELECT * FROM user U WHERE U.id = #{id};
+    </select>
+
+    <select id="getPerson" parameterType="int" resultType="map">
+        select * from person p where p.id = #{id};
+    </select>
+    
     <select id="listAllUser" resultType="map">
-        SELECT u.id, u.username,p.mobile, p.name, p.unit_id, p.is_deleted FROM `user` u left join person p on u.person_id = p.id where u.usertype_id = 0;
+        SELECT u.id, u.username,p.mobile, p.name, p.unit_id, p.is_deleted, uu.name as unitname FROM `user` u
+            left join person p on u.person_id = p.id
+            left join unit uu on p.unit_id = uu.id
+            where u.usertype_id = 0;
+    </select>
+
+    <select id="listUserByIds"  resultType="map">
+        SELECT u.id, u.username, p.name, p.unit_id, p.mobile, uu.name as unitname FROM `user` u left join person p on u.id = p.id left join unit uu on p.unit_id = uu.id
+          WHERE u.id IN <foreach collection="array" item="id" separator="," open="(" close=")">#{id}</foreach>
     </select>
 
     <select id="listAllUnit" resultType="map">
@@ -35,7 +51,7 @@
     </select>
 
     <select id="listAllUserOrderByName" resultType="map">
-        SELECT u.id, p.name,p.unit_id, uu.name,u.username, p.mobile,p.is_deleted FROM `user` u
+        SELECT u.id, p.name,p.unit_id, uu.name as unit_name ,u.username, p.mobile,p.is_deleted FROM `user` u
             LEFT JOIN `person` p ON u.person_id = p.id
             LEFT JOIN `unit` uu ON  p.unit_id = uu.id
             WHERE u.usertype_id !=1 ORDER by p.name ;

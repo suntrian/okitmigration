@@ -5,36 +5,30 @@
     <script src="${basepath}/js/jquery-3.3.1.min.js"></script>
     <script src="${basepath}/js/jstree.min.js"></script>
     <link rel="stylesheet" href="${basepath}/css/style.css">
-    <style>
-        .wrap {
-            margin: 0 auto;
-            width: 1024px;
-        }
-        .fixwidth {
-            width: 512px;
-            height: 768px;
-            float: left;
-        }
-        .scroll_y {
-            overflow-y: auto;
-            height: 744px;
-        }
-
-    </style>
+    <link rel="stylesheet" href="${basepath}/css/my.css">
 </head>
 <body>
 <div class="wrap">
-    <div id="project_src_tree" class="fixwidth"></div>
+    <div>
+        <h2>选择项目映射关系</h2>
+    </div>
+    <div class="fixwidth">
+        <div id="project_src_tree" class="scroll_y "></div>
+    </div>
     <div class="fixwidth">
         <div style="padding-left: 24px">
             <input id="search_desc" type="text" placeholder="查找...">
         </div>
         <div id="project_dest_tree" class="scroll_y"></div>
     </div>
-    <div>
-        <a href="${basepath}/step7" target="_self">下一步</a>
+    <div class="clear"></div>
+    <div class="bottom">
+        <div class="right">
+                <a href="javascript:void(0);" onclick="save()">下一步</a>
+        </div>
     </div>
 </div>
+
 
 <script>
     $("#project_src_tree").on("select_node.jstree", function (event, node) {
@@ -97,11 +91,19 @@
     $("#project_dest_tree").jstree({
         'core':{
             'data': {
-                'url': "${basepath}/project/"
+                'url': "${basepath}/project/dest"
             }
         },
         'plugins': ["search", "wholerow", "checkbox"]
-    })
+    });
+    function save() {
+        $.ajax({
+            url: "${basepath}/project/map/save",
+            success: function (result) {
+                window.location.href = "${basepath}/step7"
+            }
+        })
+    }
 </script>
 </body>
 </html>

@@ -19,7 +19,7 @@ public class UserMapperTest  extends OkitmigrationApplicationTests {
 
     @Test
     public void testGetUser(){
-        Map<String, Object> user = userMapper.getUser(1);
+        Map<String, Object> user = userMapper.getSimpleUser(1);
         Assert.assertNotNull(user);
         logger.debug(user.get("username").toString());
         System.out.println(user.get("username"));

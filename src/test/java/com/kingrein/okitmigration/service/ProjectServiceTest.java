@@ -16,7 +16,7 @@ public class ProjectServiceTest extends OkitmigrationApplicationTests {
     @Test
     public void testListProjectTree(){
         Map<Integer, Map<String, Object>> projectsMap = projectService.listSrcProject();
-        List<TreeNode<Map<String, Object>>> projectTree = projectService.listProjectTree();
+        List<TreeNode<Map<String, Object>>> projectTree = projectService.listSrcProjectTree();
         System.out.println(projectTree);
     }
 

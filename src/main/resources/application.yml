@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 88
 spring:
   freemarker:
     cache: false
@@ -8,7 +8,7 @@ spring:
     request-context-attribute: request
   datasource:
     src:
-      jdbc-url: jdbc:mysql://127.0.0.1:3306/pms_src?useSSL=false
+      jdbc-url: jdbc:mysql://127.0.0.1:3318/pms?useSSL=false
       username: root
       password: 123456
       type: com.alibaba.druid.pool.DruidDataSource
@@ -17,7 +17,7 @@ spring:
       filters: stat
       maxActive: 20
       initialSize: 1
-      maxWait: 60000
+      maxWait: 600000
       minIdle: 1
       timeBetweenEvictionRunsMillis: 60000
       minEvictableIdleTimeMillis: 300000
@@ -37,7 +37,7 @@ spring:
       filters: stat
       maxActive: 20
       initialSize: 1
-      maxWait: 60000
+      maxWait: 600000
       minIdle: 1
       timeBetweenEvictionRunsMillis: 60000
       minEvictableIdleTimeMillis: 300000
@@ -54,11 +54,18 @@ spring:
     unitMapFile: unitmap.txt
     userMapFile: usermap.txt
     entityFile: entityselected.txt
+    svnFile: svnnode.txt
     ticketMapFile: ticketmap.txt
     requirementMapFile: requirementmap.txt
     taskMapFile: taskmap.txt
     testcaseMapFile: testcasemap.txt
     memoryMapFile: memorymap.txt
+    forumMapFile: forummap.txt
+    riskMapFile: riskmap.txt
+    questionMapFile: questionmap.txt
 logging:
   level:
     com.kingrein.okitmigration: debug
+  path: D:/temp
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%t] %-5level %class{36} %L %M - %msg%xEx%n"

@@ -1,0 +1,46 @@
+.wrap {
+    margin: 0 auto;
+    width: 800px;
+    min-height: 1px;
+}
+h1, h2, h3, h4, h5 {
+    text-align: left;
+}
+body {
+    margin: 0 auto;
+}
+.clear {
+    clear: both;
+}
+.next {
+    text-align: center;
+}
+.deleted {
+    color: red;
+}
+.normal {
+    color: #00ff00;
+}
+.fixwidth {
+    width: 400px;
+    min-height: 1px;
+    max-height: 768px;
+    overflow-y: auto;
+    float: left;
+}
+
+.left {
+    float: left;
+}
+.right {
+    float: right;
+}
+
+.bottom {
+    width: 800px;
+    margin-top: 20px;
+}
+.title {
+    padding: 10px  10px 0 30px;
+    color: blue;
+}

@@ -5,32 +5,15 @@
     <script src="${basepath}/js/jquery-3.3.1.min.js"></script>
     <script src="${basepath}/js/jstree.min.js"></script>
     <link rel="stylesheet" href="${basepath}/css/style.css">
-    <style>
-        .wrap{
-            width: 800px;
-            margin: 0 auto;
-        }
-        .fixwidth{
-            width: 400px;
-            height: 768px;
-            overflow-y: auto;
-            float: left;
-        }
-        .normal {
-            color: #00ff00;
-        }
-        .deleted {
-            color: #ff00ff;
-        }
-    </style>
+    <link rel="stylesheet" href="${basepath}/css/my.css">
 </head>
 <body>
 <div class="wrap">
     <div>
-        <h1>使用说明</h1>
+        <h1>选择单位/部门映射关系</h1>
         <ul>
             <li>
-                1. 先选择上级单位的对应关系，再选择下级单位的对应关系
+                1. 先选择上级单位/部门的对应关系，再选择下级单位的对应关系
             </li>
             <li>
                 2. 找不到对应的单位/部门时，选中源单位，然后点击【增加单位】。非外部单位请谨慎添加
@@ -43,9 +26,10 @@
         <#macro recurse_tree treenode depth=1>
             <#assign unit_counter=unit_counter+1 />
                 <li id=${treenode.self.id} class="jstree-open">
-                    <span>${treenode.self.name}</span>
+                    <span>${treenode.self.name}</span>&nbsp;&nbsp;
+                    <span>【<#if treenode.self.type=1><#if treenode.self.category_id=1>内部<#else >外部</#if>单位<#else >部门</#if>】</span>
                     <span class="<#if treenode.self.is_deleted=1>deleted<#else>normal</#if>">
-                        <#if treenode.self.is_deleted=1>已删除<#else>正常</#if>
+                        <#if treenode.self.is_deleted=1>已删除<#else></#if>
                     </span>
                     <#if (treenode.children)??>
                         <ul>
@@ -66,9 +50,14 @@
     <div id="dest_unit_tree"  class="fixwidth">
 
     </div>
-    <div>
-        <a onclick="addUnit()" >增加单位</a>
-        <a href="${basepath}/step4" target="_self" >下一步</a>
+    <div class="clear"></div>
+    <div class="bottom">
+        <div class="left">
+            <a onclick="addUnit()" href="javascript:void(0);" >增加单位</a>
+        </div>
+        <div class="right">
+            <a href="javascript:void(0);" onclick="save()">下一步</a>
+        </div>
     </div>
 </div>
 <script>
@@ -116,7 +105,7 @@
                 for (var sn = 0, len = data.length; sn < len; sn++){
                     var node = {};
                     node.id = data[sn].id;
-                    node.text = data[sn].name;
+                    node.text = data[sn].name + '【' + (data[sn].type==1?((data[sn].category_id==1?"内部":"外部") + "单位"):"部门")+ '】' + (data[sn].is_deleted?"<span class='deleted'>已删除</span>":"");
                     if (data[sn].selected){
                         selectedNode = node.id;
                         if (!node.state) {node.state = {}}
@@ -158,7 +147,17 @@
                 id: srcUnitId
             },
             success: function (result) {
-
+                if (result.success == true || result.data === "succeed"){
+                    alert("添加单位成功");
+                }
+            }
+        })
+    }
+    function save() {
+        $.ajax({
+            url:"${basepath}/unit/map/save",
+            success: function (result) {
+                window.location.href = "${basepath}/step4";
             }
         })
     }

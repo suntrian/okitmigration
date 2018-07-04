@@ -1,23 +1,16 @@
 <html>
 <head>
     <#assign basepath="${request.getContextPath()}">
-    <title>选择将导入的项目</title>
+    <title>请选择要导入的项目</title>
     <script src="${basepath}/js/jquery-3.3.1.min.js"></script>
     <script src="${basepath}/js/jstree.min.js"></script>
     <link rel="stylesheet" href="${basepath}/css/style.css">
-    <style>
-        .wrap{
-            width: 1024px;
-            margin: 0 auto;
-        }
-        .project_tree {
-            height: 768px;
-            overflow-y: auto;
-        }
-    </style>
+    <link rel="stylesheet" href="${basepath}/css/my.css">
+
 </head>
 <body>
 <div class="wrap">
+    <h2>选择要导入的项目</h2>
     <div id="project_tree" class="project_tree">
         <#assign proj_counter=0>
         <#macro recurse_tree treenode depth=1>
@@ -42,9 +35,16 @@
                 </ul>
             </#list>
     </div>
-    <input type="checkbox" value="all" id="checkall">全选
-    <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-    <input type="submit" onclick="submit()" value="下一步">
+    <div class="clear"></div>
+    <div class="bottom">
+        <div class="left">
+            <input type="checkbox" value="all" id="checkall">全选
+        </div>
+        <div class="right">
+            <a href="javascript:void(0);" onclick="submit()">下一步</a>
+        </div>
+    </div>
+
 </div>
 <script>
     var projectTree = $('#project_tree');
@@ -96,7 +96,6 @@
         } else {
             projectTree.jstree(true).uncheck_all();
         }
-
     });
 </script>
 

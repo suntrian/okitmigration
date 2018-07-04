@@ -9,15 +9,23 @@
     </select>
 
     <select id="listAllUser" resultType="map">
-        SELECT u.id, u.username,p.mobile, p.name, p.unit_id, p.is_deleted FROM `user` u left join person p on u.person_id = p.id where u.usertype_id = 0;
+        SELECT u.id, u.username,p.mobile, p.name, p.unit_id, p.is_deleted, uu.name as unitname FROM `user` u
+            left join person p on u.person_id = p.id
+            left join unit uu on p.unit_id = uu.id
+            where u.usertype_id = 0;
+    </select>
+
+    <select id="listUserByIds" resultType="map">
+        SELECT u.id, u.username, p.name, p.unit_id, p.mobile, uu.name as unitname FROM `user` u left join person p on u.id = p.id left join unit uu on p.unit_id = uu.id
+        WHERE p.is_deleted = 0 AND u.id IN <foreach collection="array" item="id" separator="," open="(" close=")">#{id}</foreach>
     </select>
 
     <select id="listAllUnit" resultType="map">
-        SELECT * FROM unit;
+        SELECT * FROM unit WHERE is_deleted = 0;
     </select>
 
     <select id="getUnit" resultType="map">
-        SELECT * FROM unit u WHERE u.id = #{id};
+        SELECT * FROM unit u WHERE u.id = #{id} AND u.is_deleted = 0;
     </select>
 
     <select id="listUnitByParent" resultType="map">
@@ -31,18 +39,19 @@
                     u.parent_id is null
                 </otherwise>
             </choose>
+            and u.is_deleted = 0
         </where>
     </select>
 
     <select id="listAllUserOrderByName" resultType="map">
-        SELECT u.id, p.name,p.unit_id, uu.name,u.username, p.mobile,p.is_deleted FROM `user` u
+        SELECT u.id, p.name,p.unit_id, uu.name as unit_name ,u.username, p.mobile,p.is_deleted FROM `user` u
             LEFT JOIN `person` p ON u.person_id = p.id
             LEFT JOIN `unit` uu ON  p.unit_id = uu.id
-            WHERE u.usertype_id !=1 ORDER by p.name ;
+            WHERE u.usertype_id !=1 AND p.is_deleted = 0 ORDER by p.name ;
     </select>
     
     <select id="listUserByName" resultType="map">
-        SELECT u.id, u.username, p.name as text, p.unit_id, uu.name
+        SELECT u.id, u.username, p.name as text, p.unit_id, uu.name, p.is_deleted
             FROM user u
             LEFT JOIN person p ON u.person_id = p.id
             LEFT JOIN unit uu on p.unit_id = uu.id
@@ -50,8 +59,18 @@
     </select>
 
 
-    <insert id="addUnit" parameterType="map">
-        INSERT INTO `unit`(`type`,`name`,`code`,`address`,`phone`,`comm`,`create_date`,`category_id`) VALUES (#{type},#{name},#{code},#{address},#{phone},#{comm},current_timestamp,#{category_id} )
+    <insert id="addUnit" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `unit`(uuid,id,parent_id,type,name,code,address,phone,create_date,comm,ord,is_deleted,delete_person_id,delete_ip,delete_date,delete_reason,category_id,int_column_1,int_column_2,int_column_3,int_column_4,int_column_5,int_column_6,int_column_7,int_column_8,int_column_9,int_column_10,double_column_1,double_column_2,double_column_3,double_column_4,double_column_5,double_column_6,double_column_7,double_column_8,double_column_9,double_column_10,boolean_column_1,boolean_column_2,boolean_column_3,boolean_column_4,boolean_column_5,boolean_column_6,boolean_column_7,boolean_column_8,boolean_column_9,boolean_column_10,date_column_1,date_column_2,date_column_3,date_column_4,date_column_5,date_time_column_1,date_time_column_2,date_time_column_3,date_time_column_4,date_time_column_5,varchar_column_1,varchar_column_2,varchar_column_3,varchar_column_4,varchar_column_5,varchar_column_6,varchar_column_7,varchar_column_8,varchar_column_9,varchar_column_10,text_column_1,text_column_2,text_column_3,text_column_4,text_column_5,web_column_1,web_column_2,web_column_3,standard_column_1,standard_column_2,standard_column_3,standard_column_4,standard_column_5,standard_column_6,standard_column_7,standard_column_8,standard_column_9,standard_column_10,url_column_1,url_column_2,url_column_3,url_column_4,url_column_5,url_column_1_address,url_column_2_address,url_column_3_address,url_column_4_address,url_column_5_address,person_single_1,person_single_2,person_single_3,person_single_4,person_single_5,person_multiple_1,person_multiple_2,person_multiple_3,unit_single_1,unit_single_2,unit_single_3,unit_single_4,unit_single_5,unit_multiple_1,unit_multiple_2,unit_multiple_3,STANDARD_FX_COLUMN_1,STANDARD_FX_COLUMN_2,STANDARD_FX_COLUMN_3,STANDARD_FX_COLUMN_4,STANDARD_FX_COLUMN_5,STANDARD_TREE_COLUMN_1,STANDARD_TREE_COLUMN_2,STANDARD_TREE_COLUMN_3,STANDARD_TREE_COLUMN_4,STANDARD_TREE_COLUMN_5,STANDARD_TREE_FX_COLUMN_1,STANDARD_TREE_FX_COLUMN_2,STANDARD_TREE_FX_COLUMN_3,STANDARD_TREE_FX_COLUMN_4,STANDARD_TREE_FX_COLUMN_5)
+              VALUES (#{uuid},null,#{parent_id},#{type},#{name},#{code},#{address},#{phone},#{create_date},#{comm},#{ord},#{is_deleted},#{delete_person_id},#{delete_ip},#{delete_date},#{delete_reason},#{category_id},#{int_column_1},#{int_column_2},#{int_column_3},#{int_column_4},#{int_column_5},#{int_column_6},#{int_column_7},#{int_column_8},#{int_column_9},#{int_column_10},#{double_column_1},#{double_column_2},#{double_column_3},#{double_column_4},#{double_column_5},#{double_column_6},#{double_column_7},#{double_column_8},#{double_column_9},#{double_column_10},#{boolean_column_1},#{boolean_column_2},#{boolean_column_3},#{boolean_column_4},#{boolean_column_5},#{boolean_column_6},#{boolean_column_7},#{boolean_column_8},#{boolean_column_9},#{boolean_column_10},#{date_column_1},#{date_column_2},#{date_column_3},#{date_column_4},#{date_column_5},#{date_time_column_1},#{date_time_column_2},#{date_time_column_3},#{date_time_column_4},#{date_time_column_5},#{varchar_column_1},#{varchar_column_2},#{varchar_column_3},#{varchar_column_4},#{varchar_column_5},#{varchar_column_6},#{varchar_column_7},#{varchar_column_8},#{varchar_column_9},#{varchar_column_10},#{text_column_1},#{text_column_2},#{text_column_3},#{text_column_4},#{text_column_5},#{web_column_1},#{web_column_2},#{web_column_3},#{standard_column_1},#{standard_column_2},#{standard_column_3},#{standard_column_4},#{standard_column_5},#{standard_column_6},#{standard_column_7},#{standard_column_8},#{standard_column_9},#{standard_column_10},#{url_column_1},#{url_column_2},#{url_column_3},#{url_column_4},#{url_column_5},#{url_column_1_address},#{url_column_2_address},#{url_column_3_address},#{url_column_4_address},#{url_column_5_address},#{person_single_1},#{person_single_2},#{person_single_3},#{person_single_4},#{person_single_5},#{person_multiple_1},#{person_multiple_2},#{person_multiple_3},#{unit_single_1},#{unit_single_2},#{unit_single_3},#{unit_single_4},#{unit_single_5},#{unit_multiple_1},#{unit_multiple_2},#{unit_multiple_3},#{STANDARD_FX_COLUMN_1},#{STANDARD_FX_COLUMN_2},#{STANDARD_FX_COLUMN_3},#{STANDARD_FX_COLUMN_4},#{STANDARD_FX_COLUMN_5},#{STANDARD_TREE_COLUMN_1},#{STANDARD_TREE_COLUMN_2},#{STANDARD_TREE_COLUMN_3},#{STANDARD_TREE_COLUMN_4},#{STANDARD_TREE_COLUMN_5},#{STANDARD_TREE_FX_COLUMN_1},#{STANDARD_TREE_FX_COLUMN_2},#{STANDARD_TREE_FX_COLUMN_3},#{STANDARD_TREE_FX_COLUMN_4},#{STANDARD_TREE_FX_COLUMN_5})
+    </insert>
+
+    <insert id="addPerson" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `person`(name, gender_id, level_id, speciality_id, unit_id, mobile, office_phone, home_phone, office_address, home_address, photo_path, comm, create_date, ord, education_id, political_id, email, RESUME, is_deleted, delete_person_id, delete_ip, delete_date, delete_reason, int_column_1, int_column_2, int_column_3, int_column_4, int_column_5, int_column_6, int_column_7, int_column_8, int_column_9, int_column_10, double_column_1, double_column_2, double_column_3, double_column_4, double_column_5, double_column_6, double_column_7, double_column_8, double_column_9, double_column_10, date_column_1, date_column_2, date_column_3, date_column_4, date_column_5, date_column_6, date_column_7, date_column_8, date_column_9, date_column_10, date_time_column_1, date_time_column_2, date_time_column_3, date_time_column_4, date_time_column_5, date_time_column_6, date_time_column_7, date_time_column_8, date_time_column_9, date_time_column_10, varchar_column_1, varchar_column_2, varchar_column_3, varchar_column_4, varchar_column_5, varchar_column_6, varchar_column_7, varchar_column_8, varchar_column_9, varchar_column_10, varchar_column_11, varchar_column_12, varchar_column_13, varchar_column_14, varchar_column_15, varchar_column_16, varchar_column_17, varchar_column_18, varchar_column_19, varchar_column_20, text_column_1, text_column_2, text_column_3, text_column_4, text_column_5, text_column_6, text_column_7, text_column_8, text_column_9, text_column_10, web_column_1, web_column_2, web_column_3, standard_column_1, standard_column_2, standard_column_3, standard_column_4, standard_column_5, standard_column_6, standard_column_7, standard_column_8, standard_column_9, standard_column_10, url_column_1, url_column_2, url_column_3, url_column_4, url_column_5, url_column_1_address, url_column_2_address, url_column_3_address, url_column_4_address, url_column_5_address, unit_single_1, unit_single_2, unit_single_3, unit_single_4, unit_single_5, unit_multiple_1, unit_multiple_2, unit_multiple_3, STANDARD_FX_COLUMN_1, STANDARD_FX_COLUMN_2, STANDARD_FX_COLUMN_3, STANDARD_FX_COLUMN_4, STANDARD_FX_COLUMN_5, STANDARD_TREE_COLUMN_1, STANDARD_TREE_COLUMN_2, STANDARD_TREE_COLUMN_3, STANDARD_TREE_COLUMN_4, STANDARD_TREE_COLUMN_5, STANDARD_TREE_FX_COLUMN_1, STANDARD_TREE_FX_COLUMN_2, STANDARD_TREE_FX_COLUMN_3, STANDARD_TREE_FX_COLUMN_4, STANDARD_TREE_FX_COLUMN_5, ministryJobTitle_id, civilianJobTitle_id, UUID)
+                    VALUES (#{name}, #{gender_id}, #{level_id}, #{speciality_id}, #{unit_id}, #{mobile}, #{office_phone}, #{home_phone}, #{office_address}, #{home_address}, #{photo_path}, #{comm}, #{create_date}, #{ord}, #{education_id}, #{political_id}, #{email}, #{RESUME}, 0, #{delete_person_id}, #{delete_ip}, #{delete_date}, #{delete_reason}, #{int_column_1}, #{int_column_2}, #{int_column_3}, #{int_column_4}, #{int_column_5}, #{int_column_6}, #{int_column_7}, #{int_column_8}, #{int_column_9}, #{int_column_10}, #{double_column_1}, #{double_column_2}, #{double_column_3}, #{double_column_4}, #{double_column_5}, #{double_column_6}, #{double_column_7}, #{double_column_8}, #{double_column_9}, #{double_column_10}, #{date_column_1}, #{date_column_2}, #{date_column_3}, #{date_column_4}, #{date_column_5}, #{date_column_6}, #{date_column_7}, #{date_column_8}, #{date_column_9}, #{date_column_10}, #{date_time_column_1}, #{date_time_column_2}, #{date_time_column_3}, #{date_time_column_4}, #{date_time_column_5}, #{date_time_column_6}, #{date_time_column_7}, #{date_time_column_8}, #{date_time_column_9}, #{date_time_column_10}, #{varchar_column_1}, #{varchar_column_2}, #{varchar_column_3}, #{varchar_column_4}, #{varchar_column_5}, #{varchar_column_6}, #{varchar_column_7}, #{varchar_column_8}, #{varchar_column_9}, #{varchar_column_10}, #{varchar_column_11}, #{varchar_column_12}, #{varchar_column_13}, #{varchar_column_14}, #{varchar_column_15}, #{varchar_column_16}, #{varchar_column_17}, #{varchar_column_18}, #{varchar_column_19}, #{varchar_column_20}, #{text_column_1}, #{text_column_2}, #{text_column_3}, #{text_column_4}, #{text_column_5}, #{text_column_6}, #{text_column_7}, #{text_column_8}, #{text_column_9}, #{text_column_10}, #{web_column_1}, #{web_column_2}, #{web_column_3}, #{standard_column_1}, #{standard_column_2}, #{standard_column_3}, #{standard_column_4}, #{standard_column_5}, #{standard_column_6}, #{standard_column_7}, #{standard_column_8}, #{standard_column_9}, #{standard_column_10}, #{url_column_1}, #{url_column_2}, #{url_column_3}, #{url_column_4}, #{url_column_5}, #{url_column_1_address}, #{url_column_2_address}, #{url_column_3_address}, #{url_column_4_address}, #{url_column_5_address}, #{unit_single_1}, #{unit_single_2}, #{unit_single_3}, #{unit_single_4}, #{unit_single_5}, #{unit_multiple_1}, #{unit_multiple_2}, #{unit_multiple_3}, #{STANDARD_FX_COLUMN_1}, #{STANDARD_FX_COLUMN_2}, #{STANDARD_FX_COLUMN_3}, #{STANDARD_FX_COLUMN_4}, #{STANDARD_FX_COLUMN_5}, #{STANDARD_TREE_COLUMN_1}, #{STANDARD_TREE_COLUMN_2}, #{STANDARD_TREE_COLUMN_3}, #{STANDARD_TREE_COLUMN_4}, #{STANDARD_TREE_COLUMN_5}, #{STANDARD_TREE_FX_COLUMN_1}, #{STANDARD_TREE_FX_COLUMN_2}, #{STANDARD_TREE_FX_COLUMN_3}, #{STANDARD_TREE_FX_COLUMN_4}, #{STANDARD_TREE_FX_COLUMN_5}, #{ministryJobTitle_id}, #{civilianJobTitle_id}, #{UUID});
+    </insert>
+    <insert id="addUser" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `user`(id,person_id,usertype_id,username,password,comm,create_date,personal_id)
+              select #{id},#{person_id},#{usertype_id},#{username},#{password},#{comm},#{create_date},#{personal_id} from `user` where not exists (select * from `user` where username = #{username});
     </insert>
 
 </mapper>

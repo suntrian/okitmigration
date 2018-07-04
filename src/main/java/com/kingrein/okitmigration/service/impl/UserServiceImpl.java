@@ -9,6 +9,7 @@ import com.kingrein.okitmigration.service.UserService;
 import com.kingrein.okitmigration.util.TreeNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -18,6 +19,7 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
 
     private Map<Integer, Integer> unitMap = new HashMap<>();
+    private Map<Integer, Integer> userMap = new HashMap<>();
 
     @Resource
     private UserSrcMapper userSrcMapper;
@@ -30,7 +32,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Map<String , Object> getSrcUser(Integer id){
-        return userSrcMapper.getUser(id);
+        return userSrcMapper.getSimpleUser(id);
     }
     @Override
     public Map<String, Object> getDestUser(Integer id) {
@@ -119,6 +121,16 @@ public class UserServiceImpl implements UserService {
         return parseMap2Tree(units);
     }
 
+    @Override
+    public Map<Integer, Map<String, Object>> listAllSrcUser() {
+        return userSrcMapper.listAllUser();
+    }
+
+    @Override
+    public Map<Integer, Map<String, Object>> listAllDestUser() {
+        return userDestMapper.listAllUser();
+    }
+
     /**
      *  查找在目标系统中无法找到或者找到多个用户的源系统中的人员
      * @return
@@ -145,32 +157,22 @@ public class UserServiceImpl implements UserService {
                 checkpoint = cursor;
                 if (cursor<destUsers.size() && srcUser.get("name").equals(destUsers.get(cursor).get("name"))){
                     //匹配到多个的情况
+                    srcUser.put("state", "dual");
                     result.add(srcUser);
                 } else {
                     //正常匹配到一个的情况
-                    recordService.recordUserMap((Integer) srcUser.get("id"), (Integer) destUser.get("id"));
-//                    src.addProperty("id", (Number) srcUser.get("id"));
-//                    src.addProperty("username", (String) srcUser.get("username"));
-//                    src.addProperty("name", (String) srcUser.get("name"));
-//                    dest.addProperty("id", (Number) destUser.get("id"));
-//                    dest.addProperty("username", (String) destUser.get("username"));
-//                    dest.addProperty("name", (String) destUser.get("name"));
-//                    thisMap.add("src", src);
-//                    thisMap.add("dest", dest);
-//                    json.add(thisMap);
-//                    src = new JsonObject();
-//                    dest = new JsonObject();
-//                    thisMap = new JsonObject();
+                    userMap.put((Integer) srcUser.get("id"), (Integer) destUser.get("id"));
                 }
 
             }
-            if (cursor == destUsers.size()){
+            if (cursor == destUsers.size()  ){
                 //匹配到零个的情况
+                srcUser.put("state","single");
                 result.add(srcUser);
                 cursor = 0;
             }
         }
-//        recordService.recordUserMap(json);
+
         return result;
     }
 
@@ -206,14 +208,63 @@ public class UserServiceImpl implements UserService {
         return roots;
     }
 
+    /**
+     * 手动增加单位
+     * @param id 源数据表单位ID
+     * @return
+     */
     @Override
     public Boolean addUnitBySrcUnitId(Integer id){
         Map<String, Object> srcUnit = userSrcMapper.getUnit(id);
-        // TODO 需改为目标单位中对应的单位
-        srcUnit.put("parent_id",srcUnit.get("parent_id") );
-        Integer newId = userDestMapper.addUnit(srcUnit);
-        // TODO 保存源ID与返回的新ID对应关系
+        srcUnit.put("parent_id",transformIntergerId((Integer) srcUnit.get("parent_id"), unitMap));
+        Integer count = userDestMapper.addUnit(srcUnit);
+        unitMap.put(id, (Integer) srcUnit.get("id"));
         return true;
     }
 
+    /**
+     * 手动增加人员
+     * @param id
+     * @return
+     * @throws IOException
+     */
+    @Transactional
+    @Override
+    public Integer addUserBySrcUserId(Integer id) throws IOException {
+        Map<String, Object> srcUser = userSrcMapper.getUser(id);
+        Map<String, Object> srcPerson = userSrcMapper.getPerson(id);
+        srcPerson.put("unit_id", unitMap.get(srcPerson.get("unit_id")));
+        srcPerson.put("id", null);
+        Integer count = userDestMapper.addPerson(srcPerson);
+        Integer newId = ((Long) srcPerson.get("id")).intValue();
+        srcUser.put("id", newId);
+        srcUser.put("person_id", newId);
+        this.userMap.put(id, newId);
+        return userDestMapper.addUser(srcUser);
+    }
+
+    private Integer transformIntergerId(Integer src, Map<Integer, Integer> map){
+        return src == null?null: map.get(src)==null?src: map.get(src);
+    }
+
+
+    @Override
+    public Map<Integer, Integer> getUnitMap() {
+        return unitMap;
+    }
+
+    @Override
+    public void setUnitMap(Map<Integer, Integer> unitMap) {
+        this.unitMap = unitMap;
+    }
+
+    @Override
+    public Map<Integer, Integer> getUserMap() {
+        return userMap;
+    }
+
+    @Override
+    public void setUserMap(Map<Integer, Integer> userMap) {
+        this.userMap = userMap;
+    }
 }

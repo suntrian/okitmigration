@@ -7,6 +7,14 @@
         SELECT * FROM `project` p WHERE p.is_deleted = 0;
     </select>
 
+    <select id="listProjectPerson" resultType="map">
+        SELECT * FROM project_person pp WHERE pp.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+
+    <select id="listProjectPersonAuth" resultType="map" >
+        SELECT * FROM r_user_projectauth rup where rup.project_id in <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+
     <select id="listProjectType" resultType="map">
         SELECT * FROM `s_project_type`;
     </select>
@@ -26,9 +34,531 @@
     <select id="listProjectStage" resultType="map">
         SELECT * FROM `s_project_stage`;
     </select>
+    
+    <select id="listWorkflow" resultType="map">
+        SELECT * FROM workflow;
+    </select>
+
+    <select id="listAllWorkflowTask" resultType="map">
+        SELECT * FROM workflow_task;
+    </select>
 
     <select id="listProjectByIds" resultType="map">
         SELECT * FROM `project` p WHERE p.id IN <foreach collection="list" open="(" close=")" item="id" separator=",">#{id}</foreach>
     </select>
+
+    <select id="listProductByProjectIds" parameterType="list" resultType="map">
+        SELECT pd.* FROM product pd LEFT JOIN r_product_project rpp on pd.product_uid = rpp.product_uid WHERE rpp.project_id IN
+        <foreach collection="list" item="id" separator="," open="(" close=")">#{id}</foreach>
+    </select>
     
+    <select id="listProductVersionByProjectIds" resultType="map">
+        SELECT pv.* FROM product_version pv LEFT JOIN r_product_version_project p on pv.product_version_uid = p.product_version_uid
+            WHERE p.project_id IN <foreach collection="list" close=")" open="(" separator="," item="id">#{id}</foreach>
+    </select>
+    
+    <select id="listProductVersionModuleByProjectIds" resultType="map">
+        SELECT pm.* FROM product_version_module pm LEFT JOIN r_product_module_project rpmp on pm.module_uid = rpmp.product_module_uid
+            WHERE rpmp.project_id IN <foreach collection="list" item="id" separator="," open="(" close=")" >#{id}</foreach>
+    </select>
+    
+    <select id="listProductProjectByProjectIds" resultType="map">
+        SELECT * FROM r_product_project rpp where rpp.project_id in <foreach collection="list" close=")" open="(" separator="," item="id">#{id}</foreach>
+    </select>
+    
+    <select id="listProductVersionProjectByProjectIds" resultType="map">
+        SELECT * FROM r_product_version_project r WHERE r.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    
+    <select id="listProductVersionModuleProjectByProjectIds" resultType="map">
+        SELECT * FROM r_product_module_project r WHERE r.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+    
+    <select id="listProductAuthByProjectIds" resultType="map">
+        SELECT rpa.* FROM r_product_auth rpa LEFT JOIN r_product_project rpp on rpa.product_uid = rpp.product_uid WHERE rpp.project_id IN
+          <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    
+    <select id="listSvnNode" resultType="map">
+        SELECT * FROM svn_node_config
+    </select>
+    
+    <select id="listSvnConfigDirectoryByProject" resultType="map">
+        SELECT * FROM svn_config_directory scd WHERE scd.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>  AND scd.is_deleted = 0
+    </select>
+    
+    <select id="listTicketByProjectIds" resultType="map">
+        SELECT * FROM ticket t WHERE t.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    
+    <select id="listTicketPageEntityColumm" resultType="map">
+       SELECT pec.*, pdc.column_name AS `column` FROM page_entity_column pec LEFT JOIN page_defined_column pdc ON pec.column_id = pdc.column_id WHERE pec.entity_id = 10 AND pec.is_use_column = 1 ORDER by pec.column_id;
+    </select>
+
+    <select id="listAllFile" resultType="map">
+        SELECT * FROM file;
+    </select>
+    <select id="listFileByTicketProjectIds" resultType="map">
+        SELECT f.* FROM `file` f  LEFT JOIN r_ticket_file rtf ON f.`id` = rtf.`file_id` LEFT JOIN ticket t ON rtf.`ticket_uid` = t.`uid` WHERE t.`project_id` IN
+            <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+    
+    <select id="listTicketFileByProjectIds" resultType="map">
+        SELECT rtf.* FROM r_ticket_file rtf left join ticket t on rtf.ticket_uid = t.uid where t.project_id in
+            <foreach collection="list" close=")" item="id" separator="," open="(" >#{id}</foreach>
+    </select>
+    
+    <select id="listTicketHistoryByProjectIds" resultType="map">
+        SELECT th.* FROM ticket_history th LEFT JOIN ticket t on th.ticket_uid = t.uid where t.project_id in
+            <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+
+    <select id="listWorkflowTaskByTicketProjectIds" resultType="map">
+        SELECT * FROM workflow_task wt WHERE wt.uid IN
+            (SELECT wtt.task_uid FROM workflow_task_ticket wtt left JOIN ticket t on wtt.ticket_uid = t.uid where t.project_id IN
+                <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+            )
+    </select>
+    <select id="listWorkflowTaskTicketByProjectIds" resultType="map">
+        SELECT wtt.* FROM workflow_task_ticket wtt LEFT join ticket t on wtt.ticket_uid = t.uid WHERE t.project_id IN
+            <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    <select id="listTicketWorkflowHistoryByProjectIds" resultType="map">
+        SELECT * FROM workflow_history wh where wh.task_uid IN (
+              SELECT wtt.task_uid FROM workflow_task_ticket wtt left join ticket t on wtt.ticket_uid = t.uid where t.project_id IN
+                    <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+        )
+    </select>
+    <select id="listTicketWorkflowHistoryFileByProjectIds" resultType="map">
+        SELECT * FROM r_workflow_history_file rwhf where rwhf.history_id in (
+              SELECT wh.id FROM workflow_history wh left join workflow_task_ticket wtt on wh.task_uid = wtt.task_uid left join ticket t on wtt.ticket_uid = t.uid
+                  where t.project_id in <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+        )
+    </select>
+
+    <select id="listTicketType" resultType="map">
+        SELECT * from s_ticket_type;
+    </select>
+    <select id="listTicketStatus" resultType="map">
+        select * from s_ticket_status;
+    </select>
+    <select id="listTicketSource" resultType="map">
+        select * from s_ticket_source;
+    </select>
+    <select id="listTicketSeverity" resultType="map">
+        SELECT * FROM s_ticket_severity;
+    </select>
+    <select id="listTicketResolution" resultType="map">
+        SELECT * FROM s_ticket_resolution;
+    </select>
+    <select id="listTicketPriority" resultType="map">
+        SELECT * FROM s_ticket_priority;
+    </select>
+    <select id="listTicketFrequency" resultType="map">
+        SELECT * FROM s_ticket_frequency;
+    </select>
+    <select id="listTicketCategory" resultType="map">
+        SELECT * FROM s_ticket_category;
+    </select>
+
+    <select id="listTicketTestcaseStepByProjectIds" resultType="map">
+        SELECT rtdst.* FROM r_test_desc_step_ticket rtdst  left join ticket t on rtdst.ticket_uid = t.uid where t.project_id in
+            <foreach collection="list" open="(" separator="," item="id" close=")" >#{id}</foreach>
+    </select>
+    <select id="listTicketFormatItemByProjectIds" resultType="map">
+        SELECT * FROM r_ticket_format_item rtfi LEFT JOIN ticket t ON rtfi.ticket_uid = t.uid WHERE t.project_id IN
+            <foreach collection="list" open="(" separator="," item="id" close=")" >#{id}</foreach>
+    </select>
+
+    <!-- 需求导入开始 -->
+    <select id="listFormatPageEntityColumn" resultType="map">
+        select pec.*, pdc.column_name as `column` from page_entity_column pec left join page_defined_column pdc on pec.column_id = pdc.column_id where pec.entity_id = 1 and pec.is_use_column = 1 order by pec.column_id;
+    </select>
+    <select id="listFormatItemStatus" resultType="map">
+        SELECT * FROM s_format_item_status;
+    </select>
+    <select id="listFormatItemType" resultType="map">
+        SELECT * FROM s_format_item_type;
+    </select>
+    <select id="listFormatDifficulty" resultType="map">
+        SELECT * FROM s_format_difficulty;
+    </select>
+    <select id="listFormatStability" resultType="map">
+        SELECT * FROM s_format_stability;
+    </select>
+    <select id="listFormatExpectedLevel" resultType="map">
+        SELECT * FROM s_format_expected_level;
+    </select>
+    <select id="listFormatItemChange" resultType="map">
+        SELECT * FROM s_format_item_change;
+    </select>
+    <select id="listFormatAlteredStatus" resultType="map">
+        SELECT * FROM s_format_altered_status;
+    </select>
+    <select id="listFormatDocType" resultType="map">
+        SELECT * FROM s_format_doc_type;
+    </select>
+    <select id="listFormatPrivileges" resultType="map">
+        SELECT * FROM s_format_privileges;
+    </select>
+    <select id="listFormatChangedManner" resultType="map">
+        SELECT * FROM s_format_changed_manner;
+    </select>
+
+    <select id="listFormatDocByProjectIds" resultType="map">
+        SELECT * FROM format_doc fd WHERE fd.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+    <select id="listFormatDocFloderByProjectIds" resultType="map">
+        SELECT * FROM format_doc_floder f WHERE f.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    <select id="listFormatEditionByProjectIds" resultType="map">
+        SELECT * FROM format_edition fe WHERE fe.project_id IN <foreach collection="list" close=")" open="(" separator="," item="id">#{id}</foreach>
+    </select>
+    <select id="listFormatSectionByProjectIds" resultType="map">
+        SELECT fs.* FROM format_section fs left join format_doc fd on fs.doc_uid = fd.uid WHERE fd.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    <select id="listFormatItemEditionByProjectIds" resultType="map">
+        SELECT * FROM format_item_edition fie WHERE fie.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+    <select id="listFormatItemChangedRecordByProjectIds" resultType="map">
+        SELECT f.* FROM format_item_changed_record f LEFT JOIN format_doc f2 on f.doc_uid = f2.uid WHERE f2.project_id IN
+            <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    <select id="listFormatItemCommByProjectIds" resultType="map">
+        SELECT fc.* FROM format_item_comm fc LEFT JOIN format_edition fe ON fc.doc_edition_uid = fe.uid WHERE fe.project_id IN
+            <foreach collection="list" open="(" close=")" item="id" separator=",">#{id}</foreach>
+    </select>
+    <select id="listFormatItemDisposeHistoryByProjectids" resultType="map">
+        SELECT f.* FROM format_item_dispose_history f LEFT JOIN format_section fs ON f.section_uid = fs.uid WHERE fs.project_id IN
+            <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+    <select id="listFormatItemEditionChangeByProjectIds" resultType="map">
+        SELECT fc.* FROM format_item_edition_change fc LEFT JOIN format_doc fd ON fc.doc_uid = fd.uid WHERE fd.project_id IN
+            <foreach collection="list" close=")" item="id" separator="," open="(" >#{id}</foreach>
+    </select>
+    <select id="listFormatItemModifyHistoryByProjectIds" resultType="map">
+        SELECT * FROM format_item_modify_history m WHERE m.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")" >#{id}</foreach>
+    </select>
+    <select id="listRFormatDocFloderByProjectIds" resultType="map">
+        SELECT rfdf.* FROM r_format_doc_floder rfdf LEFT JOIN format_doc f on rfdf.formatdoc_uid = f.uid WHERE f.project_id IN
+            <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    <select id="listRFormatDocItemTypeByProjectIds" resultType="map">
+        SELECT rfdit.* FROM r_format_doc_item_type rfdit LEFT JOIN format_doc fd ON rfdit.doc_uid = fd.uid WHERE fd.project_id IN
+            <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+    <select id="listRFormatDocFileByProjectIds" resultType="map">
+        SELECT rfd.* FROM r_format_docfile rfd left JOIN format_doc f on rfd.doc_uid = f.uid WHERE f.project_id IN
+            <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    <select id="listRFormatDocsByProjectIds" resultType="map">
+        SELECT rfd.* FROM r_format_docs rfd
+            LEFT JOIN format_doc f1 on rfd.source_doc_uid = f1.uid
+            LEFT JOIN format_doc f2 on rfd.target_doc_uid = f2.uid
+            WHERE f1.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+            AND f2.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+    <select id="listRFormatItemProductByProjectIds" resultType="map">
+        SELECT rfip.* FROM r_format_item_product rfip LEFT JOIN format_item_edition fie ON rfip.item_uid = fie.uid WHERE fie.project_id IN
+            <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    <select id="listRFormatItemFileByProjectIds" resultType="map">
+        SELECT rfi.* FROM r_format_itemfile rfi LEFT JOIN format_item_edition fie ON rfi.item_uid = fie.uid WHERE fie.project_id IN
+            <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+    <select id="listRformatItemsByProjectIds" resultType="map">
+        SELECT rfi.* FROM r_format_items rfi
+            LEFT JOIN format_item_edition f1 ON rfi.reference_item_uid = f1.uid
+            LEFT JOIN format_item_edition f2 ON rfi.referencedby_item_uid = f2.uid
+            WHERE f1.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+              AND f2.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    <select id="listRFormtSectionItemByProjectIds" resultType="map">
+        SELECT rfsi.* FROM r_format_section_item rfsi LEFT JOIN format_item_edition fie ON rfsi.item_uid = fie.uid WHERE fie.project_id IN
+            <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+    <select id="listRUserFormatDocByProjectIds" resultType="map">
+        SELECT rufd.* FROM r_user_format_doc rufd LEFT JOIN format_doc f on rufd.format_doc_id = f.uid WHERE f.project_id IN
+            <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    <select id="listRUserFormatDocStatusByProjectIds" resultType="map">
+        SELECT rs.* FROM r_user_format_doc_status rs LEFT JOIN format_doc fd ON rs.format_doc_uid = fd.uid WHERE fd.project_id IN
+            <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+    <select id="listWorkflowTaskFormatItemByProjectIds" resultType="map">
+        SELECT wtfi.* FROM workflow_task_format_item wtfi LEFT JOIN format_item_edition fie ON wtfi.item_uid = fie.uid WHERE fie.project_id IN
+            <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    <select id="listWorkflowTaskWithinFormatByProjectIds" resultType="map">
+        SELECT * FROM workflow_task wt WHERE wt.uid IN (
+            SELECT wtfi.task_uid FROM workflow_task_format_item wtfi LEFT JOIN format_item_edition fie ON wtfi.item_uid = fie.uid
+                WHERE fie.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+        )
+    </select>
+    <select id="listWorkflowHistoryWithinFormatByProjectIds" resultType="map">
+        SELECT * FROM workflow_history wh WHERE wh.task_uid IN (
+            SELECT wtfi.task_uid FROM workflow_task_format_item wtfi LEFT JOIN format_item_edition fie ON wtfi.item_uid = fie.uid
+                WHERE fie.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+        )
+    </select>
+    <select id="listRWorkflowHistoryFileWithinFormatByProjectIds" resultType="map">
+        SELECT * FROM r_workflow_history_file rwhf WHERE rwhf.`history_id` IN (
+            SELECT wh.`id` FROM workflow_history wh
+                LEFT JOIN workflow_task_format_item wtfi ON wh.`task_uid` = wtfi.`task_uid`
+                LEFT JOIN format_item_edition fie ON wtfi.`item_uid` = fie.`uid`
+                WHERE fie.`project_id` IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+        )
+    </select>
+
+
+    <!-- 测试用例 -->
+    <select id="listTestActivityByProjectIds" resultType="map">
+        SELECT * FROM test_activity ta WHERE ta.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    <select id="listTestActivityStageByProjectIds" resultType="map">
+        SELECT tas.* FROM test_activity_stage tas LEFT JOIN test_activity a on tas.activity_uid = a.uid WHERE a.project_id IN  <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    <select id="listTestDescByProjectIds" resultType="map">
+        SELECT * FROM test_desc td WHERE td.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    <select id="listTestDescSectionByProjectIds" resultType="map">
+        SELECT tds.* FROM test_desc_section tds LEFT JOIN test_desc t on tds.test_desc_uid = t.test_desc_uid WHERE t.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    <select id="listTestDescStepResultByProjectIds" resultType="map">
+        SELECT tds.* FROM test_desc_step_result tds LEFT JOIN test_desc td ON tds.test_desc_uid = td.test_desc_uid WHERE td.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    <select id="listTestDescriptionCaseResultByProjectIds" resultType="map">
+        SELECT tdc.* FROM test_description_case_result tdc LEFT JOIN test_desc td ON tdc.test_desc_uid = td.test_desc_uid WHERE td.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    <select id="listTestDescFormatDocByProjectIds" resultType="map">
+        SELECT * from test_desc_format_doc tdfd
+              LEFT JOIN test_desc td ON tdfd.test_desc_uid = td.test_desc_uid
+              LEFT JOIN format_edition f on tdfd.uid = f.uid
+                  WHERE td.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+                    AND f.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>;
+    </select>
+    <select id="listTestActivityLevel" resultType="map">
+        SELECT * FROM s_test_activity_level;
+    </select>
+    <select id="listTestActivityStatus" resultType="map">
+        SELECT * FROM s_test_activity_status;
+    </select>
+    <select id="listTestCasePriority" resultType="map">
+        SELECT * FROM s_test_case_priority;
+    </select>
+    <select id="listTestCaseStatus" resultType="map">
+        SELECT * FROM s_test_case_status;
+    </select>
+    <select id="listTestMethod" resultType="map">
+        SELECT * FROM s_test_method;
+    </select>
+    <select id="listTestRule" resultType="map">
+        SELECT * FROM s_test_rule;
+    </select>
+    <select id="listTestStageCategory" resultType="map">
+        SELECT * FROM s_test_stage_category;
+    </select>
+    <select id="listTestType" resultType="map">
+        SELECT * FROM s_test_type;
+    </select>
+    <select id="listRTestDescStepTicketByProjectIds" resultType="map">
+        SELECT rt.* FROM r_test_desc_step_ticket rt
+              left JOIN test_desc td ON rt.test_desc_uid = td.test_desc_uid
+              LEFT JOIN ticket t on rt.ticket_uid = t.uid
+                  WHERE td.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+                  AND t.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    <select id="listRTestDestCaseFileByProjectIds" resultType="map">
+        SELECT rf.* FROM r_test_desc_case_file rf LEFT JOIN test_desc td ON rf.test_desc_uid = td.test_desc_uid WHERE td.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+    <select id="listRTestDescCaseItemEditionByProjectIds" resultType="map">
+        SELECT * FROM r_test_desc_case_item_edition re
+              LEFT JOIN test_desc td ON re.test_desc_uid = td.test_desc_uid
+              LEFT JOIN format_doc fd ON re.doc_uid = fd.uid
+              WHERE td.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+                AND fd.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
+    </select>
+
+    <!-- 计划任务 -->
+    <select id="listSTaskType" resultType="map">
+        SELECT * FROM s_task_type;
+    </select>
+    <select id="listSTaskStatus" resultType="map">
+        SELECT * FROM s_task_status;
+    </select>
+    <select id="listSTaskLogType" resultType="map">
+        select * from s_task_logtype;
+    </select>
+    <select id="listSTaskSatisfaction" resultType="map">
+        select * from s_task_satisfaction;
+    </select>
+    <select id="listSTaskImportant" resultType="map">
+        select * from s_task_important;
+    </select>
+    <select id="listSTaskCategory" resultType="map">
+        select * from s_task_category;
+    </select>
+    <select id="listPlanByProjectIds" resultType="map">
+        select * from plan p where p.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
+    </select>
+    <select id="listTaskByProjectIds" resultType="map">
+        SELECT * from task t where t.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach> order by t.project_id, t.ID;
+    </select>
+    <select id="listTaskLogByProjectIds" resultType="map" >
+        select tl.* from task_log tl LEFT join task t on tl.taskUID = t.UID where t.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
+    </select>
+    <select id="listRTaskFileByProjectIds" resultType="map">
+        select rtf.* from r_task_file rtf left join task t on rtf.taskUID = t.UID WHERE t.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+    <select id="listTaskPredecessorLinkByProjectIds" resultType="map">
+        select tp.* from task_predecessorlink tp LEFT join task t on tp.taskUID = t.UID where t.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+    <select id="listTaskProgressHistoryByProjectIds" resultType="map">
+        select tph.* from task_progress_history tph LEFT JOIN task t on tph.task_uid = t.UID WHERE t.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+    <select id="listTaskHistoryByProjectIds" resultType="map">
+        select th.* from task_history th left join task t on th.task_uid = t.UID where t.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
+    </select>
+    <select id="listTaskAssignmentByProjectIds" resultType="map">
+        select ta.* from task_assignment ta left join task t on ta.TaskUID = t.UID where t.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
+    </select> 
+    <select id="listTaskAcceptanceByProjectIds" resultType="map">
+        select ta.* from task_acceptance ta left join task t on ta.taskUID = t.UID where t.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
+    </select>
+    <select id="listRTaskItemByProjectIds" resultType="map">
+        select * from r_task_item rti left join task t on rti.task_uid = t.UID left join format_doc fd on rti.doc_uid = fd.uid
+            where t.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+              and fd.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+    <select id="listRTaskCaseByProjectIds" resultType="map">
+        select * from r_task_case rtc left  join task t on rtc.task_uid = t.UID left  join test_desc td on rtc.test_desc_uid = td.test_desc_uid
+            where t.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+              and td.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+    <select id="listReportQuestionWithinTaskByProjectIds" resultType="map">
+        select rq.* from report_question rq left  join task t on rq.taskUID = t.UID where t.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
+    </select>
+    <select id="listRQuestionFileWithinTaskByProjectIds" resultType="map">
+        select rqf.* from r_question_file rqf
+              left join report_question q on rqf.question_id = q.id
+              left join task t on q.taskUID = t.UID
+              where t.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
+    </select>
+
+    <!-- 项目日志 -->
+    <select id="listSMemorabiliaType" resultType="map">
+        select * from s_memorabilia_type;
+    </select>
+    <select id="listSEventsLevel" resultType="map">
+        select * from s_events_level;
+    </select>
+    <select id="listMemorabiliaByProjectIds" resultType="map">
+        select * from memorabilia m where m.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+    <select id="listRMemorabiliaFileByProjectIds" resultType="map">
+        select rf.* from r_memorabilia_file rf left join memorabilia m on rf.memorabilia_id = m.id where m.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
+    </select>
+    <select id="listRMemorabiliaUserProject" resultType="map">
+        select rm.* from r_memorabilia_user_project rm left join memorabilia m on rm.events_id = m.id where m.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+    <select id="listEventsCriticleByProjectIds" resultType="map">
+        select ec.* from events_criticle ec left join memorabilia m on ec.events_id = m.id where m.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
+    </select>
+    <select id="listEventsCriticleFileByProjectIds" resultType="map">
+        select rf.* from r_eventscriticle_file rf
+            left join events_criticle c2 on rf.criticle_id = c2.id
+            left join memorabilia m on c2.events_id = m.id
+            where m.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
+    </select>
+    
+    <!-- 项目论坛 -->
+    <select id="listReportQuestionByProjectIds" resultType="map">
+        select * from report_question rq where rq.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
+    </select>
+    <select id="listSQuestionPriority" resultType="map">
+        select * from s_question_priority;
+    </select>
+    <select id="listSQuestionStatus" resultType="map">
+        select * from s_question_status;
+    </select>
+    <select id="listSQuestionType" resultType="map">
+        select * from s_question_type;
+    </select>
+    <select id="listRQuestionFileByProjectIds" resultType="map">
+        select rqf.* from r_question_file rqf
+            left join report_question q on rqf.question_id = q.id
+            where q.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+
+    <!-- 项目问题 -->
+    <select id="listQuestionPageEntityColumn" resultType="map">
+        select pec.*, pdc.column_name as `column` from page_entity_column pec left join page_defined_column pdc on pec.column_id = pdc.column_id where pec.entity_id = 2 and pec.is_use_column = 1 order by pec.column_id;
+    </select>
+    <select id="listQuestionByProjectIds" resultType="map">
+        select * from question q where q.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
+    </select>
+    <select id="listRQuestionManagFileByProjectIds" resultType="map">
+        select r.* from r_question_manage_file r left join question q on r.question_uid = q.question_uid where q.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
+    </select>
+    <select id="listSQuestionCategory" resultType="map">
+        select * from s_question_category;
+    </select>
+    <select id="listSQuestionEvaluationLevel" resultType="map">
+        select * from s_question_evaluation_level;
+    </select>
+    <select id="listSQuestionManageStatus" resultType="map">
+        select * from s_question_manage_status;
+    </select>
+    <select id="listWorkflowTaskQuestionByProjectIds" resultType="map">
+        select * from workflow_task_question wq left join question q on wq.question_uid = q.question_uid
+        where q.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
+    </select>
+    <select id="listWorkflowTaskWithinQuestionByProjectIds" resultType="map">
+        select * from workflow_task wt where wt.uid in (select wq.task_uid from workflow_task_question wq left join question q on wq.question_uid = q.question_uid where q.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>);
+    </select>
+    <select id="listWorkflowHistoryWithinQuestionByProjectIds" resultType="map">
+        select * from workflow_history wh where wh.task_uid in (select wq.task_uid from workflow_task_question wq left join question q on wq.question_uid = q.question_uid where q.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>);
+    </select>
+    <select id="listWorkflowHistoryFileWithinQuestionByProjectIds" resultType="map">
+        select * from r_workflow_history_file rwhf left join workflow_history wh on rwhf.history_id = wh.id where wh.task_uid in (
+        select wq.task_uid from workflow_task_question wq left join question q on wq.question_uid = q.question_uid where q.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+        );
+    </select>
+
+    <!-- 项目风险 -->
+    <select id="listProjectRiskPageEntityColumn" resultType="map">
+        select pec.*, pdc.column_name as `column` from page_entity_column pec left join page_defined_column pdc on pec.column_id = pdc.column_id where pec.entity_id = 11 and pec.is_use_column = 1 order by pec.column_id;
+    </select>
+    <select id="listProjectRiskByProjectIds" resultType="map">
+        select * from project_risk pr where pr.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
+    </select>
+    <select id="listRProjectRiskFileByProjectIds" resultType="map">
+        select * from r_project_risk_file rf where rf.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
+    </select>
+    <select id="listSRiskStatus" resultType="map">
+        select * from s_risk_status;
+    </select>
+    <select id="listSRiskCategory" resultType="map">
+        select * from s_risk_category;
+    </select>
+    <select id="listSRiskDisposeStatus" resultType="map">
+        select * from s_risk_dispose_status;
+    </select>
+    <select id="listSRiskDisposeMethod" resultType="map">
+        select * from s_risk_dispose_method;
+    </select>
+    <select id="listWorkflowTaskProjectRiskByProjectIds" resultType="map">
+        select * from workflow_task_project_risk pr where pr.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+    </select>
+    <select id="listWorkflowWithinProjectRiskByProjectIds" resultType="map">
+        select * from workflow_task wt where wt.uid in (select pr.task_uid from workflow_task_project_risk pr where pr.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>);
+    </select>
+    <select id="listWorkflowHistoryWithinProjectRiskByProjectIds" resultType="map">
+        select * from workflow_history wh where wh.task_uid in (select pr.task_uid from workflow_task_project_risk pr where pr.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>);
+    </select>
+    <select id="listWorkflowHistoryFileWithInProjectRiskByProjectIds" resultType="map">
+        select rwhf.* from r_workflow_history_file rwhf left join workflow_history wh on rwhf.history_id = wh.id
+            where wh.task_uid in (select pr.task_uid from workflow_task_project_risk pr where pr.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>);
+    </select>
+
 </mapper>

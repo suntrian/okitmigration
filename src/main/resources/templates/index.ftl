@@ -2,23 +2,7 @@
 <head>
     <#assign basepath="${request.getContextPath()}">
     <title>使用说明</title>
-    <style>
-        .wrap {
-            margin: 0 auto;
-            width: 800px;
-            height: 768px;
-        }
-        h1, h2, h3, h4, h5 {
-            text-align: center;
-        }
-
-        .clear {
-            height: 20px;
-        }
-        .next {
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="${basepath}/css/my.css">
 </head>
 <body>
     <div class="wrap">
@@ -28,8 +12,20 @@
                 使用说明
             </h1>
             <div>
-                <span>1.</span><span>本工具</span>
+                <ol>
+                    <li>本工具用于实施oKit系统数据迁移，迁移工作包括三部分</li>
+                    <ul>
+                        <li>svn配置库迁移</li>
+                        <li>文件迁移</li>
+                        <li>数据库数据迁移</li>
+                    </ul>
+                    <li>实施数据库迁移前，需先完成svn配置库的迁移和文件的迁移</li>
+                    <li>svn配置库迁移方法： 将源系统安装目录下svn/data目录下的所有文件夹及文件拷贝到迁移的目标系统相应目录下，目标目录下不得存在同名目录</li>
+                    <li>文件迁移方法： 将源系统上传目录upload目录下的所有文件夹及文件拷贝到目标系统相应目录下，若目标目录下存在同名目录则合并</li>
+                    <li>数据库数据迁移，请点击<a href="${basepath}/step3">下一步</a></li>
+                </ol>
             </div>
+
         </div>
         <div class="clear"></div>
         <div class="next">
