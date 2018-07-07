@@ -123,7 +123,8 @@
         plugins: ["wholerow", "checkbox"]
     });
     function addUser() {
-        var src_userid = $("#src_user").jstree(true).get_checked()[0];
+        var srcJstree = $("#src_user").jstree(true);
+        var src_userid = srcJstree.get_checked()[0];
         $.ajax({
             url: "${basepath}/user",
             type: "POST",
@@ -131,15 +132,25 @@
                 id: src_userid
             },
             success: function (result) {
-                
+                srcJstree.hide_node(srcJstree.get_checked());
+                //var success = srcJstree.delete_node(srcJstree.get_checked());
             }
         })
     }
     function save() {
         $.ajax({
-            url: "${basepath}/user/map/save",
+            url: "${basepath}/user/map/check",
             success: function (result) {
-                window.location.href = "${basepath}/step5";
+                if (!result.success ){
+                    alert("还有人员未能匹配");
+                } else {
+                    $.ajax({
+                        url: "${basepath}/user/map/save",
+                        success: function (result) {
+                            window.location.href = "${basepath}/step5";
+                        }
+                    });
+                }
             }
         })
     }

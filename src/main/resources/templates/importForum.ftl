@@ -69,6 +69,9 @@
             success: function (result) {
                 alert("项目论坛导入成功");
                 $("#a").html("下一步");
+            },
+            error: function (result) {
+                alert("项目论坛导入失败：" + JSON.stringify(result));
             }
         })
     }

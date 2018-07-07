@@ -116,6 +116,9 @@
             success: function (result) {
                 alert("测试数据导入成功");
                 $("#a").html("下一步");
+            },
+            error: function (result) {
+                alert("测试数据导入失败" + JSON.stringify(result));
             }
         })
     }

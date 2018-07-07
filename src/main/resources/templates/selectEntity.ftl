@@ -56,7 +56,7 @@
                     "Content-Type": "application/json; charset=UTF-8"
                 },
                 success: function (result) {
-                    window.location.href = "${basepath}/next"
+                    window.location.href = "${basepath}/step8"
                 }
             })
         }

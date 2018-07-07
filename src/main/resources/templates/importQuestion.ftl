@@ -77,6 +77,9 @@
             success: function (result) {
                 alert("项目问题导入成功");
                 $("#a").html("下一步");
+            },
+            error: function (result) {
+                alert("项目问题导入失败:" + JSON.stringify(result));
             }
         })
     }

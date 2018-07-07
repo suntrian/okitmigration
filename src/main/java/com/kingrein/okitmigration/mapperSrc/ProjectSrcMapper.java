@@ -9,6 +9,7 @@ public interface ProjectSrcMapper {
 
     @MapKey("id")
     Map<Integer,Map<String, Object>> listProject();
+    Map<String, Object> getProject(Integer id);
 
     @MapKey("id")
     Map<Integer, Map<String, Object>> listProjectByIds(List<Integer> ids);
@@ -26,6 +27,8 @@ public interface ProjectSrcMapper {
     List<Map<String, Object>> listProjectLevel();
     List<Map<String, Object>> listProjectImportance();
     List<Map<String, Object>> listProjectStage();
+    @MapKey("column_id")
+    Map<Integer, Map<String, Object>> listPageEntityColumnsByColumnIds(Map<String, Object> params);
 
     /**
      * 产品IDKey
@@ -90,6 +93,7 @@ public interface ProjectSrcMapper {
 
     List<Map<String, Object>> listFormatDocByProjectIds(List<Integer> ids);
     List<Map<String, Object>> listFormatDocFloderByProjectIds(List<Integer> ids);
+    List<Map<String, Object>> listFormatDocWorkflowByProjectIds(List<Integer> ids);
     List<Map<String, Object>> listFormatEditionByProjectIds(List<Integer> ids);
     List<Map<String, Object>> listFormatSectionByProjectIds(List<Integer> ids);
     List<Map<String, Object>> listFormatItemEditionByProjectIds(List<Integer> ids);
@@ -141,6 +145,7 @@ public interface ProjectSrcMapper {
     List<Map<String, Object>> listSTaskSatisfaction();
     List<Map<String, Object>> listSTaskImportant();
     List<Map<String, Object>> listSTaskCategory();
+    List<Map<String, Object>> listTaskPageEntityColumn();
     List<Map<String, Object>> listPlanByProjectIds(List<Integer> ids);
     List<Map<String, Object>> listTaskByProjectIds(List<Integer> ids);
     List<Map<String, Object>> listRTaskFileByProjectIds(List<Integer> ids);

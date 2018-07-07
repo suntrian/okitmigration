@@ -8,9 +8,9 @@ spring:
     request-context-attribute: request
   datasource:
     src:
-      jdbc-url: jdbc:mysql://127.0.0.1:3318/pms?useSSL=false
+      jdbc-url: jdbc:mysql://192.168.31.6:3306/pms?useSSL=false
       username: root
-      password: 123456
+      password: abc123
       type: com.alibaba.druid.pool.DruidDataSource
       driver-class-name: com.mysql.jdbc.Driver
       mapperLocation: classpath*:com.kingrein.okitmigration.mapperSrc/*.xml
@@ -28,7 +28,7 @@ spring:
       poolPreparedStatements: true
       maxOpenPreparedStatements: 20
     dest:
-      jdbc-url: jdbc:mysql://127.0.0.1:3306/pms?useSSL=false
+      jdbc-url: jdbc:mysql://127.0.0.1:3318/pms_dest?useSSL=false
       username: root
       password: 123456
       type: com.alibaba.druid.pool.DruidDataSource
@@ -63,9 +63,12 @@ spring:
     forumMapFile: forummap.txt
     riskMapFile: riskmap.txt
     questionMapFile: questionmap.txt
+    workflowMapFile: workflowmap.txt
 logging:
   level:
     com.kingrein.okitmigration: debug
   path: D:/temp
   pattern:
     console: "%d{HH:mm:ss.SSS} [%t] %-5level %class{36} %L %M - %msg%xEx%n"
+  file:
+    max-size: 100MB

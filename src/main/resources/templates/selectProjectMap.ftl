@@ -11,6 +11,10 @@
 <div class="wrap">
     <div>
         <h2>选择项目映射关系</h2>
+        <li>先选择上级项目的映射关系，再选择子项目的映射关系</li>
+        <li>当无法找到对应的项目时，可选中源项目，再点击【添加项目】</li>
+        <li>当添加项目时，有可能因项目标准字段配置不同等原因导致失败，请在oKit系统中手动添加项目</li>
+        <li>即使项目添加成功，因项目标准字段配置及页面配置不同的原因，项目的标准属性配置与页面数据可能与源系统项目不同，需在oKit系统中手动修改</li>
     </div>
     <div class="fixwidth">
         <div id="project_src_tree" class="scroll_y "></div>
@@ -23,6 +27,9 @@
     </div>
     <div class="clear"></div>
     <div class="bottom">
+        <div class="left">
+            <a href="javascript:void(0);" onclick="addProject()">添加项目</a>
+        </div>
         <div class="right">
                 <a href="javascript:void(0);" onclick="save()">下一步</a>
         </div>
@@ -85,6 +92,10 @@
                 'url': "${basepath}/project/selected"
             }
         },
+        "checkbox" :{
+            "three_state": false,
+            "cascade": ""
+        },
         'plugins': ["wholerow", "checkbox"]
     });
 
@@ -94,6 +105,10 @@
                 'url': "${basepath}/project/dest"
             }
         },
+        "checkbox": {
+            "three_state": false,
+            "cascade": ""
+        },
         'plugins': ["search", "wholerow", "checkbox"]
     });
     function save() {
@@ -101,6 +116,21 @@
             url: "${basepath}/project/map/save",
             success: function (result) {
                 window.location.href = "${basepath}/step7"
+            }
+        })
+    }
+    function addProject() {
+        $.ajax({
+            url: "${basepath}/project/",
+            type: "POST",
+            data: {
+                id: $("#project_src_tree").jstree(true).get_selected()[0]
+            },
+            success: function (result) {
+                $("#project_dest_tree").jstree(true).refresh();
+            },
+            error: function (result) {
+                alert("添加项目失败， 请检查项目类型，状态等系统标准是否一致");
             }
         })
     }

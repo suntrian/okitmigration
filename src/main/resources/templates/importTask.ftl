@@ -94,8 +94,15 @@
             url: "${basepath}/project/task/doimport",
             async: false,
             success: function (result) {
+                if (!result.success){
+                    alert("计划任务导入失败，失败原因："result.data);
+                    return;
+                }
                 alert("计划任务导入成功");
                 $("#a").html("下一步");
+            },
+            error: function (result) {
+                alert("计划任务导入失败：" + JSON.stringify(result));
             }
         })
     }

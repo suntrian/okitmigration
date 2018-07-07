@@ -49,5 +49,5 @@ public interface UserService {
 
     void setUserMap(Map<Integer, Integer> userMap);
 
-    Integer addUserBySrcUserId(Integer id) throws IOException;
+    Integer addUserBySrcUserId(Integer id) throws Exception;
 }

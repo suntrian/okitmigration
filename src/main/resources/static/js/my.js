@@ -2,9 +2,13 @@ var achieveData = function(url, div, prop_id, prop_name) {
     var parsetTreeView = function(list, div, prop_id, prop_name) {
         var nodes = [];
         for (var sn = 0, len = list.length; sn < len; sn++) {
+            var id = list[sn][prop_id];
+            if (id.length>16) {
+               id = id.substr(0,6);
+            }
             nodes.push({
                 id: list[sn][prop_id],
-                text: '[' + list[sn][prop_id] + ']' + list[sn][prop_name]
+                text: '[' + id + ']' + list[sn][prop_name]
             })
         }
 

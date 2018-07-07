@@ -49,7 +49,7 @@
 <script>
     var projectTree = $('#project_tree');
     projectTree.on("select_node.jstree", function (evnet, node) {
-        console.log(node);
+
     });
 
     projectTree.on('check_node.jstree', function(event, obj) {

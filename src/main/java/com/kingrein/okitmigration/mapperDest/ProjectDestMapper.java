@@ -1,6 +1,7 @@
 package com.kingrein.okitmigration.mapperDest;
 
 import org.apache.ibatis.annotations.MapKey;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,6 +26,8 @@ public interface ProjectDestMapper {
     List<Map<String, Object>> listProjectLevel();
     List<Map<String, Object>> listProjectImportance();
     List<Map<String, Object>> listProjectStage();
+    @MapKey("column_id")
+    Map<Integer, Map<String, Object>> listPageEntityColumnsByColumnIds(Map<String, Object> params);
 
     Integer addProject(Map<String, Object> project);
     Integer addProjectPerson(Map<String, Object> projectPerson);
@@ -72,6 +75,7 @@ public interface ProjectDestMapper {
     List<Map<String, Object>> listFormatChangedManner();
     Integer addFormatDoc(Map<String, Object> formatDoc);
     Integer addFormatDocFloder(Map<String, Object> item);
+    Integer addFormatDocWorkflow(Map<String, Object> item);
     Integer addFormatEdition(Map<String, Object> item);
     Integer addFormatSection(Map<String, Object> item);
     Integer addFormatItemEdition(Map<String, Object> item);
@@ -122,7 +126,7 @@ public interface ProjectDestMapper {
     @MapKey("project_id")
     Map<Integer, Map<String, Object>> listRootTaskByProjectIds(List<Integer> ids);
     Integer addPlan(Map<String, Object> item);
-    Integer addTask(Map<String, Object> item);
+    Integer addTask(Map<String, Object> item) throws DataAccessException;
     Integer addTaskLog(Map<String, Object> item);
     Integer addTaskHistory(Map<String, Object> item);
     Integer addTaskAssignment(Map<String, Object> item);
@@ -156,6 +160,7 @@ public interface ProjectDestMapper {
     List<Map<String, Object>> listSQuestionEvaluationLevel();
     Integer addQuestion(Map<String, Object> item);
     Integer addRQuestionManageFile(Map<String, Object> item);
+    Integer addWorkflowTaskQuestion(Map<String, Object> item);
 
     //项目风险
     List<Map<String, Object>> listProjectRiskPageEntityColumn();
@@ -165,4 +170,5 @@ public interface ProjectDestMapper {
     List<Map<String, Object>> listSRiskStatus();
     Integer addProjectRisk(Map<String, Object> item);
     Integer addRProjectRiskFile(Map<String, Object> item);
+    Integer addWorkflowTaskRisk(Map<String, Object> item);
 }

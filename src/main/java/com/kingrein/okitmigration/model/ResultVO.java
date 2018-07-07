@@ -11,6 +11,10 @@ public class ResultVO {
     public ResultVO(Object data) {
         this.data = data;
     }
+    public ResultVO(Object data,Boolean success) {
+        this.data = data;
+        this.success = success;
+    }
 
     public Object getData() {
         return data;

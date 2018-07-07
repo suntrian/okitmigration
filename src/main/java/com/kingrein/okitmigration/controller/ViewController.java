@@ -93,19 +93,12 @@ public class ViewController {
         return modelAndView;
     }
 
-    @RequestMapping(value = {"/step8","configuration"})
-    public ModelAndView selectColumnMap(ModelAndView modelAndView){
-        modelAndView.setViewName("importSvn");
-        //todo
+    @RequestMapping("/step8")
+    public ModelAndView selectWorkflow(ModelAndView modelAndView) {
+        modelAndView.setViewName("selectWorkflow");
         return modelAndView;
     }
 
-    @RequestMapping(value = {"/step9","/ticket"})
-    public ModelAndView chooseStandardData(ModelAndView modelAndView) {
-        modelAndView.setViewName("importTicket");
-        //modelAndView.addObject("ticket", projectService.dealWithTicketStandard());
-        return modelAndView;
-    }
 
     @RequestMapping(value = "/next")
     public ModelAndView next(@RequestParam(value = "flag", required = false, defaultValue = "true") Boolean flag, ModelAndView modelAndView) {
@@ -126,6 +119,18 @@ public class ViewController {
         return modelAndView;
     }
 
+    @RequestMapping(value = {"svn"})
+    public ModelAndView svn(ModelAndView modelAndView){
+        modelAndView.setViewName("importSvn");
+        return modelAndView;
+    }
+
+    @RequestMapping(value = {"/ticket"})
+    public ModelAndView chooseStandardData(ModelAndView modelAndView) {
+        modelAndView.setViewName("importTicket");
+        //modelAndView.addObject("ticket", projectService.dealWithTicketStandard());
+        return modelAndView;
+    }
     @RequestMapping(value = "/test")
     public ModelAndView test(ModelAndView modelAndView) {
         modelAndView.setViewName("importTest");

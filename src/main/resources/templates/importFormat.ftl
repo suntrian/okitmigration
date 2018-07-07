@@ -140,6 +140,9 @@
             success: function (result) {
                 alert("需求导入成功");
                 $("#a").html("下一步");
+            },
+            error: function (result) {
+                alert("需求导入失败：" + JSON.stringify(result));
             }
         })
     }

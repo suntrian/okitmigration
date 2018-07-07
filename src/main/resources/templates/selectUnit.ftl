@@ -92,35 +92,7 @@
             if (nd != node.node.id)
                 sjt.uncheck_node(nd);
         });
-        $.ajax({
-            url: "${basepath}/unit/dest/mapped",
-            data: {
-                id: node.node.parent==="#"?null:node.node.parent,
-                selfid: node.node.id
-            },
-            success: function (data) {
-                destUnitTree.jstree(true).deselect_all();
-                var units = [];
-                var selectedNode;
-                for (var sn = 0, len = data.length; sn < len; sn++){
-                    var node = {};
-                    node.id = data[sn].id;
-                    node.text = data[sn].name + '【' + (data[sn].type==1?((data[sn].category_id==1?"内部":"外部") + "单位"):"部门")+ '】' + (data[sn].is_deleted?"<span class='deleted'>已删除</span>":"");
-                    if (data[sn].selected){
-                        selectedNode = node.id;
-                        if (!node.state) {node.state = {}}
-                        node.state.selected = true;
-                        node.state.checked = true;
-                    }
-                    units.push(node);
-                };
-                destUnitTree.jstree(true).settings.core.data = units;
-                if (selectedNode) {
-                    destUnitTree.jstree(true).select_node(selectedNode)
-                }
-                destUnitTree.jstree(true).refresh();
-            }
-        })
+        refreshDestUnitTree(node.node);
     });
     srcUnitTree.on("check_node.jstree", function (event, node) {
         console.log(node);
@@ -139,7 +111,8 @@
         'plugins': ['search', 'wholerow', "checkbox"]
     });
     function addUnit() {
-        var srcUnitId = srcUnitTree.jstree(true).get_checked()[0];
+        var srcJsTree = srcUnitTree.jstree(true);
+        var srcUnitId = srcJsTree.get_checked()[0];
         $.ajax({
             url: "${basepath}/unit",
             type: "POST",
@@ -149,18 +122,61 @@
             success: function (result) {
                 if (result.success == true || result.data === "succeed"){
                     alert("添加单位成功");
+                    refreshDestUnitTree(srcJsTree.get_node(srcUnitId));
                 }
             }
         })
     }
     function save() {
         $.ajax({
-            url:"${basepath}/unit/map/save",
+            url: "${basepath}/unit/map/check",
             success: function (result) {
-                window.location.href = "${basepath}/step4";
+                if (!result.success) {
+                    alert("还有单位/部门未能匹配");
+                } else {
+                    $.ajax({
+                        url:"${basepath}/unit/map/save",
+                        success: function (result) {
+                            window.location.href = "${basepath}/step4";
+                        }
+                    })
+                }
             }
-        })
+        });
     }
+
+    function refreshDestUnitTree(node) {
+        $.ajax({
+            url: "${basepath}/unit/dest/mapped",
+            data: {
+                id: node.parent==="#"?null:node.parent,
+                selfid: node.id
+            },
+            success: function (data) {
+                destUnitTree.jstree(true).deselect_all();
+                var units = [];
+                var selectedNode;
+                for (var sn = 0, len = data.length; sn < len; sn++){
+                    var nodes = {};
+                    nodes.id = data[sn].id;
+                    nodes.text = data[sn].name + '【' + (data[sn].type==1?((data[sn].category_id==1?"内部":"外部") + "单位"):"部门")+ '】' + (data[sn].is_deleted?"<span class='deleted'>已删除</span>":"");
+                    if (data[sn].selected){
+                        selectedNode = nodes.id;
+                        if (!nodes.state) {nodes.state = {}}
+                        nodes.state.selected = true;
+                        nodes.state.checked = true;
+                    }
+                    units.push(nodes);
+                };
+                destUnitTree.jstree(true).settings.core.data = units;
+                if (selectedNode) {
+                    destUnitTree.jstree(true).select_node(selectedNode)
+                }
+                destUnitTree.jstree(true).refresh();
+            }
+        });
+    }
+
 </script>
 </body>
 </html>

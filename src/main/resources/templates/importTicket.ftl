@@ -122,6 +122,7 @@
     function doImport() {
         if ($("#a").html() == "下一步") {
             window.location.href = "${basepath}/next";
+            return;
         }
         $.ajax({
             url: "${basepath}/project/ticket/doimport",
@@ -129,6 +130,9 @@
             success: function (result) {
                 alert("缺陷导入成功");
                 $("#a").html("下一步");
+            },
+            error: function (result) {
+                alert("缺陷导入失败:" + JSON.stringify(result));
             }
         })
     }

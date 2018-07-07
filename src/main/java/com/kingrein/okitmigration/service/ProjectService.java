@@ -18,6 +18,8 @@ public interface ProjectService {
 
     List<TreeNode<Map<String, Object>>> listSrcProjectTree();
 
+    Map<Integer,Map<String, Object>> listPageEntityColumnsByEntityColumnIds(List<Integer> columnIds, Integer entityId, String srcOrDest);
+
     List<TreeNode<Map<String, Object>>> listDestProjectTree();
 
     List<Map<String, Object>> listSvnNode();
@@ -62,7 +64,10 @@ public interface ProjectService {
 
     List<Map<String, Object>> listQuestionColumns(String srcOrDest);
 
-    void addDestProject(Map<String, Object> project);
+    List<Map<String, Object>> listWorkflow(String srcOrDest);
+
+    void addDestProject(Map<String, Object> project) throws Exception;
+    void addDestProject(Integer srcProjectId) throws Exception;
 
     @Transactional
     void importProject(List<Integer> projectIds);

@@ -7,6 +7,10 @@
         SELECT * FROM `project` p WHERE p.is_deleted = 0;
     </select>
 
+    <select id="getProject" resultType="map" parameterType="int">
+        select * from project where id = #{id};
+    </select>
+
     <select id="listProjectPerson" resultType="map">
         SELECT * FROM project_person pp WHERE pp.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
     </select>
@@ -43,6 +47,12 @@
         SELECT * FROM workflow_task;
     </select>
 
+    <select id="listPageEntityColumnsByColumnIds" parameterType="map" resultType="map">
+        select pec.*, pdc.column_name as `column` from page_entity_column pec left join page_defined_column pdc on pec.column_id = pdc.column_id
+            where pec.entity_id = #{entity_id}
+              and pec.column_id in <foreach collection="list" separator="," item="id" close=")" open="(">#{id}</foreach>
+    </select>
+    
     <select id="listProjectByIds" resultType="map">
         SELECT * FROM `project` p WHERE p.id IN <foreach collection="list" open="(" close=")" item="id" separator=",">#{id}</foreach>
     </select>
@@ -92,7 +102,11 @@
     </select>
     
     <select id="listTicketPageEntityColumm" resultType="map">
-       SELECT pec.*, pdc.column_name AS `column` FROM page_entity_column pec LEFT JOIN page_defined_column pdc ON pec.column_id = pdc.column_id WHERE pec.entity_id = 10 AND pec.is_use_column = 1 ORDER by pec.column_id;
+        select pec.*, pdc.column_name as `column` from page_entity_column pec
+            left join page_defined_column pdc on pec.column_id = pdc.column_id
+                where pec.entity_id = 10 and pec.is_use_column = 1
+                  and (pec.pojo_name like '%Column%' or pec.pojo_name like '%Single%' or pec.pojo_name like '%Multiple%')
+                order by pec.column_id;
     </select>
 
     <select id="listAllFile" resultType="map">
@@ -172,8 +186,11 @@
 
     <!-- 需求导入开始 -->
     <select id="listFormatPageEntityColumn" resultType="map">
-        select pec.*, pdc.column_name as `column` from page_entity_column pec left join page_defined_column pdc on pec.column_id = pdc.column_id where pec.entity_id = 1 and pec.is_use_column = 1 order by pec.column_id;
-    </select>
+        select pec.*, pdc.column_name as `column` from page_entity_column pec
+            left join page_defined_column pdc on pec.column_id = pdc.column_id
+                where pec.entity_id = 1 and pec.is_use_column = 1
+                  and (pec.pojo_name like '%Column%' or pec.pojo_name like '%Single%' or pec.pojo_name like '%Multiple%')
+                order by pec.column_id;    </select>
     <select id="listFormatItemStatus" resultType="map">
         SELECT * FROM s_format_item_status;
     </select>
@@ -211,6 +228,10 @@
     <select id="listFormatDocFloderByProjectIds" resultType="map">
         SELECT * FROM format_doc_floder f WHERE f.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
     </select>
+    <select id="listFormatDocWorkflowByProjectIds" resultType="map">
+        select rfdw.* from r_format_doc_workflow rfdw left join format_doc f on rfdw.doc_uid = f.uid where f.project_id IN
+            <foreach collection="list" open="(" close=")" item="id" separator="," >#{id}</foreach>
+    </select>
     <select id="listFormatEditionByProjectIds" resultType="map">
         SELECT * FROM format_edition fe WHERE fe.project_id IN <foreach collection="list" close=")" open="(" separator="," item="id">#{id}</foreach>
     </select>
@@ -218,7 +239,9 @@
         SELECT fs.* FROM format_section fs left join format_doc fd on fs.doc_uid = fd.uid WHERE fd.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
     </select>
     <select id="listFormatItemEditionByProjectIds" resultType="map">
-        SELECT * FROM format_item_edition fie WHERE fie.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+        SELECT * FROM format_item_edition fie left join format_doc fd on fie.doc_uid = fd.uid
+            WHERE fie.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+              or fd.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
     </select>
     <select id="listFormatItemChangedRecordByProjectIds" resultType="map">
         SELECT f.* FROM format_item_changed_record f LEFT JOIN format_doc f2 on f.doc_uid = f2.uid WHERE f2.project_id IN
@@ -274,8 +297,11 @@
               AND f2.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
     </select>
     <select id="listRFormtSectionItemByProjectIds" resultType="map">
-        SELECT rfsi.* FROM r_format_section_item rfsi LEFT JOIN format_item_edition fie ON rfsi.item_uid = fie.uid WHERE fie.project_id IN
-            <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+        SELECT rfsi.* FROM r_format_section_item rfsi
+            LEFT JOIN format_item_edition fie ON rfsi.item_uid = fie.uid
+            LEFT JOIN format_doc fd on fie.doc_uid = fd.uid
+                WHERE fie.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+                    OR fd.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
     </select>
     <select id="listRUserFormatDocByProjectIds" resultType="map">
         SELECT rufd.* FROM r_user_format_doc rufd LEFT JOIN format_doc f on rufd.format_doc_id = f.uid WHERE f.project_id IN
@@ -401,6 +427,13 @@
     <select id="listPlanByProjectIds" resultType="map">
         select * from plan p where p.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
     </select>
+    <select id="listTaskPageEntityColumn" resultType="map">
+         select pec.*, pdc.column_name as `column` from page_entity_column pec
+            left join page_defined_column pdc on pec.column_id = pdc.column_id
+                where pec.entity_id = 6 and pec.is_use_column = 1
+                  and (pec.pojo_name like '%Column%' or pec.pojo_name like '%Single%' or pec.pojo_name like '%Multiple%')
+                order by pec.column_id;
+    </select>
     <select id="listTaskByProjectIds" resultType="map">
         SELECT * from task t where t.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach> order by t.project_id, t.ID;
     </select>
@@ -492,7 +525,11 @@
 
     <!-- 项目问题 -->
     <select id="listQuestionPageEntityColumn" resultType="map">
-        select pec.*, pdc.column_name as `column` from page_entity_column pec left join page_defined_column pdc on pec.column_id = pdc.column_id where pec.entity_id = 2 and pec.is_use_column = 1 order by pec.column_id;
+        select pec.*, pdc.column_name as `column` from page_entity_column pec
+            left join page_defined_column pdc on pec.column_id = pdc.column_id
+                where pec.entity_id = 2 and pec.is_use_column = 1
+                  and (pec.pojo_name like '%Column%' or pec.pojo_name like '%Single%' or pec.pojo_name like '%Multiple%')
+                order by pec.column_id;
     </select>
     <select id="listQuestionByProjectIds" resultType="map">
         select * from question q where q.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
@@ -527,8 +564,11 @@
 
     <!-- 项目风险 -->
     <select id="listProjectRiskPageEntityColumn" resultType="map">
-        select pec.*, pdc.column_name as `column` from page_entity_column pec left join page_defined_column pdc on pec.column_id = pdc.column_id where pec.entity_id = 11 and pec.is_use_column = 1 order by pec.column_id;
-    </select>
+        select pec.*, pdc.column_name as `column` from page_entity_column pec
+            left join page_defined_column pdc on pec.column_id = pdc.column_id
+                where pec.entity_id = 11 and pec.is_use_column = 1
+                  and (pec.pojo_name like '%Column%' or pec.pojo_name like '%Single%' or pec.pojo_name like '%Multiple%')
+                order by pec.column_id;    </select>
     <select id="listProjectRiskByProjectIds" resultType="map">
         select * from project_risk pr where pr.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
     </select>

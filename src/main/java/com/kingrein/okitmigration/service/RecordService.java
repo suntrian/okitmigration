@@ -64,6 +64,9 @@ public class RecordService {
     @Value("${spring.record.questionMapFile}")
     private String questionMapFile;
 
+    @Value("${spring.record.workflowMapFile}")
+    private String workflowMapFile;
+
     @Autowired
     private UserService userService;
     @Autowired
@@ -199,6 +202,7 @@ public class RecordService {
             Map<String, Object> project = projects.get(id);
             obj.addProperty("id", id);
             obj.addProperty("name", (String) project.get("name"));
+            obj.addProperty("parent", (Integer)project.get("father_id"));
             obj.addProperty("state", "NOT IMPORTED");
             json.add(obj);
             obj = new JsonObject();
@@ -462,6 +466,11 @@ public class RecordService {
         return recordFile.readRecordFileAsJsonObject(questionFilePath);
     }
 
+    public void recordWorkflowMap(Map<String,String> workflowMap) throws IOException {
+        String workflowFilePath = new File(rootDir, workflowMapFile).toString();
+        recordFile.writeRecordFile(workflowFilePath, workflowMap);
+    }
+
     public JsonArray readAsJsonArray(String path) throws IOException {
         return recordFile.readRecordFileAsJsonArray(path);
     }
@@ -474,4 +483,12 @@ public class RecordService {
         recordFile.writeRecordFile(path, object);
     }
 
+    public void clearRecord() {
+        File fileDir = new File(rootDir);
+        File[] subFiles =  fileDir.listFiles();
+        for (File file: subFiles) {
+            file.delete();
+        }
+
+    }
 }

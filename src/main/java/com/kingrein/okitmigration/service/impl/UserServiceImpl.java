@@ -14,12 +14,16 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service("userService")
 public class UserServiceImpl implements UserService {
 
     private Map<Integer, Integer> unitMap = new HashMap<>();
     private Map<Integer, Integer> userMap = new HashMap<>();
+
+    private final String chineseCharactorRegex = "([\u4e00-\u9fa5]+)";
 
     @Resource
     private UserSrcMapper userSrcMapper;
@@ -178,6 +182,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Map<String, Object>>  listDestUserByName(String name) {
+        name = findChineseCharactor(name);
         return userDestMapper.listUserByName(name);
     }
 
@@ -208,6 +213,15 @@ public class UserServiceImpl implements UserService {
         return roots;
     }
 
+    private String findChineseCharactor(String str){
+        String result = "";
+        Matcher matcher = Pattern.compile(chineseCharactorRegex).matcher(str);
+        while (matcher.find()) {
+            result += matcher.group(0);
+        }
+        return result;
+    }
+
     /**
      * 手动增加单位
      * @param id 源数据表单位ID
@@ -230,7 +244,7 @@ public class UserServiceImpl implements UserService {
      */
     @Transactional
     @Override
-    public Integer addUserBySrcUserId(Integer id) throws IOException {
+    public Integer addUserBySrcUserId(Integer id) throws Exception {
         Map<String, Object> srcUser = userSrcMapper.getUser(id);
         Map<String, Object> srcPerson = userSrcMapper.getPerson(id);
         srcPerson.put("unit_id", unitMap.get(srcPerson.get("unit_id")));
@@ -239,8 +253,14 @@ public class UserServiceImpl implements UserService {
         Integer newId = ((Long) srcPerson.get("id")).intValue();
         srcUser.put("id", newId);
         srcUser.put("person_id", newId);
-        this.userMap.put(id, newId);
-        return userDestMapper.addUser(srcUser);
+
+        Integer count2 = userDestMapper.addUser(srcUser);
+        if (count2>0) {
+            this.userMap.put(id, newId);
+        } else {
+            throw new Exception("replicate username");
+        }
+        return count2;
     }
 
     private Integer transformIntergerId(Integer src, Map<Integer, Integer> map){

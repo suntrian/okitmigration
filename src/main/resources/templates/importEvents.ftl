@@ -59,6 +59,9 @@
             success: function (result) {
                 alert("项目日志导入成功");
                 $("#a").html("下一步");
+            },
+            error: function (result) {
+                alert("项目日志导入失败：" + JSON.stringify(result));
             }
         })
     }

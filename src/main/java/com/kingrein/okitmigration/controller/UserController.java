@@ -171,8 +171,25 @@ public class UserController {
     }
 
     @PostMapping(value = "/user")
-    public ResultVO addUser(@RequestParam("id") Integer id) throws IOException {
+    public ResultVO addUser(@RequestParam("id") Integer id) throws Exception {
         userService.addUserBySrcUserId(id);
         return new ResultVO("succeed");
+    }
+
+    @RequestMapping(value = "/user/map/check")
+    public ResultVO checkUserMap() {
+        Map<Integer,Map<String, Object>> srcUserList = userService.listAllSrcUser();
+        if (srcUserList.size() == userService.getUserMap().size()){
+            return new ResultVO("success");
+        }
+        return new ResultVO("failed", false);
+    }
+    @RequestMapping("/unit/map/check")
+    public ResultVO checkUnitMap () {
+        Map<Integer,Map<String, Object>> srcUnitMap = userService.listAllSrcUnit();
+        if (srcUnitMap.size() == userService.getUnitMap().size()) {
+            return new ResultVO("succeed");
+        }
+        return new ResultVO("failed", false);
     }
 }

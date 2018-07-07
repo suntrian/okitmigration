@@ -5,9 +5,11 @@ import com.google.gson.*;
 import com.kingrein.okitmigration.model.ResultVO;
 import com.kingrein.okitmigration.service.ProjectService;
 import com.kingrein.okitmigration.service.RecordService;
+import com.kingrein.okitmigration.service.UserService;
 import com.kingrein.okitmigration.util.TreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -29,6 +31,8 @@ public class ProjectController {
     private ProjectService projectService;
     @Resource
     private RecordService recordService;
+    @Resource
+    private UserService userService;
 
     @PostConstruct
     public void readMapFile() throws IOException {
@@ -46,8 +50,6 @@ public class ProjectController {
             projectService.getProjectMap().put(srcProjectId, destProjectId);
         }
 
-
-
         entities = projectService.getEntities();
         entities.put(1, "项目配置管理");
         entities.put(2, "项目论坛");
@@ -58,6 +60,17 @@ public class ProjectController {
         entities.put(7, "项目测试用例");
         entities.put(8, "项目需求");
         entities.put(9, "项目计划任务");
+    }
+
+    @RequestMapping(value = "/clear")
+    public ResultVO clearRecord() {
+        recordService.clearRecord();
+        userService.setUserMap(new HashMap<>());
+        userService.setUnitMap(new HashMap<>());
+        projectService.setWorkflowMap(new HashMap<>());
+        projectService.setProjectToImport(new ArrayList<>());
+        projectService.setProjectMap(new HashMap<>());
+        return new ResultVO("succeed");
     }
 
     @GetMapping(value = {"","/"})
@@ -84,6 +97,10 @@ public class ProjectController {
         List<Map<String, Object>> results = new ArrayList<Map<String, Object>>(projects.values());
         for (Map<String, Object> r: results) {
             r.put("text", r.get("name"));
+            r.put("parent", r.get("father_id")==null?"#":r.get("father_id"));
+            r.put("state", new HashMap<String, Object>(){{
+                put("opened", true);
+            }});
         };
         return results;
     }
@@ -98,6 +115,12 @@ public class ProjectController {
         return new ResultVO("succeed");
     }
 
+    @PostMapping(value = "/")
+    public ResultVO addProject(@RequestParam Integer id) throws Exception {
+        projectService.addDestProject(id);
+        return new ResultVO("succeed");
+    }
+
     @GetMapping(value = "/selected")
     public List<Map<String , Object>> listProjectSelected() throws IOException {
         JsonArray json = recordService.readProjectList();
@@ -106,6 +129,10 @@ public class ProjectController {
         for (JsonElement obj: json){
             item.put("id", obj.getAsJsonObject().get("id").getAsInt());
             item.put("text", obj.getAsJsonObject().get("name").getAsString());
+            item.put("parent", obj.getAsJsonObject().get("parent")==null?"#":obj.getAsJsonObject().get("parent").getAsInt());
+            item.put("state", new HashMap<String, Boolean>(){{
+                put("opened", true);
+            }});
             result.add(item);
             item = new HashMap<>();
         }
@@ -423,6 +450,23 @@ public class ProjectController {
         return new ResultVO("succeed");
     }
 
+    @GetMapping("/workflow/{source}")
+    public List<Map<String, Object>> listWorkflow(@PathVariable String source) {
+        return projectService.listWorkflow(source);
+    }
+
+    @PostMapping("/workflow")
+    public ResultVO setWorkflowMap(@RequestParam String src, @RequestParam String dest) {
+        projectService.getWorkflowMap().put(src, dest);
+        return new ResultVO("succeed");
+    }
+
+    @RequestMapping("/workflow/save")
+    public ResultVO saveWorkflowMap() throws IOException {
+        recordService.recordWorkflowMap(projectService.getWorkflowMap());
+        return new ResultVO("succeed");
+    }
+
     @RequestMapping("/ticket/doimport")
     public ResultVO doTicketImport() throws IOException {
         List<Integer> projectIds = projectService.getProjectToImport();
@@ -507,7 +551,13 @@ public class ProjectController {
         taskMap.add(    "logtype", gson.toJsonTree(projectService.getTaskLogTypeMap()));
         recordService.recordTaskMap(taskMap);
 
-        projectService.importTask(projectIds);
+        try {
+            projectService.importTask(projectIds);
+        } catch (DataAccessException e){
+            Throwable cause = e.getCause();
+            return new ResultVO(e.getMessage(), false);
+        }
+
         return new ResultVO("succeed");
     }
 
@@ -561,4 +611,6 @@ public class ProjectController {
         projectService.importRisk(projectIds);
         return new ResultVO("succeed");
     }
+
+
 }
