@@ -1372,17 +1372,21 @@ public class ProjectServiceImpl implements ProjectService {
 
     }
 
-    private Integer transformIntergerId(Integer src, Map<Integer, Integer> map){
+    /**
+     * 根据map获取srcid的映射关系
+     * @param src
+     * @param map
+     * @param <T>
+     * @return
+     */
+    private <T> T transformIntergerId(T src, Map<T, T> map){
         return src == null?null: map.get(src)==null?src: map.get(src);
     }
-    private String transformIntergerId(String src, Map<String, String> map) {
-        return src == null?null:map.get(src)==null?src: map.get(src);
-    }
 
-    private Map<String, Map<String, Object>> parseList2Map(List<Map<String, Object>> list, String idKey){
-        Map<String, Map<String, Object>> result = new HashMap<>();
+    private <T> Map<T, Map<String, Object>> parseList2Map(List<Map<String, Object>> list, T idKey){
+        Map<T, Map<String, Object>> result = new HashMap<T, Map<String, Object>>();
         for (Map<String, Object> item: list) {
-            result.put((String) item.get(idKey), item);
+            result.put((T) item.get(idKey), item);
         }
         return result;
     }

@@ -48,6 +48,7 @@
         <div id="srctaskcategory" class="fixwidth"></div>
         <div id="desttaskcategory" class="fixwidth"></div>
     </div>
+    <div class="clear"></div>
     <div class="bottom">
         <div class="right">
             <a id="a" href="javascript:void(0);" onclick="doImport()">开始导入</a>
@@ -95,7 +96,7 @@
             async: false,
             success: function (result) {
                 if (!result.success){
-                    alert("计划任务导入失败，失败原因："result.data);
+                    alert("计划任务导入失败，失败原因：" + result.data);
                     return;
                 }
                 alert("计划任务导入成功");
