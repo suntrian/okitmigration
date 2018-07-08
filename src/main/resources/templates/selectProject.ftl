@@ -16,8 +16,8 @@
         <#macro recurse_tree treenode depth=1>
                 <#assign proj_counter=proj_counter+1 />
                 <li class="jstree-open" id="${treenode.self.id}">
-                    <span>${proj_counter}/${depth}</span>
-                    <span><#if (depth>1)>><#list 2..depth as sp>--</#list></#if>${treenode.self.name}</span>
+                    <#--<span>${proj_counter}/${depth}</span>-->
+                    <span><#--<#if (depth>1)>><#list 2..depth as sp>--</#list></#if>-->${treenode.self.name}[${treenode.self.project_code!}]</span>
                     <span>${treenode.self.project_code!}</span>
                     <#if (treenode.children)??>
                         <ul>

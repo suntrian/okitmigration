@@ -1,18 +1,29 @@
 package com.kingrein.okitmigration.controller;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.kingrein.okitmigration.configuration.ApplicationContextUtil;
 import com.kingrein.okitmigration.model.ResultVO;
 import com.kingrein.okitmigration.service.RecordService;
 import com.kingrein.okitmigration.service.UserService;
 import com.kingrein.okitmigration.util.TreeNode;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionTemplate;
+import org.mybatis.spring.SqlSessionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.sql.DataSource;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +48,37 @@ public class UserController {
         return new HashMap<String, String>(){{
             put("hello","world");
         }};
+    }
+
+    @RequestMapping("/datasource/{source}")
+    public void setDataSource(@PathVariable String source, String url, String username, String password) throws SQLException {
+        String datasource = "destDataSource";
+        if ("src".equals(source)) {
+            datasource = "srcDataSource";
+        }
+        DruidDataSource dataSource = ApplicationContextUtil.getBean(datasource, DruidDataSource.class);
+        dataSource.restart();
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
+        try{
+            dataSource.setConnectionErrorRetryAttempts(3);      //druid bug, can't stop while exceed retryAttemptsTimes;
+            dataSource.setTimeBetweenConnectErrorMillis(60000);
+            Connection conn = dataSource.getConnection();
+            dataSource.validateConnection(conn);
+            dataSource.discardConnection(conn);
+
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
+
+    @RequestMapping("/clearcache")
+    public void clearCache() {
+        SqlSessionFactory src = ApplicationContextUtil.getBean("srcSqlSessionFactory", SqlSessionFactory.class);
+        SqlSessionFactory dest = ApplicationContextUtil.getBean("destSqlSessionFactory", SqlSessionFactory.class);
+        SqlSessionUtils.getSqlSession(src).clearCache();
+        SqlSessionUtils.getSqlSession(dest).clearCache();
     }
 
     @PostConstruct

@@ -4,6 +4,7 @@ import com.kingrein.okitmigration.service.ProjectService;
 import com.kingrein.okitmigration.service.UserService;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,6 +25,20 @@ import java.util.Map;
 public class ViewController {
 
     private Integer currentStep = 1;
+
+    @Value("${spring.datasource.src.url}")
+    private String srcUrl;
+    @Value("${spring.datasource.src.username}")
+    private String srcUsername;
+    @Value("${spring.datasource.src.password}")
+    private String srcPassword;
+
+    @Value("${spring.datasource.dest.url}")
+    private String destUrl;
+    @Value("${spring.datasource.dest.username}")
+    private String destUsername;
+    @Value("${spring.datasource.dest.password}")
+    private String destPassword;
 
     @Autowired
     private ProjectService projectService;
@@ -58,6 +73,18 @@ public class ViewController {
     @RequestMapping(value = "/step2")
     public ModelAndView setDatasource(ModelAndView modelAndView) {
         modelAndView.setViewName("datasource");
+        Map<String, Map<String, String>> datasource = new HashMap<>();
+        datasource.put("src", new HashMap<String, String>(){{
+            put("url", srcUrl);
+            put("username", srcUsername);
+            put("password", srcPassword);
+        }});
+        datasource.put("dest", new HashMap<String, String>(){{
+            put("url", destUrl);
+            put("username", destUsername);
+            put("password", destPassword);
+        }});
+        modelAndView.addObject("datasource",datasource);
         return modelAndView;
     }
 

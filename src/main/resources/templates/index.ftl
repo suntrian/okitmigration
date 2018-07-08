@@ -48,11 +48,11 @@
             $.ajax({
                 url: "${basepath}/project/clear",
                 success: function (result) {
-                    window.location.href = "${basepath}/step3";
+                    window.location.href = "${basepath}/step2";
                 }
             })
         } else {
-            window.location.href = "${basepath}/step3";
+            window.location.href = "${basepath}/step2";
         }
 
     }

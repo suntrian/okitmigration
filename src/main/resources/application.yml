@@ -9,7 +9,7 @@ spring:
   datasource:
     src:
       jdbc-url: jdbc:mysql://192.168.31.6:3306/pms?useSSL=false
-      url: jdbc:mysql://192.168.31.6:3306/pms?useSSL=false
+      url: ${spring.datasource.src.jdbc-url}
       username: root
       password: abc123
       type: com.alibaba.druid.pool.DruidDataSource
@@ -30,7 +30,7 @@ spring:
       maxOpenPreparedStatements: 20
     dest:
       jdbc-url: jdbc:mysql://127.0.0.1:3318/pms_dest?useSSL=false
-      url: jdbc:mysql://127.0.0.1:3318/pms_dest?useSSL=false
+      url: ${spring.datasource.dest.jdbc-url}
       username: root
       password: 123456
       type: com.alibaba.druid.pool.DruidDataSource
