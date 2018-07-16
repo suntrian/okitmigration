@@ -492,7 +492,7 @@
         select rf.* from r_memorabilia_file rf left join memorabilia m on rf.memorabilia_id = m.id where m.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
     </select>
     <select id="listRMemorabiliaUserProject" resultType="map">
-        select rm.* from r_memorabilia_user_project rm left join memorabilia m on rm.events_id = m.id where m.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
+        select rm.* from r_memorabilia_user_project rm left join memorabilia m on rm.events_id = m.id where rm.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
     </select>
     <select id="listEventsCriticleByProjectIds" resultType="map">
         select ec.* from events_criticle ec left join memorabilia m on ec.events_id = m.id where m.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;

@@ -114,6 +114,7 @@
     function save() {
         $.ajax({
             url: "${basepath}/project/map/save",
+            async: false,
             success: function (result) {
                 window.location.href = "${basepath}/step7"
             }

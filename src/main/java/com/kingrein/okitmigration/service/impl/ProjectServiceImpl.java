@@ -1158,6 +1158,9 @@ public class ProjectServiceImpl implements ProjectService {
             item.put("user_id", transformIntergerId((Integer)item.get("user_id"), userMap));
             item.put("type_id", transformIntergerId((Integer)item.get("type_id"), eventsTypeMap));
             item.put("level_id", transformIntergerId((Integer)item.get("level_id"), eventsLevelMap));
+            //todo: 项目日志关联里程碑，现在为直接置空
+            item.put("relevance_milestone_uid", null);
+
             Integer count = projectDestMapper.addMemorabilia(item);
             if (count == 0) continue;
             Integer newId = (Integer) item.get("id");
@@ -1165,6 +1168,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
         List<Map<String, Object>> rMemorabiliaFiles = projectSrcMapper.listRMemorabiliaFileByProjectIds(projectIds);
         for (Map<String, Object> item: rMemorabiliaFiles) {
+            //日志已经删除，但日志文件还在的情况处理
             if (!eventsMap.keySet().contains((Integer)item.get("memorabilia_id"))) continue;
             item.put("memorabilia_id", transformIntergerId((Integer)item.get("memorabilia_id"), eventsMap));
             projectDestMapper.addRMemorabiliaFile(item);
