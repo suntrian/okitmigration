@@ -346,7 +346,7 @@
     </insert>
     <insert id="addTestDescFormatDoc" parameterType="map">
         INSERT INTO test_desc_format_doc (test_desc_uid, uid, id)
-              select {#{test_desc_uid}, #{uid}, #{id} from dual where not exists (select * from test_desc_format_doc where uid=#{uid} and test_desc_uid=#{test_desc_uid}) limit 1;
+              select #{test_desc_uid}, #{uid}, #{id} from dual where not exists (select * from test_desc_format_doc where uid=#{uid} and test_desc_uid=#{test_desc_uid}) limit 1;
     </insert>
     <insert id="addRTestDescStepTicket" parameterType="map">
         INSERT ignore INTO r_test_desc_step_ticket (test_desc_uid, desc_case_uid, step_uid, ticket_uid, comm) VALUES (#{test_desc_uid}, #{desc_case_uid}, #{step_uid}, #{ticket_uid}, #{comm} );
@@ -355,7 +355,7 @@
         INSERT ignore INTO r_test_desc_case_file (test_desc_uid, desc_case_uid, file_id, upload_time, comm) VALUES (#{test_desc_uid}, #{desc_case_uid}, #{file_id}, #{upload_time}, #{comm});
     </insert>
     <insert id="addRTestDescCaseItemEdition" parameterType="map">
-        INSERT ignore INTO r_test_case_item_edition (test_case_uid, doc_uid, item_uid, edition, comm) VALUES (#{test_case_uid}, #{doc_uid}, #{item_uid}, #{edition}, #{comm}) ;
+        INSERT ignore INTO r_test_desc_case_item_edition (test_desc_uid, desc_case_uid, doc_uid, item_uid, edition, be_changed, comm) VALUES (#{test_desc_uid}, #{desc_case_uid}, #{doc_uid}, #{item_uid}, #{edition}, #{be_changed}, #{comm}) ;
     </insert>
 
     <!-- 计划任务 -->

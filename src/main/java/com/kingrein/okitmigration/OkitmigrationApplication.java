@@ -14,7 +14,7 @@ import org.springframework.context.ApplicationContext;
 public class OkitmigrationApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
-        //ApplicationContext context = SpringApplication.run(OkitmigrationApplication.class, args);
+        ApplicationContext context = SpringApplication.run(OkitmigrationApplication.class, args);
         //ApplicationContextUtil.setApplicationContext(context);
     }
 

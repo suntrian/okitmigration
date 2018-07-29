@@ -8,7 +8,7 @@ spring:
     request-context-attribute: request
   datasource:
     src:
-      jdbc-url: jdbc:mysql://192.168.31.6:3306/pms?useSSL=false
+      jdbc-url: jdbc:mysql://192.168.33.112:3306/pms?useSSL=false
       url: ${spring.datasource.src.jdbc-url}
       username: root
       password: abc123

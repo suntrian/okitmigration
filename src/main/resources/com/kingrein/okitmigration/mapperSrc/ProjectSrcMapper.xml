@@ -180,7 +180,7 @@
             <foreach collection="list" open="(" separator="," item="id" close=")" >#{id}</foreach>
     </select>
     <select id="listTicketFormatItemByProjectIds" resultType="map">
-        SELECT * FROM r_ticket_format_item rtfi LEFT JOIN ticket t ON rtfi.ticket_uid = t.uid WHERE t.project_id IN
+        SELECT rtfi.* FROM r_ticket_format_item rtfi LEFT JOIN ticket t ON rtfi.ticket_uid = t.uid WHERE t.project_id IN
             <foreach collection="list" open="(" separator="," item="id" close=")" >#{id}</foreach>
     </select>
 
@@ -357,7 +357,7 @@
         SELECT tdc.* FROM test_description_case_result tdc LEFT JOIN test_desc td ON tdc.test_desc_uid = td.test_desc_uid WHERE td.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
     </select>
     <select id="listTestDescFormatDocByProjectIds" resultType="map">
-        SELECT * from test_desc_format_doc tdfd
+        SELECT tdfd.* from test_desc_format_doc tdfd
               LEFT JOIN test_desc td ON tdfd.test_desc_uid = td.test_desc_uid
               LEFT JOIN format_edition f on tdfd.uid = f.uid
                   WHERE td.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
@@ -398,7 +398,7 @@
         SELECT rf.* FROM r_test_desc_case_file rf LEFT JOIN test_desc td ON rf.test_desc_uid = td.test_desc_uid WHERE td.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
     </select>
     <select id="listRTestDescCaseItemEditionByProjectIds" resultType="map">
-        SELECT * FROM r_test_desc_case_item_edition re
+        SELECT re.* FROM r_test_desc_case_item_edition re
               LEFT JOIN test_desc td ON re.test_desc_uid = td.test_desc_uid
               LEFT JOIN format_doc fd ON re.doc_uid = fd.uid
               WHERE td.project_id IN <foreach collection="list" close=")" item="id" separator="," open="(">#{id}</foreach>
@@ -459,12 +459,12 @@
         select ta.* from task_acceptance ta left join task t on ta.taskUID = t.UID where t.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
     </select>
     <select id="listRTaskItemByProjectIds" resultType="map">
-        select * from r_task_item rti left join task t on rti.task_uid = t.UID left join format_doc fd on rti.doc_uid = fd.uid
+        select rti.* from r_task_item rti left join task t on rti.task_uid = t.UID left join format_doc fd on rti.doc_uid = fd.uid
             where t.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
               and fd.project_id IN <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
     </select>
     <select id="listRTaskCaseByProjectIds" resultType="map">
-        select * from r_task_case rtc left  join task t on rtc.task_uid = t.UID left  join test_desc td on rtc.test_desc_uid = td.test_desc_uid
+        select rtc.* from r_task_case rtc left  join task t on rtc.task_uid = t.UID left  join test_desc td on rtc.test_desc_uid = td.test_desc_uid
             where t.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
               and td.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
     </select>
@@ -547,7 +547,7 @@
         select * from s_question_manage_status;
     </select>
     <select id="listWorkflowTaskQuestionByProjectIds" resultType="map">
-        select * from workflow_task_question wq left join question q on wq.question_uid = q.question_uid
+        select wq.* from workflow_task_question wq left join question q on wq.question_uid = q.question_uid
         where q.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>;
     </select>
     <select id="listWorkflowTaskWithinQuestionByProjectIds" resultType="map">
@@ -557,7 +557,7 @@
         select * from workflow_history wh where wh.task_uid in (select wq.task_uid from workflow_task_question wq left join question q on wq.question_uid = q.question_uid where q.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>);
     </select>
     <select id="listWorkflowHistoryFileWithinQuestionByProjectIds" resultType="map">
-        select * from r_workflow_history_file rwhf left join workflow_history wh on rwhf.history_id = wh.id where wh.task_uid in (
+        select rwhf.* from r_workflow_history_file rwhf left join workflow_history wh on rwhf.history_id = wh.id where wh.task_uid in (
         select wq.task_uid from workflow_task_question wq left join question q on wq.question_uid = q.question_uid where q.project_id in <foreach collection="list" open="(" separator="," item="id" close=")">#{id}</foreach>
         );
     </select>
