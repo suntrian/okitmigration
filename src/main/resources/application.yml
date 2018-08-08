@@ -69,7 +69,7 @@ spring:
 logging:
   level:
     com.kingrein.okitmigration: debug
-  path: D:/migration
+  path: D:/temp
   pattern:
     console: "%d{HH:mm:ss.SSS} [%t] %-5level %class{36} %L %M - %msg%xEx%n"
   file:

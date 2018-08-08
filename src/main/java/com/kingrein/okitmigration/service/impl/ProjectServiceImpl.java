@@ -7,11 +7,15 @@ import com.kingrein.okitmigration.service.UserService;
 import com.kingrein.okitmigration.util.TreeNode;
 import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.sql.DataSource;
 import java.util.*;
 
 @Service("projectService")
@@ -101,6 +105,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Resource
     private ProjectSrcMapper projectSrcMapper;
@@ -705,6 +712,13 @@ public class ProjectServiceImpl implements ProjectService {
             file.put("history_id", workflowHistoryMap.get((Integer)file.get("history_id") ));
             projectDestMapper.addWorkflowHistoryFile(file);
         }
+
+        if (entities.values().contains("项目测试用例")) {
+            List<Map<String , Object>> testDescStepTickets = projectSrcMapper.listRTestDescStepTicketByProjectIds(projectIds);
+            for (Map<String, Object> item: testDescStepTickets) {
+                projectDestMapper.addRTestDescStepTicket(item);
+            }
+        }
     }
 
     @Transactional
@@ -977,12 +991,24 @@ public class ProjectServiceImpl implements ProjectService {
         Map<Integer, Map<String, Object>> rootTasks = projectDestMapper.listRootTaskByProjectIds(new ArrayList<>(projectMap.values()));
         Map<String, String > rootTaskUidMap = new HashMap<>();
         List<Map<String, Object>> tasks = projectSrcMapper.listTaskByProjectIds(ids);
-        for (Map<String, Object> item: tasks) {
-            if (item.get("parent_uid") == null) {
-                rootTaskUidMap.put((String) item.get("UID"), (String) rootTasks.get(projectMap.get((Integer)item.get("project_id"))).get("UID"));
-                continue;
+        LinkedList<Map<String, Object>> taskQueues = new LinkedList<>(tasks);
+        Set<String> addedTaskUids = new HashSet<>();
+        while (!taskQueues.isEmpty()) {
+            Map<String, Object> item = taskQueues.pop();
+            if (item.get("parent_uid") == null) {               //处理任务的根任务。根任务非手动创建，为项目名称的任务。
+                if (rootTasks.get(projectMap.get((Integer)item.get("project_ID"))) != null ) {
+                    rootTaskUidMap.put((String) item.get("UID"), (String) rootTasks.get(projectMap.get((Integer)item.get("project_id"))).get("UID"));
+                    continue;
+                }
+            } else {
+                if (!rootTaskUidMap.keySet().contains(item.get("parent_uid")) && !addedTaskUids.contains(item.get("parent_uid"))) {
+                    taskQueues.add(item);
+                    continue;
+                }
             }
-            item.put("parent_uid", rootTaskUidMap.keySet().contains(item.get("parent_uid"))?rootTaskUidMap.get(item.get("parent_uid")):item.get("parent_uid"));
+            if (item.get("parent_id") != null) {
+                item.put("parent_uid", rootTaskUidMap.keySet().contains(item.get("parent_uid")) ? rootTaskUidMap.get(item.get("parent_uid")) : item.get("parent_uid"));
+            }
             item.put("user_id", transformIntergerId((Integer)item.get("user_id"), userMap));
             item.put("update_user_id", transformIntergerId((Integer)item.get("update_user_id"), userMap));
             item.put("project_id", transformIntergerId((Integer)item.get("project_id"), projectMap));
@@ -993,7 +1019,9 @@ public class ProjectServiceImpl implements ProjectService {
             item.put("update_user_id", transformIntergerId((Integer)item.get("update_user_id"), userMap));
             //TODO: stage_id
             projectDestMapper.addTask(item);
+            addedTaskUids.add((String) item.get("UID"));
         }
+
         List<Map<String, Object>> tasklogs = projectSrcMapper.listTaskLogByProjectIds(ids);
         for (Map<String, Object> log: tasklogs) {
             log.put("user_id", transformIntergerId((Integer)log.get("user_id"), userMap));
@@ -1130,12 +1158,7 @@ public class ProjectServiceImpl implements ProjectService {
         for (Map<String, Object> item: rTestDescCaseFiles) {
             projectDestMapper.addRTestDescCaseFile(item);
         }
-        if (entities.values().contains("项目缺陷")) {
-            List<Map<String , Object>> testDescStepTickets = projectSrcMapper.listRTestDescStepTicketByProjectIds(projectIds);
-            for (Map<String, Object> item: testDescStepTickets) {
-                projectDestMapper.addRTestDescStepTicket(item);
-            }
-        }
+
 
     }
 
@@ -1152,6 +1175,9 @@ public class ProjectServiceImpl implements ProjectService {
             item.put("user_id", transformIntergerId((Integer)item.get("user_id"), userMap));
             item.put("type_id", transformIntergerId((Integer)item.get("type_id"), eventsTypeMap));
             item.put("level_id", transformIntergerId((Integer)item.get("level_id"), eventsLevelMap));
+            //todo: 项目日志关联里程碑，现在为直接置空
+            item.put("relevance_milestone_uid", null);
+
             Integer count = projectDestMapper.addMemorabilia(item);
             if (count == 0) continue;
             Integer newId = (Integer) item.get("id");
@@ -1159,6 +1185,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
         List<Map<String, Object>> rMemorabiliaFiles = projectSrcMapper.listRMemorabiliaFileByProjectIds(projectIds);
         for (Map<String, Object> item: rMemorabiliaFiles) {
+            //日志已经删除，但日志文件还在的情况处理
             if (!eventsMap.keySet().contains((Integer)item.get("memorabilia_id"))) continue;
             item.put("memorabilia_id", transformIntergerId((Integer)item.get("memorabilia_id"), eventsMap));
             projectDestMapper.addRMemorabiliaFile(item);
@@ -1249,7 +1276,9 @@ public class ProjectServiceImpl implements ProjectService {
             item.put("creator_id", transformIntergerId((Integer)item.get("creator_id"), userMap));
             item.put("operator_id", transformIntergerId((Integer)item.get("operator_id"), userMap));
             item.put("workflow_uid", transformIntergerId((String)item.get("workflow_uid"), workflowMap));
-            if ((Integer)item.get("disposer_id")>0) {
+            if (item.get("disposer_id") == null) {
+
+            } else if ((Integer)item.get("disposer_id")>0) {
                 item.put("disposer_id", transformIntergerId((Integer)item.get("disposer_id"), userMap));
             } else if ((Integer)item.get("disposer_id")<0) {
                 //todo: 指派到角色的情况
@@ -1268,13 +1297,17 @@ public class ProjectServiceImpl implements ProjectService {
             item.put("from_status_id", transformIntergerId((Integer)item.get("from_status_id"), questionManageStatusMap));
             item.put("to_status_id", transformIntergerId((Integer)item.get("to_status_id"), questionManageStatusMap));
             item.put("operator_id", transformIntergerId((Integer)item.get("operator_id"), userMap));
-            if ((Integer)item.get("former_disposer_id")>0) {
+            if (item.get("former_disposer_id") == null) {
+
+            } else if ((Integer)item.get("former_disposer_id")>0) {
                 item.put("former_disposer_id", transformIntergerId((Integer)item.get("former_disposer_id"), userMap));
             } else if ((Integer)item.get("former_disposer_id")<0) {
                 //TODO：指派到角色
                 item.put("former_disposer_id", 0);
             }
-            if ((Integer)item.get("next_disposer_id")>0) {
+            if (item.get("") == null) {
+
+            } else if ((Integer)item.get("next_disposer_id")>0) {
                 item.put("next_disposer_id", transformIntergerId((Integer)item.get("next_disposer_id"), userMap));
             } else if ((Integer)item.get("next_disposer_id")<0) {
                 //TODO：指派到角色
@@ -1306,10 +1339,11 @@ public class ProjectServiceImpl implements ProjectService {
             item.put("project_id", transformIntergerId((Integer)item.get("project_id"), projectMap));
             item.put("category_id", transformIntergerId((Integer)item.get("category_id"), riskCategoryMap));
             //TODO: s_influence_degree, s_influence_type
+            //TODO: milestone_type_id
             item.put("risk_status_id", transformIntergerId((Integer)item.get("risk_status_id"), riskStatusMap));
             item.put("risk_dispose_status_id", transformIntergerId((Integer)item.get("risk_dispose_status_id"), riskDisposeStatusMap));
             item.put("manager", transformIntergerId((Integer)item.get("manager"), userMap));
-            //TODO: milestone_type_id
+            item.put("introducer", transformIntergerId((Integer)item.get("introducer"), userMap));  //提出人
             item.put("disposer", transformIntergerId((Integer)item.get("disposer"), userMap));
             item.put("risk_dispose_method", transformIntergerId((Integer)item.get("risk_dispose_method"), riskDisposeMethodMap));
             projectDestMapper.addProjectRisk(item);
@@ -1320,13 +1354,15 @@ public class ProjectServiceImpl implements ProjectService {
             projectDestMapper.addRProjectRiskFile(item);
         }
 
-        List<Map<String, Object>> workflowTasks = projectSrcMapper.listWorkflowTaskProjectRiskByProjectIds(projectIds);
+        List<Map<String, Object>> workflowTasks = projectSrcMapper.listWorkflowWithinProjectRiskByProjectIds(projectIds);
         for (Map<String, Object> item: workflowTasks) {
             item.put("status_id", transformIntergerId((Integer) item.get("status_id"), riskDisposeStatusMap));
             item.put("creator_id", transformIntergerId((Integer)item.get("creator_id"), userMap));
             item.put("operator_id", transformIntergerId((Integer)item.get("operator_id"), userMap));
             item.put("workflow_uid", transformIntergerId((String)item.get("workflow_uid"), workflowMap));
-            if ((Integer)item.get("disposer_id")>0) {
+            if (item.get("disposer_id") == null) {
+
+            }else if ((Integer)item.get("disposer_id")>0) {
                 item.put("disposer_id", transformIntergerId((Integer)item.get("disposer_id"), userMap));
             } else if ((Integer)item.get("disposer_id")<0) {
                 //todo: 指派到角色的情况
@@ -1334,7 +1370,7 @@ public class ProjectServiceImpl implements ProjectService {
             }
             projectDestMapper.addWorkflowTask(item);
         }
-        List<Map<String, Object>> workflowTaskRisks = projectSrcMapper.listWorkflowWithinProjectRiskByProjectIds(projectIds);
+        List<Map<String, Object>> workflowTaskRisks = projectSrcMapper.listWorkflowTaskProjectRiskByProjectIds(projectIds);
         for (Map<String, Object> item: workflowTaskRisks) {
             item.put("project_id", transformIntergerId((Integer)item.get("project_id"), projectMap));
             projectDestMapper.addWorkflowTaskRisk(item);
@@ -1345,13 +1381,17 @@ public class ProjectServiceImpl implements ProjectService {
             item.put("from_status_id", transformIntergerId((Integer)item.get("from_status_id"), riskDisposeStatusMap));
             item.put("to_status_id", transformIntergerId((Integer)item.get("to_status_id"), riskDisposeStatusMap));
             item.put("operator_id", transformIntergerId((Integer)item.get("operator_id"), userMap));
-            if ((Integer)item.get("former_disposer_id")>0) {
+            if (item.get("former_disposer_id") == null) {
+
+            } else if ((Integer)item.get("former_disposer_id")>0) {
                 item.put("former_disposer_id", transformIntergerId((Integer)item.get("former_disposer_id"), userMap));
             } else if ((Integer)item.get("former_disposer_id")<0) {
                 //TODO：指派到角色
                 item.put("former_disposer_id", 0);
             }
-            if ((Integer)item.get("next_disposer_id")>0) {
+            if (item.get("next_disposer_id") == null) {
+
+            } else if ((Integer)item.get("next_disposer_id")>0) {
                 item.put("next_disposer_id", transformIntergerId((Integer)item.get("next_disposer_id"), userMap));
             } else if ((Integer)item.get("next_disposer_id")<0) {
                 //TODO：指派到角色

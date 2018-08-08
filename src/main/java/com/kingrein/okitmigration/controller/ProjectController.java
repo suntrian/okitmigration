@@ -583,6 +583,7 @@ public class ProjectController {
             projectService.importTask(projectIds);
         } catch (DataAccessException e){
             Throwable cause = e.getCause();
+            logger.error(e.getMessage());
             return new ResultVO(e.getMessage(), false);
         }
         projectService.getEntityStatus().put(9, 1);
