@@ -339,7 +339,7 @@ public class RecordService {
         recordFile.writeRecordFile(svnFilePath, nodeId.toString());
     }
 
-    public Integer readSvnNode() throws IOException {
+    public Integer readSvnNode() throws IOException, NumberFormatException {
         String svnFilePath = new File(rootDir, svnFile).toString();
         return Integer.valueOf(recordFile.readRecordFile(svnFilePath));
     }
@@ -469,6 +469,11 @@ public class RecordService {
     public void recordWorkflowMap(Map<String,String> workflowMap) throws IOException {
         String workflowFilePath = new File(rootDir, workflowMapFile).toString();
         recordFile.writeRecordFile(workflowFilePath, workflowMap);
+    }
+
+    public JsonObject readWorkflowMap() throws IOException {
+        String workflowFilePath = new File(rootDir, workflowMapFile).toString();
+        return readAsJsonObject(workflowFilePath);
     }
 
     public JsonArray readAsJsonArray(String path) throws IOException {

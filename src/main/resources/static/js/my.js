@@ -26,8 +26,22 @@ var achieveData = function(url, div, prop_id, prop_name) {
         }
     });
 };
-var bindSrcClick = function (divsrc,divdest) {
+var bindSrcClick = function (divsrc,divdest, url) {
     divsrc.on("select_node.jstree", function (event, node) {
+        if (url) {
+            $.ajax({
+                url: url,
+                type: "GET",
+                data: {
+                    src: node.node.id
+                },
+                success: function (result) {
+                    if (result.data) {
+                        divdest.jstree(true).select_node(result.data);
+                    }
+                }
+            })
+        }
         var treesrc = divsrc.jstree(true);
         $.each(node.selected, function (i, nd) {
             if (nd!=node.node.id) {

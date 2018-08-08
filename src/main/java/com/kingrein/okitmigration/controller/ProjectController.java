@@ -50,6 +50,11 @@ public class ProjectController {
             projectService.getProjectMap().put(srcProjectId, destProjectId);
         }
 
+        JsonObject workflowMap = recordService.readWorkflowMap();
+        for (String key: workflowMap.keySet()) {
+            projectService.getWorkflowMap().put(key, workflowMap.get(key).getAsString());
+        }
+
         entities = projectService.getEntities();
         entities.put(1, "项目配置管理");
         entities.put(2, "项目论坛");
@@ -151,6 +156,11 @@ public class ProjectController {
         return new ResultVO("succeed");
     }
 
+    @GetMapping(value = "/map")
+    public ResultVO getProjectMap(@RequestParam("src") Integer src) {
+        return new ResultVO(projectService.getProjectMap().get(src));
+    }
+
     @RequestMapping(value = "/map/save")
     public ResultVO saveProjectMap() throws IOException {
         //记录项目映射关系
@@ -182,9 +192,20 @@ public class ProjectController {
         return new ResultVO("succeed");
     }
 
-    @GetMapping(value = "/svnnode")
+    @GetMapping(value = "/svn/node")
     public List<Map<String, Object>> listSvnNode(){
-        return projectService.listSvnNode();
+        List<Map<String, Object>> svnNodes = projectService.listSvnNode();
+        try {
+            Integer svnId = recordService.readSvnNode();
+            for (Map<String, Object> svn: svnNodes) {
+                if (svnId.equals(svn.get("id"))) {
+                    svn.put("state", "selected");
+                }
+            }
+        } catch (IOException e) {
+
+        }
+        return svnNodes;
     }
 
     @PostMapping(value = "/svn/node")
@@ -460,6 +481,10 @@ public class ProjectController {
         projectService.getWorkflowMap().put(src, dest);
         return new ResultVO("succeed");
     }
+    @GetMapping("/workflow")
+    public ResultVO getWorkflowMap(@RequestParam String src) {
+        return new ResultVO(projectService.getWorkflowMap().get(src));
+    }
 
     @RequestMapping("/workflow/save")
     public ResultVO saveWorkflowMap() throws IOException {
@@ -482,6 +507,7 @@ public class ProjectController {
         ticketMap.add("frequency", gson.toJsonTree(projectService.getTicketFrequencyMap()));
         recordService.recordTicketMap(ticketMap);
         projectService.importTicket(projectIds);
+        projectService.getEntityStatus().put(6, 1);
         return new ResultVO("succeed");
     }
 
@@ -496,6 +522,7 @@ public class ProjectController {
     public ResultVO doSvnImport() throws Exception {
         List<Integer> projectIds = projectService.getProjectToImport();
         projectService.importSvnDbData(projectIds);
+        projectService.getEntityStatus().put(1, 1);
         return new ResultVO("succeed");
     }
 
@@ -516,6 +543,7 @@ public class ProjectController {
         formatMap.add("changedmanner", gson.toJsonTree(projectService.getFormatChangedMannerMap()));
         recordService.recordFormatMap(formatMap);
         projectService.importRequirement(projectIds);
+        projectService.getEntityStatus().put(8, 1);
         return new ResultVO("succeed");
     }
 
@@ -534,7 +562,7 @@ public class ProjectController {
         testMap.add("testype", gson.toJsonTree(projectService.getTestTypeMap()));
         recordService.recordTestMap(testMap);
         projectService.importTest(projectIds);
-
+        projectService.getEntityStatus().put(7, 1);
         return new ResultVO("succeed");
     }
 
@@ -557,7 +585,7 @@ public class ProjectController {
             Throwable cause = e.getCause();
             return new ResultVO(e.getMessage(), false);
         }
-
+        projectService.getEntityStatus().put(9, 1);
         return new ResultVO("succeed");
     }
 
@@ -569,6 +597,7 @@ public class ProjectController {
         eventsMap.add("eventslevel", gson.toJsonTree(projectService.getEventsLevelMap()));
         recordService.recordEventsMap(eventsMap);
         projectService.importEvents(projectIds);
+        projectService.getEntityStatus().put(3, 1);
         return new ResultVO("succeed");
     }
 
@@ -580,8 +609,8 @@ public class ProjectController {
         forumMap.add("status", gson.toJsonTree(projectService.getReportQuestionStatusMap()));
         forumMap.add("type", gson.toJsonTree(projectService.getReportQuestionTypeMap()));
         recordService.recordForumMap(forumMap);
-
         projectService.importForum(projectIds);
+        projectService.getEntityStatus().put(2, 1);
         return new ResultVO("succeed");
     }
 
@@ -595,6 +624,7 @@ public class ProjectController {
         questionMap.add("evaluationlevel", gson.toJsonTree(projectService.getQuestionEvaluationLevelMap()));
         recordService.recordQuestionMap(questionMap);
         projectService.importQuestion(projectIds);
+        projectService.getEntityStatus().put(5, 1);
         return new ResultVO("succeed");
     }
 
@@ -609,6 +639,7 @@ public class ProjectController {
         riskMap.add("disposestatus", gson.toJsonTree(projectService.getRiskDisposeStatusMap()));
         recordService.recordRiskMap(riskMap);
         projectService.importRisk(projectIds);
+        projectService.getEntityStatus().put(4, 1);
         return new ResultVO("succeed");
     }
 

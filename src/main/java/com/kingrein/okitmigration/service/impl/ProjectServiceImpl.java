@@ -22,6 +22,7 @@ public class ProjectServiceImpl implements ProjectService {
     Integer svnDestNode = 0;
 
     Map<Integer, String> entities = new HashMap<>();
+    Map<Integer, Integer> entityStatus = new HashMap<>();
 
     //缺陷对应表
     Map<Integer, Integer> ticketColumnMap = new HashMap<>();
@@ -1645,6 +1646,14 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void setEntities(Map<Integer, String> entities) {
         this.entities = entities;
+    }
+    @Override
+    public Map<Integer, Integer> getEntityStatus() {
+        return entityStatus;
+    }
+    @Override
+    public void setEntityStatus(Map<Integer, Integer> entityStatus) {
+        this.entityStatus = entityStatus;
     }
 
     @Override

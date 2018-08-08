@@ -11,9 +11,9 @@
 <div class="wrap">
     <div class="clear"></div>
     <div>
-        <h3>
+        <h2>
             导入配置管理数据
-        </h3>
+        </h2>
         <ul>
             <li>1. 将oKit安装目录下的svn/data目录下的所有目录拷出，粘贴到迁移节点对应的svn/data目录下，迁移的目标节点下不得存在同名目录</li>
             <li>2. svn数据迁移完成后，选择对应的节点</li>
@@ -32,16 +32,22 @@
     <script>
         $(document).ready(function () {
             $.ajax({
-                url: '${basepath}/project/svnnode',
+                url: '${basepath}/project/svn/node',
                 type: "GET",
                 success : function (result) {
                     var nodes = [];
                     for (var sn in result) {
                         var node = result[sn];
-                        nodes.push({
+                        var treenode = {
                             id: node.id,
-                            text: node.name + "[" + node.ip + "]",
-                        });
+                            text: node.name + "[" + node.ip + "]"
+                        };
+                        if (node.state && node.state == "selected") {
+                            treenode['state'] = {
+                                selected: true
+                            }
+                        }
+                        nodes.push(treenode);
                     }
                     $("#svnnode").jstree({
                         core: {
@@ -60,7 +66,7 @@
                     djt.uncheck_node(nd);
                 }
             });
-            $("#svnnode").jstree(true).uncheck_all();
+            //$("#svnnode").jstree(true).uncheck_all();
             $.ajax({
                 url: '${basepath}/project/svn/node',
                 type: "POST",
@@ -73,6 +79,8 @@
             })
         });
         function doImport() {
+            var svntree = $("#svnnode").jstree(true);
+            if (svntree.get_checked().length == 0) return;
             if ($("#next").html() === "开始导入") {
                 $.ajax({
                     url: "${basepath}/project/svn/doimport",
@@ -82,7 +90,7 @@
                     }
                 });
             } else {
-                window.location.href = "${basepath}/next?flag=true"
+                window.location.href = "${basepath}/next"
             }
 
         }

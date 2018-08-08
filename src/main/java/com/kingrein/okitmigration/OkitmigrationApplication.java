@@ -8,7 +8,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
-//@MapperScan(value = {"com.kingrein.okitmigration.mapperSrc","com.kingrein.okitmigration.mapperDest"})
+@MapperScan(value = {"com.kingrein.okitmigration.mapperSrc","com.kingrein.okitmigration.mapperDest"})
 public class OkitmigrationApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {

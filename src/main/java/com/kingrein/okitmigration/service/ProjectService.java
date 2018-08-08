@@ -228,6 +228,10 @@ public interface ProjectService {
 
     void setEntities(Map<Integer, String> entities);
 
+    Map<Integer, Integer> getEntityStatus();
+
+    void setEntityStatus(Map<Integer, Integer> entityStatus);
+
     Map<Integer, Integer> getTaskFileTypeMap();
 
     void setTaskFileTypeMap(Map<Integer, Integer> taskFileTypeMap);

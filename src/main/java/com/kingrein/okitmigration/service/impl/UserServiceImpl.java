@@ -144,10 +144,12 @@ public class UserServiceImpl implements UserService {
         List<Map<String, Object>> srcUsers = userSrcMapper.listAllUserOrderByName();
         List<Map<String, Object>> destUsers = userDestMapper.listAllUserOrderByName();
         List<Map<String, Object>> result = new ArrayList<>();
-        JsonArray json = new JsonArray();
-        JsonObject src = new JsonObject();
-        JsonObject dest = new JsonObject();
-        JsonObject thisMap = new JsonObject();
+        if (srcUsers.size() == 0) {
+            return result;
+        }
+        if (destUsers.size() == 0) {
+            return srcUsers;
+        }
         int checkpoint = 0;
         for (int s = 0 ; s < srcUsers.size(); s++){
             Map<String ,Object> srcUser = srcUsers.get(s);
@@ -161,6 +163,9 @@ public class UserServiceImpl implements UserService {
                 checkpoint = cursor;
                 if (cursor<destUsers.size() && srcUser.get("name").equals(destUsers.get(cursor).get("name"))){
                     //匹配到多个的情况
+                    if (userMap.keySet().contains(srcUser.get("id"))) {
+                        continue;
+                    }
                     srcUser.put("state", "dual");
                     result.add(srcUser);
                 } else {
@@ -171,9 +176,11 @@ public class UserServiceImpl implements UserService {
             }
             if (cursor == destUsers.size()  ){
                 //匹配到零个的情况
+                if (userMap.keySet().contains(srcUser.get("id"))) {
+                    continue;
+                }
                 srcUser.put("state","single");
                 result.add(srcUser);
-                cursor = 0;
             }
         }
 
@@ -181,9 +188,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Map<String, Object>>  listDestUserByName(String name) {
+    public List<Map<String, Object>>  listDestUserByName(Integer id, String name) {
         name = findChineseCharactor(name);
-        return userDestMapper.listUserByName(name);
+        List<Map<String, Object>> users = userDestMapper.listUserByName(name);
+        for (Map<String, Object> user: users) {
+            if (user.get("id").equals(userMap.get(id))) {
+                user.put("state", "selected");
+            }
+        }
+        return users;
     }
 
     private List<TreeNode<Map<String, Object>>> parseMap2Tree(Map<Integer, Map<String, Object>> map){

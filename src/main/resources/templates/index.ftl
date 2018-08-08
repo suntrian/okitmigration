@@ -24,7 +24,7 @@
                     <li>svn配置库迁移方法： 将源系统安装目录下svn/data目录下的所有文件夹及文件拷贝到迁移的目标系统相应目录下，目标目录下不得存在同名目录</li>
                     <li>文件迁移方法： 将源系统上传目录upload目录下的所有文件夹及文件拷贝到目标系统相应目录下，若目标目录下存在同名目录则合并</li>
                     <li>数据库数据迁移，请点击<a href="${basepath}/step3">下一步</a></li>
-                    <li>若本次数据迁移为全新环境的迁移或需要重新迁移数据，请勾选<input id="clear" type="checkbox"  />清除缓存</li>
+                    <li>若本次数据迁移为全新环境的迁移或需要重新迁移数据，请勾选<input id="clear" type="checkbox" /><strong>清除缓存</strong></li>
                 </ol>
             </div>
             <div>
@@ -54,7 +54,9 @@
         } else {
             window.location.href = "${basepath}/step3";
         }
-
+    }
+    function toggleClear(event, data) {
+        
     }
 </script>
 </body>

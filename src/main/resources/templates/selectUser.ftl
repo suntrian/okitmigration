@@ -16,6 +16,12 @@
                 <li>
                     下列人员无法按姓名匹配到唯一人员，请手动选择或添加
                 </li>
+                <li>
+                    当存在同名人员时，选择左侧源系统中的人员，右侧会显示目标系统中的同名人员姓名及部门，请勾选对应人员
+                </li>
+                <li>
+                    当未找到对应的人员时，选择左侧源系统中的人员，右侧将无人员显示，请点击添加，会自动将此人员添加到对应的部门下
+                </li>
             </ul>
         </div>
         <div id="src_user" class="fixwidth">
@@ -27,7 +33,7 @@
         <div class="clear"></div>
         <div class="bottom">
             <div class="left">
-                <a href="javascript:void(0)" onclick="addUser()" >添加</a>
+                <a id="add" href="javascript:void(0)" onclick="addUser()" >添加</a>
             </div>
             <div class="right">
                 <a href="javascript:void(0)" onclick="save()">下一步</a>
@@ -41,7 +47,8 @@
             url: "${basepath}/user/notmapped",
             success: function (result) {
                 if (result.length == 0) {
-                    $("#src_user").html("无");
+                    $("#src_user").html("<em>人员已全部匹配</em>");
+                    $("#add").hide();
                     return;
                 }
                 var nodes = []
@@ -64,8 +71,14 @@
             }
 
         })
-    })
-    
+    });
+    var selectedNode;
+    $("#dest_user").on("refresh.jstree", function (event, data) {
+        if (selectedNode) {
+            $("#dest_user").jstree(true).select_node(selectedNode);
+        }
+    });
+
     $("#src_user").on("select_node.jstree", function (event, node) {
         var selectedUser = node.selected;
         var srcUserTree = $("#src_user").jstree(true);
@@ -79,15 +92,20 @@
             url: "${basepath}/user/dest",
             type: "GET",
             data: {
+                id: node.node.id,
                 name: node.node.original.name,
                 unit_id: node.node.original.unit_id
             },
             success: function (result) {
                 var userNodes = [];
+                selectedNode = null;
                 for (var i = 0 , len = result.length; i < len; i++){
                     var node = {};
                     node.id = result[i].id;
                     node.text = result[i].text + "【" + result[i].name + "】" + (result[i].is_deleted?"<span class='deleted'>已删除</span>":"");
+                    if (result[i].state == "selected") {
+                        selectedNode = node.id;
+                    }
                     userNodes.push(node);
                 }
                 $("#dest_user").jstree(true).settings.core.data = userNodes;
@@ -134,6 +152,9 @@
             success: function (result) {
                 srcJstree.hide_node(srcJstree.get_checked());
                 //var success = srcJstree.delete_node(srcJstree.get_checked());
+            },
+            error: function (result) {
+                alert(result);
             }
         })
     }

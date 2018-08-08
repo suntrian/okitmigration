@@ -10,7 +10,7 @@
 <body>
 <div class="wrap">
     <div>
-        <h2>选择项目映射关系</h2>
+        <h1>选择项目映射关系</h1>
         <li>先选择上级项目的映射关系，再选择子项目的映射关系</li>
         <li>当无法找到对应的项目时，可选中源项目，再点击【添加项目】</li>
         <li>当添加项目时，有可能因项目标准字段配置不同等原因导致失败，请在oKit系统中手动添加项目</li>
@@ -48,6 +48,23 @@
         });
         var destProj = $("#project_dest_tree").jstree(true);
         destProj.uncheck_all();
+        var srcProj = $("#project_src_tree").jstree(true);
+        $.ajax({
+            url: "${basepath}/project/map",
+            type: "GET",
+            data: {
+                src: srcProj.get_checked()[0]
+            }, 
+            success: function (result) {
+                if (result.data) {
+                    destProj.select_node(result.data);
+                }
+            }
+        });
+    });
+
+    $("#project_dest_tree").on("refresh.jstree", function (event, node) {
+        
     });
 
     $("#project_dest_tree").on("select_node.jstree", function (event, node) {
@@ -82,7 +99,7 @@
         }
         to = setTimeout(function () {
             var v = $("#search_desc").val();
-            $("#project_dest_tree").jstree(true).search(v);
+            $("#project_dest_tree").jstree(true).search(v, undefined, true);
         }, 250);
     });
 

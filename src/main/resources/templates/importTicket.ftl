@@ -12,10 +12,15 @@
     <div class="wrap">
         <div>
             <h1>缺陷数据导入</h1>
-            <h2>使用说明</h2>
+            <h3>使用说明</h3>
+            <ul>
+                <li>请选择项目问题标准设置的对应关系</li>
+                <li>显示格式为[ID]Name，左侧为源系统的标准，右侧为目标系统的标准</li>
+                <li>若两边ID与名称一致，可不选择</li>
+            </ul>
         </div>
         <div id="column">
-            <div class="clear title"><span>选择缺陷列映射关系</span></div>
+            <div class="clear title"><span>选择缺陷扩展字段映射关系</span></div>
             <div id="column_src" class="fixwidth"></div>
             <div id="column_dest" class="fixwidth"></div>
         </div>

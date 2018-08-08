@@ -103,15 +103,13 @@ public class ViewController {
     @RequestMapping(value = "/next")
     public ModelAndView next(@RequestParam(value = "flag", required = false, defaultValue = "true") Boolean flag, ModelAndView modelAndView) {
         Map<Integer, String> entities = projectService.getEntities();
-        if (!flag) {
-            modelAndView.setViewName(entityViewMap.get(currentStep));
-            return modelAndView;
-        }
-        for (int step = currentStep; step <=entityViewMap.size(); step++){
+        Map<Integer, Integer> entityStatus = projectService.getEntityStatus();
+        for (int step = 0; step <=entityViewMap.size(); step++){
             if (entities.get(step) != null) {
-                currentStep = step + 1;
-                modelAndView.setViewName(entityViewMap.get(step));
-                return modelAndView;
+                if (entityStatus.get(step)==null) {
+                    modelAndView.setViewName(entityViewMap.get(step));
+                    return modelAndView;
+                }
             }
         }
         currentStep = 1;

@@ -83,9 +83,9 @@ public class UserController {
     public List<Map<String, Object>> listDestUnitMapped(@RequestParam(name = "id", required = false) Integer parentId, @RequestParam(name = "selfid") Integer selfid ){
         Integer destUnitParentId = userService.getUnitMap().get(parentId);
         List<Map<String, Object>> unitList = userService.listDestUnit(destUnitParentId);
-        Map<String, Object> srcUnit = userService.getSrcUnit(selfid);
+        Map<Integer, Integer> unitMap = userService.getUnitMap();
         for (Map<String, Object> dest : unitList){
-            if (dest.get("name")!=null && dest.get("name")!=null && dest.get("name").equals(srcUnit.get("name"))){
+            if (dest.get("id").equals(unitMap.get(selfid))) {
                 dest.put("selected", true);
             }
         }
@@ -160,8 +160,8 @@ public class UserController {
      * @return
      */
     @RequestMapping(value = "/user/dest", method = RequestMethod.GET)
-    public List<Map<String, Object>> listDestUserByName(@RequestParam("name") String name, @RequestParam(value = "unit_id", required = false) Integer unit_id) {
-        return userService.listDestUserByName(name);
+    public List<Map<String, Object>> listDestUserByName(@RequestParam("id") Integer id, @RequestParam("name") String name, @RequestParam(value = "unit_id", required = false) Integer unit_id) {
+        return userService.listDestUserByName(id, name);
     }
 
     @PostMapping(value = "/unit")

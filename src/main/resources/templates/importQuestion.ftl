@@ -14,11 +14,13 @@
         <h1>问题管理数据导入</h1>
         <h3>使用说明</h3>
         <ul>
-            <li></li>
+            <li>请选择项目问题标准设置的对应关系</li>
+            <li>显示格式为[ID]Name，左侧为源系统的标准，右侧为目标系统的标准</li>
+            <li>若两边ID与名称一致，可不选择</li>
         </ul>
     </div>
     <div>
-        <div class="clear title"><span>选择问题属性映射关系</span></div>
+        <div class="clear title"><span>选择问题扩展字段映射关系</span></div>
         <div class="fixwidth" id="srcquestioncolumn"></div>
         <div class="fixwidth" id="destquestioncolumn"></div>
     </div>

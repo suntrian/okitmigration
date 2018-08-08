@@ -4,7 +4,11 @@
     min-height: 1px;
 }
 h1, h2, h3, h4, h5 {
-    text-align: left;
+    text-align: center;
+    margin: 30px auto;
+}
+li {
+    margin: 3px auto;
 }
 body {
     margin: 0 auto;

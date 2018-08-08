@@ -10,7 +10,7 @@
 </head>
 <body>
 <div class="wrap">
-    <h2>选择要导入的项目</h2>
+    <h1>选择要导入的项目</h1>
     <div id="project_tree" class="project_tree">
         <#assign proj_counter=0>
         <#macro recurse_tree treenode depth=1>

@@ -37,7 +37,7 @@ public interface UserService {
 
     List<Map<String, Object>> listUserNotMapped() throws IOException;
 
-    List<Map<String, Object>>  listDestUserByName(String name);
+    List<Map<String, Object>>  listDestUserByName(Integer id, String name);
 
     Boolean addUnitBySrcUnitId(Integer id);
 

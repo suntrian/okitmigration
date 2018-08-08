@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.kingrein.okitmigration.mapperSrc.UserSrcMapper">
-    <cache />
+    <cache flushInterval="5000" />
 
     <select id="getSimpleUser" parameterType="int" resultType="map">
         SELECT u.id, u.username, p.name, p.unit_id, p.mobile, uu.name as unitname FROM `user` u left join person p on u.id = p.id left join unit uu on p.unit_id = uu.id

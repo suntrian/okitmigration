@@ -13,7 +13,10 @@
 <div class="wrap">
     <div>
         <h1>选择流程对应关系</h1>
-        <li>如ID一致可不选</li>
+        <ul>
+            <li>显示格式为[ID]流程名称，左侧为源系统中的自定义流程，右侧为目标系统中的自定义流程</li>
+            <li>如两边ID与名称一致可不选</li>
+        </ul>
     </div>
     <div>
         <div class="fixwidth" id="srcworkflow"></div>
@@ -31,7 +34,7 @@
         achieveData("${basepath}/project/workflow/src", $("#srcworkflow"), "uid", "name");
         achieveData("${basepath}/project/workflow/dest", $("#destworkflow"), "uid", "name");
 
-        bindSrcClick($("#srcworkflow"), $("#destworkflow"));
+        bindSrcClick($("#srcworkflow"), $("#destworkflow"), "${basepath}/project/workflow");
         bindDestClick($("#srcworkflow"), $("#destworkflow"), "${basepath}/project/workflow")
     });
     function next() {
@@ -43,6 +46,7 @@
             }
         })
     }
+
 </script>
 </body>
 </html>

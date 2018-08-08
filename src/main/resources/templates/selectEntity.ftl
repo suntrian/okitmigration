@@ -11,7 +11,7 @@
 <body>
     <div class="wrap">
 
-        <h2>选择要导入的内容</h2>
+        <h1>选择要导入的内容</h1>
         <div id="import">
 
         </div>

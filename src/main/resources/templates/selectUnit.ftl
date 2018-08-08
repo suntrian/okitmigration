@@ -63,6 +63,7 @@
 <script>
     var srcUnitTree = $("#src_unit_tree");
     var destUnitTree = $("#dest_unit_tree");
+    var selectedNode;
     destUnitTree.on("select_node.jstree", function (event, node) {
         var selectedNodes = node.selected;
         var djt = destUnitTree.jstree(true);
@@ -104,6 +105,16 @@
         },
         "plugins" : ["search", "wholerow", "checkbox" ]
     });
+    // destUnitTree.on('loaded.jstree', function (event, data) {
+    //     console.log(data);
+    // });
+
+    destUnitTree.on('refresh.jstree', function (event, data) {
+        if (selectedNode) {
+            destUnitTree.jstree(true).select_node(selectedNode)
+        }
+    });
+
     destUnitTree.jstree({
         'core':{
             data: null
@@ -155,7 +166,7 @@
             success: function (data) {
                 destUnitTree.jstree(true).deselect_all();
                 var units = [];
-                var selectedNode;
+                selectedNode = null;
                 for (var sn = 0, len = data.length; sn < len; sn++){
                     var nodes = {};
                     nodes.id = data[sn].id;
@@ -167,11 +178,8 @@
                         nodes.state.checked = true;
                     }
                     units.push(nodes);
-                };
-                destUnitTree.jstree(true).settings.core.data = units;
-                if (selectedNode) {
-                    destUnitTree.jstree(true).select_node(selectedNode)
                 }
+                destUnitTree.jstree(true).settings.core.data = units;
                 destUnitTree.jstree(true).refresh();
             }
         });

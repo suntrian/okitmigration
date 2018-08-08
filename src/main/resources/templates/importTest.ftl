@@ -15,7 +15,9 @@
             <h1>测试管理数据导入</h1>
             <h3>使用说明</h3>
             <ul>
-                <li></li>
+                <li>请选择项目问题标准设置的对应关系</li>
+                <li>显示格式为[ID]Name，左侧为源系统的标准，右侧为目标系统的标准</li>
+                <li>若两边ID与名称一致，可不选择</li>
             </ul>
         </div>
         <div>
@@ -54,7 +56,7 @@
             <div id="desttestmethod" class="fixwidth"></div>
         </div>
         <div>
-            <div class="clear title"><span>选择映射关系</span></div>
+            <div class="clear title"><span>选择测试规则映射关系</span></div>
             <div id="srctestrule" class="fixwidth"></div>
             <div id="desttestrule" class="fixwidth"></div>
         </div>
