@@ -232,6 +232,10 @@ public interface ProjectService {
 
     void setEntityStatus(Map<Integer, Integer> entityStatus);
 
+    Map<String, Integer> getImportStatistics();
+
+    void setImportStatistics(Map<String, Integer> importStatistics);
+
     Map<Integer, Integer> getTaskFileTypeMap();
 
     void setTaskFileTypeMap(Map<Integer, Integer> taskFileTypeMap);

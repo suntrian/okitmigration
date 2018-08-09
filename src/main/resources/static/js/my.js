@@ -1,31 +1,75 @@
-var achieveData = function(url, div, prop_id, prop_name) {
-    var parsetTreeView = function(list, div, prop_id, prop_name) {
-        var nodes = [];
-        for (var sn = 0, len = list.length; sn < len; sn++) {
-            var id = list[sn][prop_id];
-            if (id.length>16) {
-               id = id.substr(0,6);
-            }
-            nodes.push({
-                id: list[sn][prop_id],
-                text: '[' + id + ']' + list[sn][prop_name]
-            })
+var parseTreeView = function(list, div, prop_id, prop_name) {
+    var nodes = [];
+    for (var sn = 0, len = list.length; sn < len; sn++) {
+        var id = list[sn][prop_id];
+        if (id.length>16) {
+            id = id.substr(0,6);
         }
+        nodes.push({
+            id: list[sn][prop_id],
+            text: '[' + id + ']' + list[sn][prop_name]
+        })
+    }
 
-        div.jstree({
-            core: {
-                data: nodes
-            },
-            plugins: ["checkbox", "wholerow"]
+    div.jstree({
+        core: {
+            data: nodes
+        },
+        plugins: ["checkbox", "wholerow"]
+    });
+};
+
+var parseTreeViewForWorkflow = function (list, div, prop_id, prop_name) {
+    var nodes = [];
+    for (var sn = 0, len = list.length; sn < len; sn++) {
+        var id = list[sn][prop_id];
+        var typeId = list[sn].config_id;
+        var type = '';
+        switch (typeId) {
+            case 1:
+                type = "缺陷";
+                break;
+            case 2:
+                type = "需求";
+                break;
+            case 3:
+                type = "问题";
+                break;
+            case 4:
+                type = "风险";
+                break;
+        } 
+        if (id.length>16) {
+            id = id.substr(0,6);
+        }
+        nodes.push({
+            id: list[sn][prop_id],
+            text: '[' + id + ']' + '[' + type + ']' + list[sn][prop_name]
         });
-    };
+    }
+
+    div.jstree({
+        core: {
+            data: nodes
+        },
+        plugins: ["checkbox", "wholerow"]
+    });
+};
+
+var achieveData = function(url, div, prop_id, prop_name, func) {
+
     $.ajax({
         url: url,
         success: function (result) {
-            parsetTreeView(result, div, prop_id, prop_name);
+            if (!func) {
+                func = parseTreeView;
+            }
+            func(result, div, prop_id, prop_name);
         }
     });
 };
+
+
 var bindSrcClick = function (divsrc,divdest, url) {
     divsrc.on("select_node.jstree", function (event, node) {
         if (url) {

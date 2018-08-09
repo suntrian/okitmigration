@@ -31,8 +31,8 @@
 </div>
 <script>
     $(document).ready(function () {
-        achieveData("${basepath}/project/workflow/src", $("#srcworkflow"), "uid", "name");
-        achieveData("${basepath}/project/workflow/dest", $("#destworkflow"), "uid", "name");
+        achieveData("${basepath}/project/workflow/src", $("#srcworkflow"), "uid", "name", parseTreeViewForWorkflow);
+        achieveData("${basepath}/project/workflow/dest", $("#destworkflow"), "uid", "name", parseTreeViewForWorkflow);
 
         bindSrcClick($("#srcworkflow"), $("#destworkflow"), "${basepath}/project/workflow");
         bindDestClick($("#srcworkflow"), $("#destworkflow"), "${basepath}/project/workflow")
@@ -42,6 +42,10 @@
             url: '${basepath}/project/workflow/save',
             async: false,
             success: function (result) {
+                if (!result.success) {
+                    alert("还有流程未匹配");
+                    return;
+                }
                 window.location.href = "${basepath}/next";
             }
         })

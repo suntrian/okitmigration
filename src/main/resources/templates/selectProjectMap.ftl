@@ -128,12 +128,19 @@
         },
         'plugins': ["search", "wholerow", "checkbox"]
     });
+    var saving = false;
     function save() {
+        if (saving) return;
+        saving = true;
         $.ajax({
             url: "${basepath}/project/map/save",
             async: false,
             success: function (result) {
                 window.location.href = "${basepath}/step7"
+            },
+            error: function (result) {
+                saving = false;
+                alert(result);
             }
         })
     }

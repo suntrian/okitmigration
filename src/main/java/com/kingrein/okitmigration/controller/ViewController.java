@@ -2,7 +2,6 @@ package com.kingrein.okitmigration.controller;
 
 import com.kingrein.okitmigration.service.ProjectService;
 import com.kingrein.okitmigration.service.UserService;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -12,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.PostConstruct;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,8 +20,6 @@ import java.util.Map;
 
 @Controller
 public class ViewController {
-
-    private Integer currentStep = 1;
 
     @Value("${spring.datasource.src.url}")
     private String srcUrl;
@@ -55,8 +50,8 @@ public class ViewController {
         entityViewMap.put(3, "importEvents");       //关联任务里程碑
         entityViewMap.put(4, "importRisk");         //
         entityViewMap.put(5, "importQuestion");
-        entityViewMap.put(6, "importTest");
-        entityViewMap.put(7, "importTicket");       //缺陷中包含测试活动属性
+        entityViewMap.put(6, "importTicket");
+        entityViewMap.put(7, "importTest");       //缺陷中包含测试活动属性
         entityViewMap.put(8, "importFormat");
         entityViewMap.put(9, "importTask");
     }
@@ -132,14 +127,14 @@ public class ViewController {
         Map<Integer, String> entities = projectService.getEntities();
         Map<Integer, Integer> entityStatus = projectService.getEntityStatus();
         for (int step = 0; step <=entityViewMap.size(); step++){
-            if (entities.get(step) != null) {
-                if (entityStatus.get(step)==null) {
-                    modelAndView.setViewName(entityViewMap.get(step));
-                    return modelAndView;
-                }
+            if (entityStatus.get(step) != null && entityStatus.get(step) == 1) {
+                modelAndView.setViewName(entityViewMap.get(step));
+                return modelAndView;
             }
         }
-        currentStep = 1;
+        modelAndView.addObject("entities", entities);
+        modelAndView.addObject("entityStatus", entityStatus);
+        modelAndView.addObject("statistics", projectService.getImportStatistics());
         modelAndView.setViewName("finish");
         return modelAndView;
     }
@@ -198,11 +193,4 @@ public class ViewController {
         return modelAndView;
     }
 
-    public Integer getCurrentStep() {
-        return currentStep;
-    }
-
-    public void setCurrentStep(Integer currentStep) {
-        this.currentStep = currentStep;
-    }
 }

@@ -339,9 +339,11 @@ public class RecordService {
         recordFile.writeRecordFile(svnFilePath, nodeId.toString());
     }
 
-    public Integer readSvnNode() throws IOException, NumberFormatException {
+    public Integer readSvnNode() throws IOException {
         String svnFilePath = new File(rootDir, svnFile).toString();
-        return Integer.valueOf(recordFile.readRecordFile(svnFilePath));
+        String content =recordFile.readRecordFile(svnFilePath);
+        if (content == null || "".equals(content.trim())) return null;
+        return Integer.valueOf(content);
     }
 
     public void recordEntity(Object obj) throws IOException {

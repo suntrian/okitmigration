@@ -69,8 +69,8 @@ spring:
 logging:
   level:
     com.kingrein.okitmigration: debug
-  path: D:/temp
+  path: D:/migration
   pattern:
-    console: "%d{HH:mm:ss.SSS} [%t] %-5level %class{36} %L %M - %msg%xEx%n"
+    console: "%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"
   file:
-    max-size: 5MB
+    max-size: 10MB

@@ -55,9 +55,6 @@
             window.location.href = "${basepath}/step2";
         }
     }
-    function toggleClear(event, data) {
-        
-    }
 </script>
 </body>
 </html>

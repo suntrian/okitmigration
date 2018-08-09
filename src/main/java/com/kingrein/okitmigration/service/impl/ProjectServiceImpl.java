@@ -5,17 +5,13 @@ import com.kingrein.okitmigration.mapperSrc.ProjectSrcMapper;
 import com.kingrein.okitmigration.service.ProjectService;
 import com.kingrein.okitmigration.service.UserService;
 import com.kingrein.okitmigration.util.TreeNode;
-import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.sql.DataSource;
 import java.util.*;
 
 @Service("projectService")
@@ -27,6 +23,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     Map<Integer, String> entities = new HashMap<>();
     Map<Integer, Integer> entityStatus = new HashMap<>();
+    Map<String, Integer> importStatistics = new HashMap<>();
 
     //缺陷对应表
     Map<Integer, Integer> ticketColumnMap = new HashMap<>();
@@ -464,14 +461,15 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void importProject(List<Integer> projectIds) {
         Map<Integer, Integer> userMap = userService.getUserMap();
-
+        int projectPersonCount = 0;
         List<Map<String, Object>> projectPersons = projectSrcMapper.listProjectPerson(projectIds);
         for (Map<String, Object> projectPerson: projectPersons) {
             projectPerson.put("project_id", projectMap.get ((Integer) projectPerson.get("project_id")));
             projectPerson.put("user_id", userMap.get((Integer) projectPerson.get("user_id")));
             projectPerson.put("creater_id", projectPerson.get("creater_id")==null?null: userMap.get((Integer) projectPerson.get("creater_id")));
-            projectDestMapper.addProjectPerson(projectPerson);
+            projectPersonCount += projectDestMapper.addProjectPerson(projectPerson);
         }
+        importStatistics.put("project_person", projectPersonCount);
 
         List<Map<String, Object>> projectPersonAuths = projectSrcMapper.listProjectPersonAuth(projectIds);
         for (Map<String , Object> auth: projectPersonAuths) {
@@ -485,7 +483,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void importProduct(List<Integer> projectIds){
         Map<Integer, Integer> userMap = userService.getUserMap();
-
+        int count = 0;
         List<Map<String, Object>> products = projectSrcMapper.listProductByProjectIds(projectIds);
         for (Map<String, Object> product: products) {
             product.put("pm_person_id", product.get("pm_person_id")==null?null:userMap.get((Integer) product.get("pm_person_id")));
@@ -493,8 +491,10 @@ public class ProjectServiceImpl implements ProjectService {
             product.put("delete_person_id", product.get("delete_person_id")==null?null:userMap.get((Integer)product.get("delete_person_id")));
             product.put("rd_person_id", product.get("rd_person_id")==null?null:userMap.get((Integer)product.get("rd_person_id")));
             product.put("qm_person_id", product.get("qm_person_id")==null?null:userMap.get((Integer)product.get("qm_person_id")));
-            projectDestMapper.addProduct(product);
+            count += projectDestMapper.addProduct(product);
         }
+        importStatistics.put("product", count);
+        count = 0;
         List<Map<String, Object>> productVersions = projectSrcMapper.listProductVersionByProjectIds(projectIds);
         for (Map<String, Object> version: productVersions) {
             version.put("rd_person_id", version.get("rd_person_id")==null?null:userMap.get((Integer)version.get("rd_person_id")));
@@ -502,31 +502,44 @@ public class ProjectServiceImpl implements ProjectService {
             version.put("delete_person_id", version.get("delete_person_id")==null?null:userMap.get((Integer)version.get("delete_person_id")));
             version.put("pm_person_id", version.get("pm_person_id")==null?null:userMap.get((Integer)version.get("pm_person_id")));
             version.put("qm_person_id", version.get("qm_person_id")==null?null:userMap.get((Integer)version.get("qm_person_id")));
-            projectDestMapper.addProductVersion(version);
+            count += projectDestMapper.addProductVersion(version);
+
         }
+        importStatistics.put("product_version", count);
+        count = 0;
         List<Map<String, Object>> productModules = projectSrcMapper.listProductVersionModuleByProjectIds(projectIds);
         for (Map<String, Object> module: productModules){
             module.put("rd_person_id", module.get("rd_person_id")==null?null:userMap.get((Integer)module.get("rd_person_id")));
             module.put("creator_id", module.get("creator_id")==null?null:userMap.get((Integer)module.get("creator_id")));
             module.put("delete_person_id", module.get("delete_person_id")==null?null:userMap.get((Integer)module.get("delete_person_id")));
-            projectDestMapper.addProductVersionModule(module);
+            count += projectDestMapper.addProductVersionModule(module);
         }
+        importStatistics.put("product_version_module", count);
+        count = 0;
         List<Map<String, Object>> productProjects = projectSrcMapper.listProductProjectByProjectIds(projectIds);
         for (Map<String, Object> productProject: productProjects) {
             productProject.put("project_id", projectMap.get((Integer)productProject.get("project_id")));
-            projectDestMapper.addProductProject(productProject);
+            count += projectDestMapper.addProductProject(productProject);
         }
+        importStatistics.put("product_project", count);
+        count = 0;
+
         List<Map<String, Object>> productVersionProjects = projectSrcMapper.listProductVersionProjectByProjectIds(projectIds);
         for (Map<String, Object> versionProject: productVersionProjects) {
             versionProject.put("project_id", projectMap.get((Integer)versionProject.get("project_id")));
-            projectDestMapper.addProductVersionProject(versionProject);
+            count += projectDestMapper.addProductVersionProject(versionProject);
         }
+        importStatistics.put("product_version_project", count);
+        count = 0;
 
         List<Map<String, Object>> productVersionModuleProjects = projectSrcMapper.listProductVersionModuleProjectByProjectIds(projectIds);
         for (Map<String, Object> moduleProject: productVersionModuleProjects) {
             moduleProject.put("project_id", projectMap.get((Integer) moduleProject.get("project_id")));
-            projectDestMapper.addProductVersionModuleProject(moduleProject);
+            count += projectDestMapper.addProductVersionModuleProject(moduleProject);
         }
+        importStatistics.put("product_version_module_project", count);
+        count = 0;
+
         List<Map<String, Object>> productAuths = projectSrcMapper.listProductAuthByProjectIds(projectIds);
         for (Map<String, Object> auth: productAuths) {
             auth.put("person_id", userMap.get((Integer) auth.get("person_id")));
@@ -542,25 +555,28 @@ public class ProjectServiceImpl implements ProjectService {
         }
         Map<Integer, Integer> userMap = userService.getUserMap();
         List<Map<String, Object>> svnConfigDirectories = projectSrcMapper.listSvnConfigDirectoryByProject(projectIds);
+        int count = 0;
         for (Map<String, Object> svn: svnConfigDirectories) {
             svn.put("project_id", projectMap.get((Integer) svn.get("project_id")));
             svn.put("user_id", userMap.get((Integer) svn.get("user_id")));
             svn.put("delete_person_id", userMap.get(svn.get("delete_person_id")==null?null: (Integer) svn.get("delete_person_id")));
             svn.put("node_config_id", svnDestNode);
-            projectDestMapper.addSvnConfigDirectory(svn);
+            count += projectDestMapper.addSvnConfigDirectory(svn);
         }
+        importStatistics.put("svn_config_direcotry", count);
     }
 
     @Transactional
     @Override
     public void importFileDbData() {
         Map<Integer, Integer> userMap = userService.getUserMap();
-
+        int count = 0;
         List<Map<String, Object>> files = projectSrcMapper.listAllFile();
         for( Map<String, Object> file: files) {
             file.put("user_id", file.get("user_id") == null?null: userMap.get((Integer) file.get("user_id")));
-            projectDestMapper.addFile(file);
+            count += projectDestMapper.addFile(file);
         }
+        importStatistics.put("file", count);
     }
 
     @Transactional
@@ -571,7 +587,7 @@ public class ProjectServiceImpl implements ProjectService {
         List<Map<String, Object>> products = projectSrcMapper.listProductByProjectIds(projectIds);
         Map<String, Map<String, Object>> productMaps = parseList2Map(products, "product_uid");
         //缺陷
-
+        int count = 0;
         Map<String, String> ticketEntityMap = new HashMap<>();
         Map<String, Object>  srcTicketValueMap = new HashMap<>();
         if (ticketColumnMap.size()>0) {
@@ -636,8 +652,10 @@ public class ProjectServiceImpl implements ProjectService {
             ticket.put("category_id",  transformIntergerId((Integer) ticket.get("category_id"), ticketCategoryMap));
             ticket.put("frequency_id",  transformIntergerId((Integer) ticket.get("frequency_id"), ticketFrequencyMap));
 
-            projectDestMapper.addTicket(ticket);
+            count += projectDestMapper.addTicket(ticket);
         }
+        importStatistics.put("ticket", count);
+        count = 0;
 
         //缺陷历史
         List<Map<String, Object>> ticketHistorys = projectSrcMapper.listTicketHistoryByProjectIds(projectIds);
@@ -646,15 +664,19 @@ public class ProjectServiceImpl implements ProjectService {
             history.put("disposer_from_id", transformIntergerId((Integer) history.get("disposer_from_id"), userMap));
             history.put("status_id",transformIntergerId((Integer) history.get("status_id"), ticketStatusMap));
             history.put("resolution_id", transformIntergerId((Integer) history.get("resolution_id"), ticketResolutionMap));
-            projectDestMapper.addTicketHistory(history);
+            count += projectDestMapper.addTicketHistory(history);
         }
+        importStatistics.put("ticket_history", count);
+        count = 0;
 
         //缺陷文件
         List<Map<String, Object>> ticketFiles = projectSrcMapper.listTicketFileByProjectIds(projectIds) ;
         for (Map<String, Object> file: ticketFiles) {
             file.put("uploader_id", transformIntergerId((Integer) file.get("uploader_id"), userMap));
-            projectDestMapper.addTicketFile(file);
+            count += projectDestMapper.addTicketFile(file);
         }
+        importStatistics.put("ticket_file", count);
+        count = 0;
 
         //缺陷关联的流程实例
         List<Map<String, Object>> workflowTasks = projectSrcMapper.listWorkflowTaskByTicketProjectIds(projectIds);
@@ -663,15 +685,18 @@ public class ProjectServiceImpl implements ProjectService {
             workflowTask.put("creator_id", transformIntergerId((Integer) workflowTask.get("creator_id"), userMap));
             workflowTask.put("operator_id", transformIntergerId((Integer)workflowTask.get("operator_id"), userMap));
             workflowTask.put("disposer_id", transformIntergerId((Integer) workflowTask.get("disposer_id"), userMap));
-            projectDestMapper.addWorkflowTask(workflowTask);
+            count += projectDestMapper.addWorkflowTask(workflowTask);
         }
+        importStatistics.put("ticket_workflow_task", count);
+        count = 0;
 
         //缺陷流程
         List<Map<String, Object>> workflowTaskTickets = projectSrcMapper.listWorkflowTaskTicketByProjectIds(projectIds) ;
         for (Map<String, Object> taskTicket: workflowTaskTickets) {
-            projectDestMapper.addWorkflowTaskTicket(taskTicket);
+            count += projectDestMapper.addWorkflowTaskTicket(taskTicket);
         }
-
+        importStatistics.put("workflow_task_ticket", count);
+        count = 0;
 
         //缺陷流程历史
         List<Map<String, Object>> workflowHistories = projectSrcMapper.listTicketWorkflowHistoryByProjectIds(projectIds);
@@ -698,10 +723,16 @@ public class ProjectServiceImpl implements ProjectService {
             }
             history.put("from_status_id", transformIntergerId((Integer) history.get("from_status_id"), ticketStatusMap));
             history.put("to_status_id", transformIntergerId((Integer) history.get("to_status_id"), ticketStatusMap) );
-            projectDestMapper.addWorkflowHistory(history);
+            Integer c = projectDestMapper.addWorkflowHistory(history);
+            count += c;
+            if (c == 0) {
+                continue;
+            }
             Integer newHistoryId = (Integer) history.get("id");
             workflowHistoryMap.put(srcHistoryId, newHistoryId);
         }
+        importStatistics.put("ticket_workflow_history", count);
+        count = 0;
 
         //缺陷流程历史文件
         List<Map<String, Object>> workflowHistoryFiles = projectSrcMapper.listTicketWorkflowHistoryFileByProjectIds(projectIds);
@@ -710,15 +741,18 @@ public class ProjectServiceImpl implements ProjectService {
                 continue;
             }
             file.put("history_id", workflowHistoryMap.get((Integer)file.get("history_id") ));
-            projectDestMapper.addWorkflowHistoryFile(file);
+            count += projectDestMapper.addWorkflowHistoryFile(file);
         }
+        importStatistics.put("ticket_workflow_history_file", count);
+        count = 0;
 
         if (entities.values().contains("项目测试用例")) {
             List<Map<String , Object>> testDescStepTickets = projectSrcMapper.listRTestDescStepTicketByProjectIds(projectIds);
             for (Map<String, Object> item: testDescStepTickets) {
-                projectDestMapper.addRTestDescStepTicket(item);
+                count += projectDestMapper.addRTestDescStepTicket(item);
             }
         }
+        importStatistics.put("test_desc_step_ticket", count);
     }
 
     @Transactional
@@ -726,14 +760,17 @@ public class ProjectServiceImpl implements ProjectService {
     public void importRequirement(List<Integer> ids) {
         Map<Integer, Integer> userMap = userService.getUserMap();
         Map<Integer, Integer> unitMap = userService.getUnitMap();
-
+        int count = 0;
         //文件夹 format_floder
         List<Map<String, Object>> formatFloders = projectSrcMapper.listFormatDocFloderByProjectIds(ids);
         for (Map<String, Object> item: formatFloders) {
             item.put("project_id", transformIntergerId((Integer)item.get("project_id"), projectMap));
             item.put("delete_person_id", transformIntergerId((Integer)item.get("delete_person_id"), userMap));
-            projectDestMapper.addFormatDocFloder(item);
+            count += projectDestMapper.addFormatDocFloder(item);
         }
+        importStatistics.put("format_folder", count);
+        count = 0;
+
         //需求文档 format_doc
         List<Map<String, Object>> formatDocs = projectSrcMapper.listFormatDocByProjectIds(ids);
         for (Map<String, Object> item: formatDocs) {
@@ -742,20 +779,28 @@ public class ProjectServiceImpl implements ProjectService {
             item.put("doc_type", transformIntergerId((Integer)item.get("doc_type"), formatDocTypeMap));
             item.put("delete_person_id", transformIntergerId((Integer)item.get("delete_person_id"), userMap));
             item.put("unit_id", transformIntergerId((Integer) item.get("unit_id"), unitMap));
-            projectDestMapper.addFormatDoc(item);
+            count += projectDestMapper.addFormatDoc(item);
         }
+        importStatistics.put("format_doc", count);
+        count = 0;
+
         //文档，文件夹关系 r_format_doc_floder
         List<Map<String, Object>> rFormatDocFloders = projectSrcMapper.listRFormatDocFloderByProjectIds(ids);
         for (Map<String, Object> item: rFormatDocFloders) {
-            projectDestMapper.addRFormatDocFloder(item);
+            count += projectDestMapper.addRFormatDocFloder(item);
         }
+        importStatistics.put("format_doc_folder", count);
+        count = 0;
+
         //文档版本 format_edition
         List<Map<String, Object>> formatEditions = projectSrcMapper.listFormatEditionByProjectIds(ids);
         for (Map<String, Object> item: formatEditions) {
             item.put("project_id", transformIntergerId((Integer)item.get("project_id"), projectMap));
             item.put("user_id", transformIntergerId((Integer)item.get("user_id"), userMap));
-            projectDestMapper.addFormatEdition(item);
+            count += projectDestMapper.addFormatEdition(item);
         }
+        importStatistics.put("format_edition", count);
+        count = 0;
 
         //文档和条目类型关联关系 r_format_doc_item_type
         List<Map<String, Object>> rFormatDocItemTypes = projectSrcMapper.listRFormatDocItemTypeByProjectIds(ids);
@@ -774,14 +819,18 @@ public class ProjectServiceImpl implements ProjectService {
         List<Map<String, Object>> formatSections = projectSrcMapper.listFormatSectionByProjectIds(ids);
         for (Map<String, Object> item: formatSections) {
             item.put("project_id", transformIntergerId((Integer)item.get("project_id"), projectMap));
-            projectDestMapper.addFormatSection(item);
+            count += projectDestMapper.addFormatSection(item);
         }
+        importStatistics.put("format_section", count);
+        count = 0;
 
         //文档文件 r_format_docfile
         List<Map<String, Object>> formatDocFiles = projectSrcMapper.listRFormatDocFileByProjectIds(ids);
         for (Map<String, Object> item: formatDocFiles) {
-            projectDestMapper.addRFormatDocFile(item);
+            count += projectDestMapper.addRFormatDocFile(item);
         }
+        importStatistics.put("format_doc_file", count);
+        count = 0;
 
         //文档依赖关系 r_format_docs
         List<Map<String, Object>> rFormatDocs = projectSrcMapper.listRFormatDocsByProjectIds(ids);
@@ -794,16 +843,20 @@ public class ProjectServiceImpl implements ProjectService {
         for (Map<String , Object> item: formatItemEditions) {
             item.put("project_id", transformIntergerId((Integer) item.get("project_id"), projectMap));
             item.put("operator_id", transformIntergerId((Integer) item.get("operator_id"), userMap ));
-            projectDestMapper.addFormatItemEdition(item);
+            count += projectDestMapper.addFormatItemEdition(item);
         }
+        importStatistics.put("format_item_edition", count);
+        count = 0;
 
         //需求变更纪录 format_item_changed_record
         List<Map<String, Object>> formatItemChangeRecords = projectSrcMapper.listFormatItemChangedRecordByProjectIds(ids);
         for (Map<String, Object> item: formatItemChangeRecords) {
             item.put("operator_id", transformIntergerId((Integer)item.get("operator_id"), userMap));
             item.put("request_manner", transformIntergerId((Integer)item.get("request_manner"), formatChangedMannerMap));
-            projectDestMapper.addFormatItemChangedRecord(item);
+            count += projectDestMapper.addFormatItemChangedRecord(item);
         }
+        importStatistics.put("format_item_changed_record", count);
+        count = 0;
 
         //需求关系 r_format_section_item
         List<Map<String, Object>> rFormatSectionItems = projectSrcMapper.listRFormtSectionItemByProjectIds(ids);
@@ -818,8 +871,10 @@ public class ProjectServiceImpl implements ProjectService {
             item.put("difficulty_id", transformIntergerId((Integer)item.get("difficulty_id"), formatDifficultyMap));
             item.put("expected_level_id", transformIntergerId((Integer)item.get("expected_level_id"), formatExpectedLevelMap));
             item.put("operator_id", transformIntergerId((Integer)item.get("operator_id"), userMap));
-            projectDestMapper.addRFormatSectionItem(item);
+            count += projectDestMapper.addRFormatSectionItem(item);
         }
+        importStatistics.put("format_section_item", count);
+        count = 0;
 
         //不知道干嘛用的，format_item_comm
         List<Map<String, Object>> formatItemComms = projectSrcMapper.listFormatItemCommByProjectIds(ids) ;
@@ -949,8 +1004,10 @@ public class ProjectServiceImpl implements ProjectService {
                 //TODO: 指派到角色的情况
                 item.put("next_disposer_id", 0);
             }
-            Integer count =  projectDestMapper.addWorkflowHistory(item);
-            if (count == 0) continue;
+            Integer c =  projectDestMapper.addWorkflowHistory(item);
+            if (c == 0) {
+                continue;
+            }
             Integer newId = (Integer) item.get("id");
             workflowHistoryMap.put(srcHistoryId, newId);
         }
@@ -981,12 +1038,15 @@ public class ProjectServiceImpl implements ProjectService {
         Map<Integer, Integer> userMap = userService.getUserMap();
         Map<Integer, Integer> unitMap = userService.getUnitMap();
 
+        int count = 0;
         List<Map<String, Object>> plans = projectSrcMapper.listPlanByProjectIds(ids);
         for (Map<String, Object> item: plans) {
             item.put("project_id", transformIntergerId((Integer)item.get("project_id"), projectMap));
             item.put("plan_operator", transformIntergerId((Integer)item.get("plan_operator"), userMap));
-            projectDestMapper.addPlan(item);
+            count += projectDestMapper.addPlan(item);
         }
+        importStatistics.put("plan", count);
+        count = 0;
 
         Map<Integer, Map<String, Object>> rootTasks = projectDestMapper.listRootTaskByProjectIds(new ArrayList<>(projectMap.values()));
         Map<String, String > rootTaskUidMap = new HashMap<>();
@@ -1018,9 +1078,11 @@ public class ProjectServiceImpl implements ProjectService {
             item.put("Status", transformIntergerId((Integer)item.get("Status"), taskStatusMap));
             item.put("update_user_id", transformIntergerId((Integer)item.get("update_user_id"), userMap));
             //TODO: stage_id
-            projectDestMapper.addTask(item);
+            count += projectDestMapper.addTask(item);
             addedTaskUids.add((String) item.get("UID"));
         }
+        importStatistics.put("task", count);
+        count = 0;
 
         List<Map<String, Object>> tasklogs = projectSrcMapper.listTaskLogByProjectIds(ids);
         for (Map<String, Object> log: tasklogs) {
@@ -1041,8 +1103,11 @@ public class ProjectServiceImpl implements ProjectService {
         for (Map<String, Object> item: rTaskFiles) {
             item.put("user_id", transformIntergerId((Integer)item.get("user_id"), userMap));
             item.put("task_filetype", transformIntergerId((Integer)item.get("task_filetype"), taskFileTypeMap));
-            projectDestMapper.addRTaskFile(item);
+            count += projectDestMapper.addRTaskFile(item);
         }
+        importStatistics.put("task_file", count);
+        count = 0;
+
         List<Map<String, Object>> taskAssignments = projectSrcMapper.listTaskAssignmentByProjectIds(ids);
         for (Map<String, Object> item: taskAssignments) {
             item.put("ResourceUID", transformIntergerId((Integer)item.get("ResourceUID"), userMap));
@@ -1106,6 +1171,7 @@ public class ProjectServiceImpl implements ProjectService {
         Map<Integer, Integer> userMap = userService.getUserMap();
         Map<Integer, Integer> unitMap = userService.getUnitMap();
 
+        int count = 0;
         List<Map<String, Object>> testActivities = projectSrcMapper.listTestActivityByProjectIds(projectIds);
         for (Map<String, Object> item: testActivities) {
             item.put("project_id", transformIntergerId((Integer)item.get("project_id"), projectMap));
@@ -1113,15 +1179,21 @@ public class ProjectServiceImpl implements ProjectService {
             item.put("level_id", transformIntergerId((Integer)item.get("level_id"), testActivityLevelMap));
             item.put("status_id", transformIntergerId((Integer)item.get("status_id"), testActivityStatusMap));
             item.put("unit_id", transformIntergerId((Integer)item.get("unit_id"), unitMap));
-            projectDestMapper.addTestActivity(item);
+            count += projectDestMapper.addTestActivity(item);
         }
+        importStatistics.put("test_activity", count);
+        count = 0;
+
         List<Map<String, Object>> testDescs = projectSrcMapper.listTestDescByProjectIds(projectIds);
         for (Map<String, Object> item: testDescs ){
             item.put("project_id", transformIntergerId((Integer)item.get("project_id"), projectMap));
             item.put("user_id", transformIntergerId((Integer)item.get("user_id"), userMap));
             item.put("operator_id", transformIntergerId((Integer)item.get("operator_id"), userMap));
-            projectDestMapper.addTestDesc(item);
+            count += projectDestMapper.addTestDesc(item);
         }
+        importStatistics.put("test_desc", count);
+        count = 0;
+
         List<Map<String, Object>> testActivityStages = projectSrcMapper.listTestActivityStageByProjectIds(projectIds);
         for (Map<String, Object> item: testActivityStages) {
             item.put("creator_id", transformIntergerId((Integer)item.get("creator_id"), userMap));
@@ -1131,13 +1203,18 @@ public class ProjectServiceImpl implements ProjectService {
             item.put("rule_id", transformIntergerId((Integer)item.get("rule_id"), testRuleMap));
             item.put("method_id", transformIntergerId((Integer)item.get("method_id"), testMethodMap));
             item.put("category_id", transformIntergerId((Integer)item.get("category_id"), testStageCategoryMap));
-            projectDestMapper.addTestActivityStage(item);
+            count += projectDestMapper.addTestActivityStage(item);
         }
+        importStatistics.put("test_activity_stage", count);
+        count = 0;
 
         List<Map<String, Object>> testDescSections = projectSrcMapper.listTestDescSectionByProjectIds(projectIds);
         for (Map<String, Object> item: testDescSections) {
-            projectDestMapper.addTestDescSection(item);
+            count += projectDestMapper.addTestDescSection(item);
         }
+        importStatistics.put("test_desc_section", count);
+        count = 0;
+
         List<Map<String, Object>> testDescriptionCaseResults = projectSrcMapper.listTestDescriptionCaseResultByProjectIds(projectIds);
         for (Map<String, Object> item: testDescriptionCaseResults) {
             item.put("status_id", transformIntergerId((Integer)item.get("status_id"), testCaseStatusMap));
@@ -1148,18 +1225,24 @@ public class ProjectServiceImpl implements ProjectService {
             item.put("test_person_id", transformIntergerId((Integer)item.get("test_person_id"), userMap));
             item.put("executor", transformIntergerId((Integer)item.get("executor"), userMap));
             item.put("project_id", transformIntergerId((Integer)item.get("project_id"), projectMap));
-            projectDestMapper.addTestDescriptionCaseResult(item);
+            count += projectDestMapper.addTestDescriptionCaseResult(item);
         }
+        importStatistics.put("test_description_case_result", count);
+        count = 0;
+
         List<Map<String, Object>> testDescStepResults = projectSrcMapper.listTestDescStepResultByProjectIds(projectIds);
         for (Map<String, Object> item: testDescStepResults) {
-            projectDestMapper.addTestDescStepResult(item);
+            count += projectDestMapper.addTestDescStepResult(item);
         }
+        importStatistics.put("test_desc_step_result", count);
+        count = 0;
+
         List<Map<String, Object>> rTestDescCaseFiles = projectSrcMapper.listRTestDestCaseFileByProjectIds(projectIds);
         for (Map<String, Object> item: rTestDescCaseFiles) {
-            projectDestMapper.addRTestDescCaseFile(item);
+            count += projectDestMapper.addRTestDescCaseFile(item);
         }
-
-
+        importStatistics.put("test_desc_case_file", count);
+        count = 0;
     }
 
     @Transactional
@@ -1167,7 +1250,7 @@ public class ProjectServiceImpl implements ProjectService {
     public void importEvents(List<Integer> projectIds) {
         Map<Integer, Integer> userMap = userService.getUserMap();
         Map<Integer, Integer> unitMap = userService.getUnitMap();
-
+        int count = 0;
         List<Map<String, Object>> memorabilias = projectSrcMapper.listMemorabiliaByProjectIds(projectIds);
         for(Map<String, Object> item: memorabilias) {
             Integer srcId = (Integer) item.get("id");
@@ -1178,18 +1261,25 @@ public class ProjectServiceImpl implements ProjectService {
             //todo: 项目日志关联里程碑，现在为直接置空
             item.put("relevance_milestone_uid", null);
 
-            Integer count = projectDestMapper.addMemorabilia(item);
-            if (count == 0) continue;
+            Integer c = projectDestMapper.addMemorabilia(item);
+            count += c;
+            if (c == 0) continue;
             Integer newId = (Integer) item.get("id");
             eventsMap.put(srcId, newId);
         }
+        importStatistics.put("event", count);
+        count = 0;
+
         List<Map<String, Object>> rMemorabiliaFiles = projectSrcMapper.listRMemorabiliaFileByProjectIds(projectIds);
         for (Map<String, Object> item: rMemorabiliaFiles) {
             //日志已经删除，但日志文件还在的情况处理
             if (!eventsMap.keySet().contains((Integer)item.get("memorabilia_id"))) continue;
             item.put("memorabilia_id", transformIntergerId((Integer)item.get("memorabilia_id"), eventsMap));
-            projectDestMapper.addRMemorabiliaFile(item);
+            count += projectDestMapper.addRMemorabiliaFile(item);
         }
+        importStatistics.put("event_file", count);
+        count = 0;
+
         List<Map<String, Object>> rMemoUserProjects = projectSrcMapper.listRMemorabiliaUserProject(projectIds);
         for (Map<String, Object> item: rMemoUserProjects) {
             if (!eventsMap.keySet().contains(item.get("events_id"))) continue;
@@ -1198,6 +1288,8 @@ public class ProjectServiceImpl implements ProjectService {
             item.put("project_id", transformIntergerId((Integer)item.get("project_id"), projectMap));
             projectDestMapper.addRMemorabiliaUserProject(item);
         }
+
+
         List<Map<String, Object>> eventsCriticles = projectSrcMapper.listEventsCriticleByProjectIds(projectIds);
         for (Map<String, Object>item: eventsCriticles) {
             Integer srcId = (Integer) item.get("id");
@@ -1205,11 +1297,17 @@ public class ProjectServiceImpl implements ProjectService {
             item.put("creator", transformIntergerId((Integer)item.get("creator"), userMap));
             item.put("user_id", transformIntergerId((Integer)item.get("user_id"), userMap));
             item.put("last_critics", transformIntergerId((Integer)item.get("last_critics"), userMap));
-            Integer count = projectDestMapper.addEventsCriticle(item);
-            if (count == 0) continue;
+            Integer c = projectDestMapper.addEventsCriticle(item);
+            count += c;
+            if (c == 0) {
+                continue;
+            }
             Integer newId = (Integer) item.get("id");
             eventsCriticleMap.put(srcId, newId);
         }
+        importStatistics.put("event_criticle", count);
+        count = 0;
+
         List<Map<String, Object>> eventsCriticleFiles = projectSrcMapper.listEventsCriticleFileByProjectIds(projectIds);
         for (Map<String, Object> item: eventsCriticleFiles) {
             if (!eventsCriticleMap.keySet().contains(item.get("criticle_id"))) continue;
@@ -1224,7 +1322,7 @@ public class ProjectServiceImpl implements ProjectService {
     public void importForum(List<Integer> projectIds){
         Map<Integer, Integer> userMap = userService.getUserMap();
         Map<Integer, Integer> unitMap = userService.getUnitMap();
-
+        int count = 0;
         List<Map<String, Object>> reportQuestions = projectSrcMapper.listReportQuestionByProjectIds(projectIds);
         for (Map<String, Object> item: reportQuestions) {
             Integer srcId = (Integer) item.get("id");
@@ -1235,17 +1333,23 @@ public class ProjectServiceImpl implements ProjectService {
             item.put("type_id", transformIntergerId((Integer)item.get("type_id"), reportQuestionTypeMap));
             item.put("priority_id", transformIntergerId((Integer)item.get("priority_id"), reportQuestionPriorityMap));
             item.put("status_id", transformIntergerId((Integer)item.get("status_id"), reportQuestionStatusMap));
-            Integer count = projectDestMapper.addReportQuestion(item);
-            if (count == 0) continue;
+            Integer c = projectDestMapper.addReportQuestion(item);
+            count += c;
+            if (c == 0) continue;
             Integer newId = (Integer) item.get("id");
             reportQuestionMap.put(srcId, newId);
         }
+        importStatistics.put("forum", count);
+        count = 0;
+
         List<Map<String, Object>> reportQuestionFiles = projectSrcMapper.listRQuestionFileByProjectIds(projectIds);
         for (Map<String, Object>item: reportQuestionFiles) {
             if (!reportQuestionMap.keySet().contains(item.get("question_id"))) continue;
             item.put("question_id", transformIntergerId((Integer)item.get("question_id"), reportQuestionMap));
-            projectDestMapper.addRQuestionFile(item);
+            count += projectDestMapper.addRQuestionFile(item);
         }
+        importStatistics.put("forum_file", count);
+        count = 0;
     }
 
     @Transactional
@@ -1253,7 +1357,7 @@ public class ProjectServiceImpl implements ProjectService {
     public void importQuestion(List<Integer> projectIds) {
         Map<Integer, Integer> userMap = userService.getUserMap();
         Map<Integer, Integer> unitMap = userService.getUnitMap();
-
+        int count = 0;
         List<Map<String, Object>> questions = projectSrcMapper.listQuestionByProjectIds(projectIds);
         for (Map<String, Object> item: questions) {
             item.put("creator_id", transformIntergerId((Integer)item.get("creator_id"), userMap));
@@ -1263,12 +1367,17 @@ public class ProjectServiceImpl implements ProjectService {
             item.put("category_id", transformIntergerId((Integer)item.get("category_id"), questionCategoryMap));
             item.put("status_id", transformIntergerId((Integer)item.get("status_id"), questionManageStatusMap));
             item.put("evaluation_level",transformIntergerId((Integer)item.get("evaluation_level"), questionEvaluationLevelMap));
-            projectDestMapper.addQuestion(item);
+            count += projectDestMapper.addQuestion(item);
         }
+        importStatistics.put("question", count);
+        count = 0;
+
         List<Map<String, Object>> rQuestionManageFiles = projectSrcMapper.listRQuestionManagFileByProjectIds(projectIds);
         for (Map<String, Object> item: rQuestionManageFiles) {
-            projectDestMapper.addRQuestionManageFile(item);
+            count += projectDestMapper.addRQuestionManageFile(item);
         }
+        importStatistics.put("question_file", count);
+        count = 0;
 
         List<Map<String, Object>> workflowTasks = projectSrcMapper.listWorkflowTaskWithinQuestionByProjectIds(projectIds);
         for (Map<String, Object> item: workflowTasks) {
@@ -1313,8 +1422,8 @@ public class ProjectServiceImpl implements ProjectService {
                 //TODO：指派到角色
                 item.put("next_disposer_id", 0);
             }
-            Integer count = projectDestMapper.addWorkflowHistory(item);
-            if (count == 0) {
+            Integer c = projectDestMapper.addWorkflowHistory(item);
+            if (c == 0) {
                 continue;
             }
             workflowHistoryMap.put(srcId, (Integer) item.get("id"));
@@ -1333,7 +1442,7 @@ public class ProjectServiceImpl implements ProjectService {
     public void importRisk(List<Integer> projectIds) {
         Map<Integer, Integer> userMap = userService.getUserMap();
         Map<Integer, Integer> unitMap = userService.getUnitMap();
-
+        int count = 0;
         List<Map<String, Object>> projectRisks = projectSrcMapper.listProjectRiskByProjectIds(projectIds);
         for (Map<String, Object> item: projectRisks) {
             item.put("project_id", transformIntergerId((Integer)item.get("project_id"), projectMap));
@@ -1346,13 +1455,18 @@ public class ProjectServiceImpl implements ProjectService {
             item.put("introducer", transformIntergerId((Integer)item.get("introducer"), userMap));  //提出人
             item.put("disposer", transformIntergerId((Integer)item.get("disposer"), userMap));
             item.put("risk_dispose_method", transformIntergerId((Integer)item.get("risk_dispose_method"), riskDisposeMethodMap));
-            projectDestMapper.addProjectRisk(item);
+            count += projectDestMapper.addProjectRisk(item);
         }
+        importStatistics.put("risk", count);
+        count = 0;
+
         List<Map<String, Object>> rProjectRiskFiles = projectSrcMapper.listRProjectRiskFileByProjectIds(projectIds);
         for (Map<String, Object> item: rProjectRiskFiles) {
             item.put("project_id", transformIntergerId((Integer)item.get("project_id"), projectMap));
-            projectDestMapper.addRProjectRiskFile(item);
+            count += projectDestMapper.addRProjectRiskFile(item);
         }
+        importStatistics.put("risk_file", count);
+        count = 0;
 
         List<Map<String, Object>> workflowTasks = projectSrcMapper.listWorkflowWithinProjectRiskByProjectIds(projectIds);
         for (Map<String, Object> item: workflowTasks) {
@@ -1397,8 +1511,8 @@ public class ProjectServiceImpl implements ProjectService {
                 //TODO：指派到角色
                 item.put("next_disposer_id", 0);
             }
-            Integer count = projectDestMapper.addWorkflowHistory(item);
-            if (count == 0) {
+            Integer c = projectDestMapper.addWorkflowHistory(item);
+            if (c == 0) {
                 continue;
             }
             workflowHistoryMap.put(srcId, (Integer) item.get("id"));
@@ -1694,6 +1808,14 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void setEntityStatus(Map<Integer, Integer> entityStatus) {
         this.entityStatus = entityStatus;
+    }
+    @Override
+    public Map<String, Integer> getImportStatistics() {
+        return importStatistics;
+    }
+    @Override
+    public void setImportStatistics(Map<String, Integer> importStatistics) {
+        this.importStatistics = importStatistics;
     }
 
     @Override
