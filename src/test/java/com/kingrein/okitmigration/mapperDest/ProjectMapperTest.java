@@ -35,4 +35,10 @@ public class ProjectMapperTest  extends OkitmigrationApplicationTests {
         System.out.println(count);
 
     }
+
+    @Test
+    @Transactional
+    public void testUpdateTicketMilestone() {
+        projectDestMapper.updateTicketMilestone("001aed82a4664e72a8ff28e3d435954a", "cb5ihgz19xarx5je82914w53c2er4ruy");
+    }
 }

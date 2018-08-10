@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -99,6 +100,9 @@ public class ProjectServiceImpl implements ProjectService {
     //流程
     Map<String, String> workflowMap = new HashMap<>();
     Map<Integer, Integer> workflowHistoryMap = new HashMap<>();
+
+    //暂存缺陷关联里程碑信息
+    Map<String, String> ticketMilestoneMap = new HashMap<>();
 
     @Autowired
     private UserService userService;
@@ -652,6 +656,12 @@ public class ProjectServiceImpl implements ProjectService {
             ticket.put("category_id",  transformIntergerId((Integer) ticket.get("category_id"), ticketCategoryMap));
             ticket.put("frequency_id",  transformIntergerId((Integer) ticket.get("frequency_id"), ticketFrequencyMap));
 
+            //暂存缺陷关联的里程碑信息， 到任务导入完之后再更新进去。
+            if (!StringUtils.isEmpty(ticket.get("milestone_id"))) {
+                ticketMilestoneMap.put((String) ticket.get("uid"), (String) ticket.get("milestone_id"));
+                ticket.put("milestone_id", null);
+            }
+
             count += projectDestMapper.addTicket(ticket);
         }
         importStatistics.put("ticket", count);
@@ -1163,6 +1173,11 @@ public class ProjectServiceImpl implements ProjectService {
             }
         }
         //TODO: report work 计划任务报工，数据结构待分析
+
+        //恢复缺陷关联里程碑信息
+        for (String ticketUid: ticketMilestoneMap.keySet()) {
+            projectDestMapper.updateTicketMilestone(ticketUid, ticketMilestoneMap.get(ticketUid));
+        }
     }
 
     @Transactional

@@ -168,6 +168,10 @@
               select #{history_id}, #{file_id} from dual where not exists (select * from r_workflow_history_file where file_id = #{file_id}) limit 1;
     </insert>
 
+    <update id="updateTicketMilestone" >
+        UPDATE `ticket` t SET t.milestone_id = #{milestone} WHERE t.uid = #{ticket};
+    </update>
+
 
     <!-- 需求导入开始 -->
     <select id="listFormatPageEntityColumn" resultType="map">

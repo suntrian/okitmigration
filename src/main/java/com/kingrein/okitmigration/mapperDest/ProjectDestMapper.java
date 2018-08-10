@@ -1,6 +1,7 @@
 package com.kingrein.okitmigration.mapperDest;
 
 import org.apache.ibatis.annotations.MapKey;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
@@ -60,6 +61,8 @@ public interface ProjectDestMapper {
     Integer addTicketFile(Map<String, Object> ticketFille);
     Integer addTicketHistory(Map<String, Object> ticketHistory);
     Integer addWorkflowTaskTicket(Map<String, Object> workflowTaskTicket);
+
+    Integer updateTicketMilestone(@Param("ticket") String Ticketuid, @Param("milestone") String milestoneUid);
 
     //需求导入开始
     List<Map<String, Object>> listFormatPageEntityColumn();

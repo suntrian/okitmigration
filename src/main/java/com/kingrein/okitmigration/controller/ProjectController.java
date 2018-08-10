@@ -513,7 +513,7 @@ public class ProjectController {
         ticketMap.add("frequency", gson.toJsonTree(projectService.getTicketFrequencyMap()));
         recordService.recordTicketMap(ticketMap);
         projectService.importTicket(projectIds);
-        projectService.getEntityStatus().put(6, 2);         //2 for has imported successfully
+        projectService.getEntityStatus().put(7, 2);         //2 for has imported successfully
         return new ResultVO("succeed");
     }
 
@@ -568,7 +568,7 @@ public class ProjectController {
         testMap.add("testype", gson.toJsonTree(projectService.getTestTypeMap()));
         recordService.recordTestMap(testMap);
         projectService.importTest(projectIds);
-        projectService.getEntityStatus().put(7, 2);
+        projectService.getEntityStatus().put(6, 2);
         return new ResultVO("succeed");
     }
 

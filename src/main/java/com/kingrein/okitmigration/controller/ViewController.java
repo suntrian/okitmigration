@@ -50,8 +50,8 @@ public class ViewController {
         entityViewMap.put(3, "importEvents");       //关联任务里程碑
         entityViewMap.put(4, "importRisk");         //
         entityViewMap.put(5, "importQuestion");
-        entityViewMap.put(6, "importTicket");
-        entityViewMap.put(7, "importTest");       //缺陷中包含测试活动属性
+        entityViewMap.put(6, "importTest");
+        entityViewMap.put(7, "importTicket");       //缺陷中包含测试活动属性
         entityViewMap.put(8, "importFormat");
         entityViewMap.put(9, "importTask");
     }
