@@ -661,6 +661,8 @@ public class ProjectServiceImpl implements ProjectService {
                 ticketMilestoneMap.put((String) ticket.get("uid"), (String) ticket.get("milestone_id"));
                 ticket.put("milestone_id", null);
             }
+            //因为角色并未匹配，无法关联到对应角色，缺陷处置角色置空
+            ticket.put("dispose_role_id", null);
 
             count += projectDestMapper.addTicket(ticket);
         }
@@ -756,7 +758,7 @@ public class ProjectServiceImpl implements ProjectService {
         importStatistics.put("ticket_workflow_history_file", count);
         count = 0;
 
-        if (entities.values().contains("项目测试用例")) {
+        if (entityStatus.get(6) != null && entityStatus.get(6) == 2) {
             List<Map<String , Object>> testDescStepTickets = projectSrcMapper.listRTestDescStepTicketByProjectIds(projectIds);
             for (Map<String, Object> item: testDescStepTickets) {
                 count += projectDestMapper.addRTestDescStepTicket(item);
@@ -1029,7 +1031,7 @@ public class ProjectServiceImpl implements ProjectService {
             projectDestMapper.addWorkflowHistoryFile(item);
         }
 
-        if (entities.values().contains("项目测试用例")) {
+        if (entityStatus.get(6) != null && entityStatus.get(6) == 2) {      //测试管理已导入情况
             List<Map<String, Object>> testDescFormatDocs = projectSrcMapper.listTestDescFormatDocByProjectIds(ids);
             for (Map<String, Object> item: testDescFormatDocs) {
                 projectDestMapper.addTestDescFormatDoc(item);
@@ -1037,6 +1039,13 @@ public class ProjectServiceImpl implements ProjectService {
             List<Map<String,Object>> testDescCaseItemEditions = projectSrcMapper.listRTestDescCaseItemEditionByProjectIds(ids);
             for (Map<String, Object> item: testDescCaseItemEditions) {
                 projectDestMapper.addRTestDescCaseItemEdition(item);
+            }
+        }
+
+        if (entityStatus.get(7) != null && entityStatus.get(7) == 2) { //缺陷已导入的情况
+            List<Map<String, Object>> ticketFormatItems = projectSrcMapper.listTicketFormatItemByProjectIds(ids);
+            for (Map<String, Object> item: ticketFormatItems) {
+                projectDestMapper.addTicketFormatItem(item);
             }
         }
 
@@ -1160,13 +1169,13 @@ public class ProjectServiceImpl implements ProjectService {
             projectDestMapper.addRQuestionFile(item);
         }
 
-        if (entities.values().contains("项目需求")) {
+        if (entityStatus.get(8) != null && entityStatus.get(8) == 2) {
             List<Map<String, Object>> rTaskItems = projectSrcMapper.listRTaskItemByProjectIds(ids);
             for (Map<String, Object> item: rTaskItems) {
                 projectDestMapper.addRTaskItem(item);
             }
         }
-        if (entities.values().contains("项目测试用例")) {
+        if (entityStatus.get(6) != null && entityStatus.get(6) == 2) {
             List<Map<String, Object>> rTaskCases = projectSrcMapper.listRTaskCaseByProjectIds(ids);
             for (Map<String, Object> item: rTaskCases) {
                 projectDestMapper.addRTaskCase(item);

@@ -61,7 +61,7 @@ public interface ProjectDestMapper {
     Integer addTicketFile(Map<String, Object> ticketFille);
     Integer addTicketHistory(Map<String, Object> ticketHistory);
     Integer addWorkflowTaskTicket(Map<String, Object> workflowTaskTicket);
-
+    Integer addTicketFormatItem(Map<String,Object> item);
     Integer updateTicketMilestone(@Param("ticket") String Ticketuid, @Param("milestone") String milestoneUid);
 
     //需求导入开始
@@ -174,4 +174,6 @@ public interface ProjectDestMapper {
     Integer addProjectRisk(Map<String, Object> item);
     Integer addRProjectRiskFile(Map<String, Object> item);
     Integer addWorkflowTaskRisk(Map<String, Object> item);
+
+
 }

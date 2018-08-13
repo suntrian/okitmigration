@@ -61,8 +61,8 @@ public class ProjectController {
         entities.put(3, "项目日志");
         entities.put(4, "项目风险");
         entities.put(5, "项目问题");
-        entities.put(6, "项目缺陷");
-        entities.put(7, "项目测试用例");
+        entities.put(6, "项目测试用例");
+        entities.put(7, "项目缺陷");
         entities.put(8, "项目需求");
         entities.put(9, "项目计划任务");
     }

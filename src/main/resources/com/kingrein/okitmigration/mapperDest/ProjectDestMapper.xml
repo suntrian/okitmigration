@@ -150,7 +150,12 @@
     <insert id="addTicketHistory" parameterType="map">
         INSERT IGNORE INTO ticket_history (uid, ticket_uid, comm, changed_record, dispose_time, status_id, resolution_id, disposer_id, process_address, disposer_from_id) VALUES (#{uid},#{ ticket_uid},#{ comm},#{ changed_record},#{ dispose_time},#{ status_id},#{ resolution_id},#{ disposer_id},#{ process_address},#{ disposer_from_id})
     </insert>
-    
+
+
+    <insert id="addTicketFormatItem" parameterType="map">
+        INSERT IGNORE INTO r_ticket_format_item(`ticket_uid`,`doc_edition_uid`,`section_uid`,`item_uid`,`item_edition`) VALUES (#{ticket_uid}, #{doc_edition_uid}, #{section_uid}, #{item_uid}, #{item_edition});
+    </insert>
+
     <insert id="addWorkflowTaskTicket" parameterType="map" useGeneratedKeys="true" keyProperty="id">
         INSERT IGNORE INTO workflow_task_ticket (id, task_uid, ticket_uid)
               select null, #{task_uid}, #{ticket_uid} from dual
