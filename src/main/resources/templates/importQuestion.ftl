@@ -63,7 +63,7 @@
         bindSrcClick($("#srcquestionevaluationlevel"), $("#destquestionevaluationlevel"));
 
         bindDestClick($("#srcquestioncolumn"), $("#destquestioncolumn"), "${basepath}/project/question/questionColumn");
-        bindDestClick($("#srcquestioncategory"), $("#destquestioncategory"), "${basepath}/project/question/questionCateogry");
+        bindDestClick($("#srcquestioncategory"), $("#destquestioncategory"), "${basepath}/project/question/questionCategory");
         bindDestClick($("#srcquestionmanagestatus"), $("#destquestionmanagestatus"), "${basepath}/project/question/questionManageStatus");
         bindDestClick($("#srcquestionevaluationlevel"), $("#destquestionevaluationlevel"), "${basepath}/project/question/questionEvaluationLevel");
 

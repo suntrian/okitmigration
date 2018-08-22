@@ -231,6 +231,7 @@ public class UserServiceImpl implements UserService {
         Matcher matcher = Pattern.compile(chineseCharactorRegex).matcher(str);
         while (matcher.find()) {
             result += matcher.group(0);
+            break;
         }
         return result;
     }

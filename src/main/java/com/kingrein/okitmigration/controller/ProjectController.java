@@ -99,13 +99,17 @@ public class ProjectController {
     @GetMapping(value = "/dest")
     public List listDestProject(){
         Map<Integer, Map<String, Object>> projects = projectService.listDestProject();
-        List<Map<String, Object>> results = new ArrayList<Map<String, Object>>(projects.values());
+        List<Map<String, Object>> results = new ArrayList<>();
+        Map<String, Object> tmp = new HashMap<>();
         for (Map<String, Object> r: results) {
-            r.put("text", r.get("name"));
-            r.put("parent", r.get("father_id")==null?"#":r.get("father_id"));
-            r.put("state", new HashMap<String, Object>(){{
-                put("opened", true);
-            }});
+            tmp.put("id", r.get("id"));
+            tmp.put("text", r.get("name"));
+            //tmp.put("parent", r.get("father_id")==null?"#":r.get("father_id"));
+//            tmp.put("state", new HashMap<String, Object>(){{
+//                put("opened", true);
+//            }});
+            results.add(tmp);
+            tmp = new HashMap<>();
         };
         return results;
     }
@@ -492,7 +496,22 @@ public class ProjectController {
     public ResultVO saveWorkflowMap() throws IOException {
         List<Map<String, Object>> srcWorkflows = projectService.listWorkflow("src");
         if (projectService.getWorkflowMap().size() != srcWorkflows.size()) {
-            return new ResultVO("failed", false);
+            List<Map<String, Object>> destWorkflows = projectService.listWorkflow("dest");
+            for (Map<String, Object> src: srcWorkflows) {
+                if (projectService.getWorkflowMap().keySet().contains(src.get("uid"))) {
+                    continue;
+                }
+                boolean matched = false;
+                for (Map<String, Object> dest: destWorkflows) {
+                    if (src.get("uid").equals(dest.get("uid"))) {
+                        matched = true;
+                        break;
+                    }
+                }
+                if (!matched) {
+                    return new ResultVO("failed", false);
+                }
+            }
         }
         recordService.recordWorkflowMap(projectService.getWorkflowMap());
         return new ResultVO("succeed");

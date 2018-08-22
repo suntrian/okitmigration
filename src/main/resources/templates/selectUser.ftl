@@ -87,6 +87,10 @@
                 srcUserTree.uncheck_node(nd);
             }
         });
+        var destTreeChecked = $("#dest_user").jstree(true).get_checked();
+        for (var n in destTreeChecked) {
+            $("#dest_user").jstree(true).uncheck_node(destTreeChecked[n]);
+        }
         //var srcUsername = srcUserTree.get_node(srcUserTree.get_checked()[0]).text;
         $.ajax({
             url: "${basepath}/user/dest",

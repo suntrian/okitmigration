@@ -7,6 +7,9 @@
     <script src="${basepath}/js/my.js"></script>
     <link rel="stylesheet" href="${basepath}/css/style.css">
     <link rel="stylesheet" href="${basepath}/css/my.css">
+    <meta HTTP-EQUIV="pragma" CONTENT="no-cache">
+    <meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+    <meta HTTP-EQUIV="expires" CONTENT="0">
 </head>
 <body>
     <div class="wrap">
