@@ -101,7 +101,7 @@ public class ProjectController {
         Map<Integer, Map<String, Object>> projects = projectService.listDestProject();
         List<Map<String, Object>> results = new ArrayList<>();
         Map<String, Object> tmp = new HashMap<>();
-        for (Map<String, Object> r: results) {
+        for (Map<String, Object> r: projects.values()) {
             tmp.put("id", r.get("id"));
             tmp.put("text", r.get("name"));
             //tmp.put("parent", r.get("father_id")==null?"#":r.get("father_id"));
