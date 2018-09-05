@@ -9,8 +9,13 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ApplicationContext;
 
+
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
-//@MapperScan(value = {"com.kingrein.okitmigration.mapperSrc","com.kingrein.okitmigration.mapperDest"})
+/**
+ * 使用tomcat方式启动时，取消下行代码的注释。
+ * 使用springboot 方式启动时，将下行代码注释
+ */
+@MapperScan(value = {"com.kingrein.okitmigration.mapperSrc","com.kingrein.okitmigration.mapperDest"})
 public class OkitmigrationApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
